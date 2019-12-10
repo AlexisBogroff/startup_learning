@@ -902,7 +902,57 @@ def dashboard_view(request):
 	}
 	return render(request, 'manage_tests/dashboard.html', context)
 	
+@login_required
+@permission_required('tests.can_see_tests', raise_exception=True)
+def launch_view(request):
+	testlist_dyntest = DynTestInfo.objects.all()
+	testlist_dynmcqtest = DynMCQInfo.objects.all()
+	context = {
+		'testlist_dyntest' : testlist_dyntest,
+		'testlist_dynmcqtest': testlist_dynmcqtest
+	}
+	return render(request, 'manage_tests/launch_test.html', context)	
+
+def launch_specific_dyn_view(request, input_id_test):
+	dyntestinfo = get_object_or_404(DynTestInfo, id_test=input_id_test)
+	testlist_dyntest_all = DynTest.objects.all()
+	testlist_dyntest = []
+	for dyntest in testlist_dyntest_all:
+		if dyntest.id_test == input_id_test:
+			testlist_dyntest.append(dyntest)
+	context = {
+		'dyntestinfo':dyntestinfo,
+		'testlist_dyntest': testlist_dyntest,
+	}
+	return render(request, 'manage_tests/launch_specific_dyn_test.html', context)	
+
+def launch_specific_dynmcq_view(request, input_id_test):
+	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
+	DynMCQquestions = DynMCQquestion.objects.filter(id_test = input_id_test)
+	DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test)
 	
+	#On met les questions dans une liste
+	DynMCQquestions_List = []
+	for instance in DynMCQquestions:
+		DynMCQquestions_List.append(instance)
+		
+	#On ordonne les questions et les réponses dans une même liste pour l'affichage
+	Questions_Answers_List = []
+	for question in DynMCQquestions:
+		Questions_Answers_List.append(question)
+		DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test, q_num = question.q_num)
+		for answer in DynMCQanswers:
+			Questions_Answers_List.append(answer)
+			
+	context = {
+		'DynMCQquestions_List':DynMCQquestions_List,
+		'DynMCQTestInfo':DynMCQTestInfo,
+		'Questions_Answers_List': Questions_Answers_List,
+	}
+	return render(request, 'manage_tests/launch_specific_dynmcq_test.html', context)	
+
+
+
 def statistics_view(request, input_id_test):
 	"""
 	mcqtest = get_object_or_404(MCQTest, id_test=input_id_test)

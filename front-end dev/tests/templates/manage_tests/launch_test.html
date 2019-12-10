@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class='body'>
+    <h1>Launch Your Test</h1>
+
+    <h2>Dynamic Test :</h2>
+
+    {% for instance in testlist_dyntest %}
+            <p>
+                    <a href='{{ instance.get_launch }}'>Test {{ instance.id_test }}</a>: {{ instance.title }}
+            </p>
+    {% endfor %}
+	
+	<h2>Dynamic Multiple Choices Questions :</h2>
+	
+	{% for instance in testlist_dynmcqtest %}
+            <p>
+                    <a href='{{ instance.get_launch }}'>Test {{ instance.id_test }}</a>: {{ instance.title }}
+            </p>
+    {% endfor %}
+
+
+</div>
+
+{% endblock content %}
