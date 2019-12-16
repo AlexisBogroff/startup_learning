@@ -137,6 +137,19 @@
   color: rgb(19, 64, 179);
 }
 
+.head h1 {
+  color: rgb(19, 64, 179);
+  text-align: center;
+}
+
+.head h2{
+  text-align: center;   
+}
+
+.head p{
+  text-align: center;  
+}
+
 .body.home {
   position: static;
   padding-top: 5vh;
