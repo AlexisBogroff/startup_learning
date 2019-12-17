@@ -4,9 +4,9 @@
 <div class='launch'>
 	{{ form_answers.management_form }}	
 	{% csrf_token %}
-	<h1>Launch Test {{ DynMCQTestInfo.id_test }} : {{DynMCQTestInfo.title}}</h1>
+	<h1>Passing Test {{ DynMCQTestInfo.id_test }} : {{DynMCQTestInfo.title}}</h1>
 	<br><br>
-	<button name = "start" type ="submit" onclick = "location.href='{{DynMCQTestInfo.get_in_launch}}'">START</button>
+	<button name = "stop" type ="submit" onclick = "location.href='{{ DynMCQTestInfo.launch_home }}'">STOP</button>
 	<br><br>
 	{%for instance in Questions_Answers_List%}
 		{% if instance in DynMCQquestions_List %}

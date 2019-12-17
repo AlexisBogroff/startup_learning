@@ -164,9 +164,14 @@ class DynMCQInfo(models.Model):
 	def get_statistics(self):
 		return reverse('tests:Statistics', kwargs={'input_id_test': self.id_test})
 
+	def launch_home(self):
+		return reverse('tests:Launch')
+
 	def get_launch(self):
 		return reverse('tests:Launch Specific McqDyn', kwargs={'input_id_test': self.id_test})
 
+	def get_in_launch(self):
+		return reverse('tests:In Launch Specific DynMcq', kwargs={'input_id_test': self.id_test})
 		
 		
 class DynMCQquestion(models.Model):
@@ -242,8 +247,14 @@ class DynTestInfo(models.Model):
 	def get_absolute_url_dyntest(self):
 		return reverse('tests:Display dyntest', kwargs={'input_id_test': self.id_test})
 
+	def launch_home(self):
+		return reverse('tests:Launch')
+
 	def get_launch(self):
 		return reverse('tests:Launch Specific Dyn', kwargs={'input_id_test': self.id_test})
+
+	def get_in_launch(self):
+		return reverse('tests:In Launch Specific Dyn', kwargs={'input_id_test': self.id_test})
 
 			
 class DynTest(models.Model):
