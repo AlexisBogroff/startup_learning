@@ -3,9 +3,9 @@
 {% block content %}
 
 <div class='launch'>
-	<h1>Launch Test {{ testlist_dyntest.0.id_test }} : {{ dyntestinfo.title }}</h1>
+	<h1>Passing Test : {{ testlist_dyntest.0.id_test }} : {{ dyntestinfo.title }}</h1>
 	<br><br>
-	<button name = "start" type ="submit" onclick = "location.href='{{dyntestinfo.get_in_launch}}'">START</button>
+	<button name = "stop" type ="submit" onclick = "location.href='{{ dyntestinfo.launch_home }}'">STOP</button>
 	<br><br>
 	{% for instance in testlist_dyntest %}
 		<h3>Question {{instance.q_num}} : {{instance.q_text}}</h3>
