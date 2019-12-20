@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class='body'>
+	<form method='POST'>
+		{{ form_answers.management_form }}	
+		{% csrf_token %}
+		<h1>Passing Test {{ DynTestInforms.id_test }} : {{DynTestInforms.title}}</h1>
+		{%for instance in form_questions%}
+			<p>Question : {{instance.q_num}} : {{instance.q_text}}</p>
+		{%endfor%}
+		<br/>
+		{%for instance in form_answers%}
+			<h4>Question n° {{forloop.counter}} :</h4>
+			<p>Id student : {{instance.id_student}}</p>
+			<p>Réponse : {{instance.r_text}}</p>
+		{%endfor%}
+		<input type='submit', value='Save'/>
+	</form>
+</div>
+
+{% endblock content %}
