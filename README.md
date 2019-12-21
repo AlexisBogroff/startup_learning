@@ -1,6 +1,9 @@
 # startup_learning
 Help people learn effortlessly
 
+## Master
+The master branch is the production branch, it is the most stable as it doesn't yet include some of the lastest features contained in the dev branch.
+
 ## Links:
 Trello:
 
