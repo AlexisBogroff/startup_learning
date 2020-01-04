@@ -5,7 +5,7 @@
 	{{ form_answers.management_form }}	
 	{% csrf_token %}
 	<h1>Passing Test {{ DynMCQTestInfo.id_test }} : {{DynMCQTestInfo.title}}</h1>
-	<br><br>
+	<br><br>	
 	<button name = "stop" type ="submit" onclick = "location.href='{{ DynMCQTestInfo.launch_home }}'">STOP</button>
 	<br><br>
 	{%for instance in Questions_Answers_List%}

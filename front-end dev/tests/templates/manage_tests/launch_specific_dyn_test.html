@@ -1,9 +1,19 @@
 {% extends 'base.html' %}
 
+{% load staticfiles %}
+<script src="{% static 'js/countdown.js' %}"></script>
+
+
+
 {% block content %}
 
 <div class='launch'>
 	<h1>Launch Test {{ testlist_dyntest.0.id_test }} : {{ dyntestinfo.title }}</h1>
+	<br><br>
+	<body>
+		<button>Start Count Down</button>
+		<div>Registration closes in <span id="time"></span> minutes!</div>
+	</body>
 	<br><br>
 	<button name = "start" type ="submit" onclick = "location.href='{{dyntestinfo.get_in_launch}}'">START</button>
 	<br><br>
