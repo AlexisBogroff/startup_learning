@@ -152,8 +152,12 @@
   width: 60%;
 }
 
-.launch button{
- 
+.countdown p{
+  text-align: center;
+  color: crimson;
+}
+
+.launch button{ 
   background-color:white;
   border: 3px solid  black;
   border-radius: 12px;
