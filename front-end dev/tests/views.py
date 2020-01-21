@@ -730,6 +730,8 @@ def dyntest_pass_view(request, input_id_test):
 	DynTestInforms = get_object_or_404(DynTestInfo, id_test=input_id_test)
 	testlist_dyntest_all = DynTest.objects.all()
 	form_questions = []
+	DynTestInforms.print_test = True
+
 	#On récupère les dynamics test
 	for dyntest in testlist_dyntest_all:
 		if dyntest.id_test == input_id_test:
@@ -758,6 +760,7 @@ def dyntest_pass_view(request, input_id_test):
 				question_count += 1
 				pass_dyntest.save()
 			form_answers = PassDynTestSet()
+
 	context = {
 		'DynTestInforms':DynTestInforms,
 		'form_answers': form_answers,
@@ -814,8 +817,8 @@ def tests_list_student_view(request):
 	tests_list_normal_questions = Test_end_session.objects.all()
 	testlist_mcq = Test_mcq_end_session.objects.all()
 	testlist_mcqtest = MCQTest.objects.all()
-	testlist_dyntestinfo_all = DynTestInfo.objects.all()
-	testlist_dynmcqtestinfo_all = DynMCQInfo.objects.all()
+	testlist_dyntestinfo_all = DynTestInfo.objects.filter(print_test = True)
+	testlist_dynmcqtestinfo_all = DynMCQInfo.objects.filter(print_test = True)
 
 	context = {
 		'tests_list': tests_list_normal_questions,
