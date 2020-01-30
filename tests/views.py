@@ -1257,9 +1257,13 @@ def Statistique_question(DynMCQTestInfo):
 		passdynmcqtest_List.append(instance)
 		
 	for passdynmcq in passdynmcqtest_List:
-		tmp_dynmcqtest = get_object_or_404(DynMCQanswer,id_test = DynMCQTestInfo.id_test, q_num = passdynmcq.q_num, right_ans = 1)
-		if(int(passdynmcq.r_ans[2]) == tmp_dynmcqtest.ans_num):
-			stats_question[tmp_dynmcqtest.q_num-1] += 1
+		tmp_dynmcqtest = DynMCQanswer.objects.filter(id_test = DynMCQTestInfo.id_test, q_num = passdynmcq.q_num, right_ans = 1)
+		num_right_answers = []
+		for ans in tmp_dynmcqtest:
+			num_right_answers.append(ans.ans_num)
+		#Si la réponse est bonne, on incrémente la note du test
+		if check_answer(passdynmcq.r_ans,num_right_answers):
+			stats_question[tmp_dynmcqtest[0].q_num-1] += 1
 	return stats_question
 	
 def Pourcentage_stats_question(stats_question,PassDynMCQInfo_List):
