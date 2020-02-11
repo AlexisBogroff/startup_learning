@@ -3,8 +3,8 @@
 {% block content %}
 <div class='body'>
 	<form method='POST'> {% csrf_token %}
-		<p><a href='{{ DynMCQTestInfo.get_absolute_url_q_menu }}'>Retour</a></p>
-		<h1>Test {{DynMCQquestionTest.id_test}}  Question : {{DynMCQquestionTest.q_num}}</h1>
+		<p><a href="{% url 'tests:Manage Questions' %}">Retour</a></p>
+		<h1>Question :</h1>
 		
 		{% if empty_question is True %}
 			<p>Question : {{ form.q_text }}</p>

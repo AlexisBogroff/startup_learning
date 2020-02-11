@@ -307,15 +307,20 @@ class Pass_DynTestForm(forms.ModelForm):
 		]
 		
 class DynMCQTestInfoForm(forms.ModelForm):
-	id_test = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder':'test id'}))
 	title = forms.CharField(required=True)
-	nb_q = forms.CharField(required=True)
 	class Meta:
 		model = DynMCQInfo
 		fields = [
-			'id_test',
 			'title',
-			'nb_q',
+		]
+
+class DynMCQTestInfoForm_questions(forms.ModelForm):
+	questions = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+
+	class Meta:
+		model = DynMCQInfo
+		fields = [
+			'questions',
 		]
 		
 class DynMCQquestionForm(forms.ModelForm):
