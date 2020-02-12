@@ -345,20 +345,14 @@ def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt)
 	#Récupération des informations du test
 	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
 	Pass_DynMCQInfo = get_object_or_404(Pass_DynMCQTest_Info, id_test=input_id_test, id_student = input_id_student, attempt = input_attempt)
-	DynMCQquestions = DynMCQquestion.objects.filter(id_test = input_id_test)
-	DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test)
+	num_questions = get_questions(DynMCQTestInfo.questions)
 	
-	#On met les questions dans une liste
-	DynMCQquestions_List = []
-	for instance in DynMCQquestions:
-		DynMCQquestions_List.append(instance)
-		
 	#On ordonne les questions et les réponses dans une même liste pour l'affichage
 	Questions_List = []
-	for question in DynMCQquestions:
-		Questions_List.append(question)
+	for i in range(len(num_questions)):
+			Questions_List.append(DynMCQquestion.objects.get(q_num = num_questions[i]))
 	
-	nb_questions = DynMCQTestInfo.nb_q
+	nb_questions = len(num_questions)
 	#On créé un formulaire groupé de pass_dyntest du nombre de question du test
 	PassDynMCQTestSet = formset_factory(Pass_DynMCQTestForm, extra = int(nb_questions))
 	#on met dans data 3 propriétés obligatoire pour le fonctionnement du formulaire groupé
@@ -370,10 +364,10 @@ def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt)
 	
 	form_answers = PassDynMCQTestSet()
 	#On récupère les réponses de chaque questions et on les place dans les choix de réponses de l'élève pour les checkbox
-	i = 1
+	i = 0
 	for ans in form_answers:
 		choices = []
-		DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test, q_num = i)
+		DynMCQanswers = DynMCQanswer.objects.filter(q_num = num_questions[i])
 		#Récupération des réponses dans des sous-listes ('valeur retournée','texte affiché') pour chaque réponse possible
 		for answer in DynMCQanswers:
 			list = []
@@ -385,10 +379,10 @@ def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt)
 		
 	if request.method == 'POST':
 		form_answers = PassDynMCQTestSet(request.POST)
-		i = 1
+		i = 0
 		for ans in form_answers:
 			choices = []
-			DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test, q_num = i)
+			DynMCQanswers = DynMCQanswer.objects.filter(q_num = num_questions[i])
 			for answer in DynMCQanswers:
 				list = []
 				list.append(answer.ans_num)
@@ -398,17 +392,17 @@ def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt)
 			i += 1
 	
 		if form_answers.is_valid():
-			question_count = 1
+			question_count = 0
 			Pass_DynMCQInfo.time = datetime.datetime.today()
 			#Remplissage automatique des champs du test
 			for instance in form_answers:
 				pass_dynMCQtest = instance.save(commit=False)
 				pass_dynMCQtest.id_test = input_id_test
 				pass_dynMCQtest.id_student = input_id_student
-				pass_dynMCQtest.q_num = question_count
+				pass_dynMCQtest.q_num = num_questions[question_count]
 				pass_dynMCQtest.attempt = input_attempt
 				#On récupère la réponse associé et on test si la réponse est bonne
-				right_answers = DynMCQanswer.objects.filter(id_test=input_id_test, q_num = question_count, right_ans = 1)
+				right_answers = DynMCQanswer.objects.filter(q_num = num_questions[question_count], right_ans = 1)
 				num_right_answers = []
 				for ans in right_answers:
 					num_right_answers.append(ans.ans_num)
@@ -424,7 +418,6 @@ def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt)
 		'Pass_DynMCQInfo' : Pass_DynMCQInfo,
 		'DynMCQTestInfo':DynMCQTestInfo,
 		'form_answers': form_answers,
-		'DynMCQquestions_List' : DynMCQquestions_List,
 		'Questions_List' : Questions_List,
 	}
 	return render(request, 'pass_tests/dynMCQtest_pass.html', context)
@@ -461,6 +454,7 @@ def pass_dynMCQtest_display_view(request,input_id_test,input_id_student,input_at
 	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
 	Pass_DynMCQInfo = get_object_or_404(Pass_DynMCQTest_Info, id_test=input_id_test, id_student = input_id_student,attempt = input_attempt)
 	Pass_DynMCQtest = Pass_DynMCQTest.objects.filter(id_test = input_id_test, id_student = input_id_student,attempt = input_attempt)
+	nb_questions = len(get_questions(DynMCQTestInfo.questions))
 	Pass_DynMCQtest_List = []
 	for instance in Pass_DynMCQtest:
 		Pass_DynMCQtest_List.append(instance)
@@ -468,22 +462,25 @@ def pass_dynMCQtest_display_view(request,input_id_test,input_id_student,input_at
 		'DynMCQTestInfo' : DynMCQTestInfo,
 		'Pass_DynMCQInfo' : Pass_DynMCQInfo,
 		'Pass_DynMCQtest_List': Pass_DynMCQtest_List,
+		'nb_questions':nb_questions,
 	}
 	return render(request, 'manage_tests/pass_dynMCQtest_display.html', context)
 	
 def DynMCQtest_display_view(request, input_id_test):
 	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
-	DynMCQquestions = DynMCQquestion.objects.all()
-	DynMCQanswers = DynMCQanswer.objects.all()
-	
-	#On met les questions dans une liste
+	num_questions = get_questions(DynMCQTestInfo.questions)
 	DynMCQquestions_List = []
-	for instance in DynMCQquestions:
-		DynMCQquestions_List.append(instance)
+	for i in range(len(num_questions)):
+		DynMCQquestions_List.append(DynMCQquestion.objects.get(q_num = num_questions[i]))
+	DynMCQanswers = []
+	for i in range(len(num_questions)):
+		theDynMCQanswers = DynMCQanswer.objects.filter(q_num = num_questions[i])
+		for ans in theDynMCQanswers:
+			DynMCQanswers.append(ans)
 		
 	#On ordonne les questions et les réponses dans une même liste pour l'affichage
 	Questions_Answers_List = []
-	for question in DynMCQquestions:
+	for question in DynMCQquestions_List:
 		Questions_Answers_List.append(question)
 		DynMCQanswers = DynMCQanswer.objects.filter(q_num = question.q_num)
 		for answer in DynMCQanswers:
@@ -1080,44 +1077,9 @@ def in_launch_specific_dynmcq_view(request, input_id_test):
 	
 	
 def statistics_view(request, input_id_test):
-	"""
-	mcqtest = get_object_or_404(MCQTest, id_test=input_id_test)
-	pass_mcqtest_list_all = Pass_MCQTest_end_session.objects.all()
-	pass_mcqtest_list = []
-	
-	#On récupère les pass_tests liés au MCQTest
-	#Pour cela on ajoute ceux dont l'id_MCQTest est le même que celui du MCQTest
-	i = 0
-	while i < len(pass_mcqtest_list_all):
-		if pass_mcqtest_list_all[i].id_MCQTest == input_id_test:
-			pass_mcqtest_list.append(pass_mcqtest_list_all[i])
-		i += 1
-	
-	statistiques_notes = [0,0,0,0,0,0]
-	
-	#On calcul les notes aux pass_test liés aux MCQTest
-	marks_list=[]
-	i = 0
-	while i < len(pass_mcqtest_list):
-		note = 0
-		if pass_mcqtest_list[i].q1 == mcqtest.r1:
-			note += 1
-		if pass_mcqtest_list[i].q2 == mcqtest.r2:
-			note += 1
-		if pass_mcqtest_list[i].q3 == mcqtest.r3:
-			note += 1
-		if pass_mcqtest_list[i].q4 == mcqtest.r4:
-			note += 1
-		if pass_mcqtest_list[i].q5 == mcqtest.r5:
-			note += 1
-		pass_mcqtest_list[i].mark = note
-		pass_mcqtest_list[i].save()
-		marks_list.append(pass_mcqtest_list[i].mark)
-		statistiques_notes[note] += 1
-		i += 1
-	"""
 	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
 	PassDynMCQInfo = Pass_DynMCQTest_Info.objects.filter(id_test = input_id_test)
+	nb_questions = len(get_questions(DynMCQTestInfo.questions))
 	
 	PassDynMCQInfo_List = []
 	for instance in PassDynMCQInfo:
@@ -1126,7 +1088,7 @@ def statistics_view(request, input_id_test):
 	
 	statistiques_notes = []
 	i = 0
-	while i <= int(DynMCQTestInfo.nb_q):
+	while i <= int(nb_questions):
 		statistiques_notes.append(0)
 		i += 1
 		
@@ -1164,8 +1126,8 @@ def statistics_view(request, input_id_test):
 		i += 1
 	
 	#Création des graphs
-	GraphsQuestions(stats_question,int(DynMCQTestInfo.nb_q))
-	GraphsNote(total_freq,int(DynMCQTestInfo.nb_q))
+	GraphsQuestions(stats_question,int(nb_questions))
+	GraphsNote(total_freq,int(nb_questions))
 	GraphsBoxplot(marks_list)
 
 	context = {
@@ -1180,6 +1142,7 @@ def statistics_view(request, input_id_test):
 		'mediane' : m,
 		'total_statistics_question' : total_statistics_question,
 		'total_freq' : total_freq,
+		'nb_questions':nb_questions,
 	}
 	return render(request, 'manage_tests/statistics.html', context)
 	
@@ -1241,9 +1204,10 @@ def Frequences(statistiques_notes,PassDynMCQInfo_List):
 	return total_freq
 	
 def Statistique_question(DynMCQTestInfo):
+	num_questions = get_questions(DynMCQTestInfo.questions)
 	stats_question = []
 	i = 0
-	while i < int(DynMCQTestInfo.nb_q):
+	while i < int(len(num_questions)):
 		stats_question.append(0)
 		i += 1
 		
@@ -1253,13 +1217,17 @@ def Statistique_question(DynMCQTestInfo):
 		passdynmcqtest_List.append(instance)
 		
 	for passdynmcq in passdynmcqtest_List:
-		tmp_dynmcqtest = DynMCQanswer.objects.filter(id_test = DynMCQTestInfo.id_test, q_num = passdynmcq.q_num, right_ans = 1)
+		tmp_dynmcqtest = DynMCQanswer.objects.filter(q_num = passdynmcq.q_num, right_ans = 1)
 		num_right_answers = []
 		for ans in tmp_dynmcqtest:
 			num_right_answers.append(ans.ans_num)
 		#Si la réponse est bonne, on incrémente la note du test
 		if check_answer(passdynmcq.r_ans,num_right_answers):
-			stats_question[tmp_dynmcqtest[0].q_num-1] += 1
+			index = 0
+			for i in range(len(num_questions)):
+				if(tmp_dynmcqtest[0].q_num == num_questions[i]):
+					index = i
+			stats_question[index] += 1
 	return stats_question
 	
 def Pourcentage_stats_question(stats_question,PassDynMCQInfo_List):
