@@ -2,7 +2,8 @@
 
 {% block content %}
 <div class='body'>
-	<form method='POST'> {% csrf_token %}
+	<form method='POST'> 
+		{% csrf_token %} 	
 		<p><a href="{% url 'tests:Manage Questions' %}">Retour</a></p>
 		<h1>Question :</h1>
 		
@@ -34,9 +35,11 @@
 			<br/>
 			<br/>
 			<p><a href='{{ DynMCQquestionTest.get_absolute_url_add_answer }}'>Ajouter une nouvelle réponse</a></p>
+			<br/>
+			<p> Difficulty : {{DynMCQquestionTest.difficulty}}</p>
+			<p><a href='{{ DynMCQquestionTest.get_absolute_url_difficulty }}'>Remplir la difficulté</a></p>
+			<br/>
 		{% endif %}
-		<br/>
-
 	</form>
 </div>
 {% endblock content %}

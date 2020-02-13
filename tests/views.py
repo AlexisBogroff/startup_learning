@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import formset_factory
-from .forms import TestForm, PassTestForm, TestMcqForm, PassTestMcqForm, MCQTestForm, PassMCQTestForm, DynTestForm, Pass_DynTestForm,DynTestInfoForm,DynMCQTestInfoForm,DynMCQquestionForm,DynMCQanswerForm,Pass_DynMCQTestForm,DynMCQquestionForm_question,Pass_DynMCQTestInfoForm,DynMCQTestInfoForm,DynMCQTestInfoForm_questions
+from .forms import TestForm, PassTestForm, TestMcqForm, PassTestMcqForm, MCQTestForm, PassMCQTestForm, DynTestForm, Pass_DynTestForm,DynTestInfoForm,DynMCQTestInfoForm,DynMCQquestionForm,DynMCQanswerForm,Pass_DynMCQTestForm,DynMCQquestionForm_question,Pass_DynMCQTestInfoForm,DynMCQTestInfoForm,DynMCQTestInfoForm_questions,Question_difficulty_form
 from .models import Test_end_session, Pass_test_end_session, Test_mcq_end_session, MCQTest, Pass_MCQTest_end_session, DynTest,Pass_DynTest,DynTestInfo,DynMCQInfo,DynMCQquestion,DynMCQanswer,Pass_DynMCQTest,Pass_DynMCQTest_Info
 import matplotlib.pyplot as plt
 import numpy as np
@@ -193,6 +193,54 @@ def DynMCQquestion_select_menu_view(request, input_id_test):
 		'empty':empty,
 	}
 	return render(request, 'manage_tests/selectmenu_dynmcqtest.html',context)
+	
+def Question_reallocation_view(request, input_id_test):
+	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
+	
+	num_questions = get_questions(DynMCQTestInfo.questions)
+	empty = True
+	
+	#On met les questions dans une liste
+	DynMCQquestionTestList = []
+	for i in range(len(num_questions)):
+		DynMCQquestionTestList.append(DynMCQquestion.objects.get(q_num = num_questions[i]))
+	
+	form = DynMCQTestInfoForm_questions()
+	choices = []
+	DynMCQquestions = DynMCQquestion.objects.all()
+	for question in DynMCQquestions:
+		list = []
+		list.append(int(question.q_num))
+		list.append(question.q_text)
+		choices.append(list)
+	form.fields['questions'].choices = choices
+	if request.method == 'POST':
+		form = DynMCQTestInfoForm_questions(request.POST, instance = DynMCQTestInfo)
+		choices = []
+		DynMCQquestions = DynMCQquestion.objects.all()
+		for question in DynMCQquestions:
+			list = []
+			list.append(int(question.q_num))
+			list.append(question.q_text)
+			choices.append(list)
+		form.fields['questions'].choices = choices
+	
+		if form.is_valid():
+			form.save()
+			empty = False
+			num_questions = get_questions(DynMCQTestInfo.questions)
+			#On met les questions dans une liste
+			DynMCQquestionTestList = []
+			for i in range(len(num_questions)):
+				DynMCQquestionTestList.append(DynMCQquestion.objects.get(q_num = num_questions[i]))
+					
+	context = {
+		'DynMCQquestionTestList': DynMCQquestionTestList,
+		'DynMCQTestInfo': DynMCQTestInfo,
+		'form': form,
+		'empty':empty,
+	}
+	return render(request, 'manage_tests/question_reallocation.html',context)
 
 def get_questions(questions):
 	num_questions = []
@@ -245,6 +293,58 @@ def DynMCQquestion_create_view(request, input_q_num):
 		'DynMCQanswerTest_List':DynMCQanswerTest_List,
 	}
 	return render(request, 'manage_tests/test_create_dynmcqquestion.html',context)
+	
+def Add_difficulty_view(request,input_q_num):
+	#Récupération la question sélectionnée du test
+	DynMCQquestionTest = get_object_or_404(DynMCQquestion, q_num = input_q_num)
+	empty = True
+	DifficultySet = formset_factory(Question_difficulty_form, extra = 5)
+	#on met dans data 3 propriétés obligatoire pour le fonctionnement du formulaire groupé
+	data = {
+		'form-TOTAL_FORMS': 5,
+		'form-INITIAL_FORMS': '0',
+		'form-MAX_NUM_FORMS': '',
+	}
+	
+	form = DifficultySet()
+
+	for theme in form:
+		choices = []
+		for i in range(5):
+			list = []
+			list.append(i)
+			list.append(i)
+			choices.append(list)
+		theme.fields['difficulty'].choices = choices #Assignation des choix
+		
+	if request.method == 'POST':
+		form = DifficultySet(request.POST)
+		
+		for theme in form:
+			choices = []
+			for i in range(5):
+				list = []
+				list.append(i)
+				list.append(i)
+				choices.append(list)
+			theme.fields['difficulty'].choices = choices #Assignation des choix
+	
+		if form.is_valid():
+			the_difficulty = ""
+			for theme in form:
+				the_theme = theme.save(commit=False)
+				the_difficulty += the_theme.difficulty
+			DynMCQquestionTest.difficulty = the_difficulty
+			DynMCQquestionTest.save()
+			empty = False
+			
+	context = {
+		'form' : form,
+		'DynMCQquestionTest' : DynMCQquestionTest,
+		'empty' : empty,
+	}
+	return render(request, 'manage_tests/question_difficulty.html',context)
+		
 	
 def DynMCQanswer_create_view(request, input_q_num):
 	#Récupération la question sélectionnée du test

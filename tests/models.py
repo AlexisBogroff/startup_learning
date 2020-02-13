@@ -159,6 +159,9 @@ class DynMCQInfo(models.Model):
 	def get_absolute_url_display(self):
 		return reverse('tests:Display DynMCQtest', kwargs={'input_id_test': self.id_test})
 		
+	def question_reallocation(self):
+		return reverse('tests:Question_reallocation', kwargs={'input_id_test': self.id_test})
+		
 	def get_statistics(self):
 		return reverse('tests:Statistics', kwargs={'input_id_test': self.id_test})
 		
@@ -179,12 +182,16 @@ class DynMCQquestion(models.Model):
 	nb_ans = models.CharField(max_length=10)
 	right_ans = models.IntegerField(null = True)
 	activated = models.IntegerField(null = True)
+	difficulty = models.TextField(default="")
 		
 	def get_absolute_url_question(self):
 		return reverse('tests:Create DynMCQquestion', kwargs={'input_q_num': self.q_num})
 		
 	def get_absolute_url_answers(self):
 		return reverse('tests:Create DynMCQanswers', kwargs={'input_q_num': self.q_num})
+		
+	def get_absolute_url_difficulty(self):
+		return reverse('tests:Add Difficulty', kwargs={'input_q_num': self.q_num})
 		
 	def get_absolute_url_edit(self):
 		return reverse('tests:Edit DynMCQquestion', kwargs={'input_q_num': self.q_num})

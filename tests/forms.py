@@ -323,6 +323,14 @@ class DynMCQTestInfoForm_questions(forms.ModelForm):
 			'questions',
 		]
 		
+class Question_difficulty_form(forms.ModelForm):
+	difficulty = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+	class Meta:
+		model = DynMCQquestion
+		fields = [
+			'difficulty',
+		]
+		
 class DynMCQquestionForm(forms.ModelForm):
 	# Properly displayed
 	q_text = forms.CharField(widget=forms.Textarea(attrs={'rows':1, 'cols':100}))
