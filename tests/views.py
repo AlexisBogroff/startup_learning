@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import formset_factory
-from .forms import TestForm, PassTestForm, TestMcqForm, PassTestMcqForm, MCQTestForm, PassMCQTestForm, DynTestForm, Pass_DynTestForm,DynTestInfoForm,DynMCQTestInfoForm,DynMCQquestionForm,DynMCQanswerForm,Pass_DynMCQTestForm,DynMCQquestionForm_question,Pass_DynMCQTestInfoForm,DynMCQTestInfoForm,DynMCQTestInfoForm_questions,Question_difficulty_form
+from .forms import TestForm, PassTestForm, TestMcqForm, PassTestMcqForm, MCQTestForm, PassMCQTestForm, DynTestForm, Pass_DynTestForm,DynTestInfoForm,DynMCQTestInfoForm,DynMCQquestionForm,DynMCQanswerForm,Pass_DynMCQTestForm,DynMCQquestionForm_question,Pass_DynMCQTestInfoForm,DynMCQTestInfoForm,DynMCQTestInfoForm_questions,Question_difficulty_form,DynMCQTestInfoForm_launch
 from .models import Test_end_session, Pass_test_end_session, Test_mcq_end_session, MCQTest, Pass_MCQTest_end_session, DynTest,Pass_DynTest,DynTestInfo,DynMCQInfo,DynMCQquestion,DynMCQanswer,Pass_DynMCQTest,Pass_DynMCQTest_Info
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1002,13 +1002,27 @@ def tests_list_student_view(request):
 	testlist_mcqtest = MCQTest.objects.all()
 	testlist_dyntestinfo_all = DynTestInfo.objects.all()
 	testlist_dynmcqtestinfo_all = DynMCQInfo.objects.all()
+	testlist_dynmcqtestinfo_user = []
+	
+	user_groups = request.user.groups.all()
+	test_groups = ""
+	for test in testlist_dynmcqtestinfo_all:
+		test_groups = test.activated_for
+		test_groups = test_groups.replace("'","")
+		test_groups = test_groups.replace("[","")
+		test_groups = test_groups.replace("]","")
+		test_groups = test_groups.split(',')
+		for test_group in test_groups:
+			for user_group in user_groups:
+				if(str(test_group) == str(user_group)):
+					testlist_dynmcqtestinfo_user.append(test)
 
 	context = {
 		'tests_list': tests_list_normal_questions,
 		'tests_mcq_list': testlist_mcq,
 		'tests_mcqtest_list': testlist_mcqtest,
 		'testlist_dyntestinfo_all':testlist_dyntestinfo_all,
-		'testlist_dynmcqtestinfo_all' : testlist_dynmcqtestinfo_all,
+		'testlist_dynmcqtestinfo_user' : testlist_dynmcqtestinfo_user,
 	}
 	return render(request, 'pass_tests/tests_list_student.html', context)
 
@@ -1114,26 +1128,62 @@ def launch_specific_dyn_view(request, input_id_test):
 
 def launch_specific_dynmcq_view(request, input_id_test):
 	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
-	DynMCQquestions = DynMCQquestion.objects.filter(id_test = input_id_test)
-	DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test)
+	empty = True
+	num_questions = get_questions(DynMCQTestInfo.questions)
 	
-	#On met les questions dans une liste
 	DynMCQquestions_List = []
-	for instance in DynMCQquestions:
-		DynMCQquestions_List.append(instance)
+	for i in range(len(num_questions)):
+		DynMCQquestions_List.append(DynMCQquestion.objects.get(q_num = num_questions[i]))
+		
+	DynMCQanswers = []
+	for i in range(len(num_questions)):
+		theDynMCQanswers = DynMCQanswer.objects.filter(q_num = num_questions[i])
+		for ans in theDynMCQanswers:
+			DynMCQanswers.append(ans)
 		
 	#On ordonne les questions et les réponses dans une même liste pour l'affichage
 	Questions_Answers_List = []
-	for question in DynMCQquestions:
+	for question in DynMCQquestions_List:
 		Questions_Answers_List.append(question)
-		DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test, q_num = question.q_num)
+		DynMCQanswers = DynMCQanswer.objects.filter(q_num = question.q_num)
 		for answer in DynMCQanswers:
 			Questions_Answers_List.append(answer)
+			
+	group_names = []
+	groups = Group.objects.all()
+	for group in groups:
+		if(group.name != "Teacher" and group.name != "Student"):
+			group_names.append(group)
+			
+	form = DynMCQTestInfoForm_launch()
+	choices = []
+	for group in group_names:
+		list = []
+		list.append(group.name)
+		list.append(group.name)
+		choices.append(list)
+	form.fields['activated_for'].choices = choices
+	if request.method == 'POST':
+		form = DynMCQTestInfoForm_launch(request.POST, instance = DynMCQTestInfo)
+		choices = []
+		for group in group_names:
+			list = []
+			list.append(group.name)
+			list.append(group.name)
+			choices.append(list)
+		form.fields['activated_for'].choices = choices
+	
+		if form.is_valid():
+			form.save()
+			empty = False
+			form = DynMCQTestInfoForm_launch()
 			
 	context = {
 		'DynMCQquestions_List':DynMCQquestions_List,
 		'DynMCQTestInfo':DynMCQTestInfo,
 		'Questions_Answers_List': Questions_Answers_List,
+		'form': form,
+		'empty':empty,
 	}
 	return render(request, 'manage_tests/launch_specific_dynmcq_test.html', context)	
 
@@ -1152,19 +1202,24 @@ def in_launch_specific_dyn_view(request, input_id_test):
 
 def in_launch_specific_dynmcq_view(request, input_id_test):
 	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
-	DynMCQquestions = DynMCQquestion.objects.filter(id_test = input_id_test)
-	DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test)
 	
-	#On met les questions dans une liste
+	num_questions = get_questions(DynMCQTestInfo.questions)
+	
 	DynMCQquestions_List = []
-	for instance in DynMCQquestions:
-		DynMCQquestions_List.append(instance)
+	for i in range(len(num_questions)):
+		DynMCQquestions_List.append(DynMCQquestion.objects.get(q_num = num_questions[i]))
+		
+	DynMCQanswers = []
+	for i in range(len(num_questions)):
+		theDynMCQanswers = DynMCQanswer.objects.filter(q_num = num_questions[i])
+		for ans in theDynMCQanswers:
+			DynMCQanswers.append(ans)
 		
 	#On ordonne les questions et les réponses dans une même liste pour l'affichage
 	Questions_Answers_List = []
-	for question in DynMCQquestions:
+	for question in DynMCQquestions_List:
 		Questions_Answers_List.append(question)
-		DynMCQanswers = DynMCQanswer.objects.filter(id_test = input_id_test, q_num = question.q_num)
+		DynMCQanswers = DynMCQanswer.objects.filter(q_num = question.q_num)
 		for answer in DynMCQanswers:
 			Questions_Answers_List.append(answer)
 			

@@ -145,10 +145,12 @@ class Pass_MCQTest_end_session(models.Model):
 			return False
 			
 class DynMCQInfo(models.Model):
-	id_test = models.AutoField(primary_key=True)
+	id_test = models.CharField(max_length=10, primary_key=True)
 	title = models.TextField()
 	print_test = models.BooleanField(default=False)
 	questions = models.TextField(default="")
+	time = models.CharField(max_length=10,default="")
+	activated_for = models.TextField(default="")
 
 	def get_absolute_url(self):
 		return reverse('tests:Create DynMCQTest', kwargs={'input_id_test': self.id_test})
