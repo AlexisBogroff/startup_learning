@@ -57,6 +57,7 @@ from tests.views import (
 	launch_specific_dynmcq_view,
 	in_launch_specific_dyn_view,
 	in_launch_specific_dynmcq_view,
+	in_launch_mcq_stop_test,
 )
 
 app_name = 'tests'
@@ -109,6 +110,7 @@ urlpatterns = [
 	path('manage/launch/mcqdyn/<str:input_id_test>/', launch_specific_dynmcq_view, name='Launch Specific McqDyn'),
 	path('manage/inlaunch/dyn/<str:input_id_test>/', in_launch_specific_dyn_view, name='In Launch Specific Dyn'),
 	path('manage/inlaunch/mcqdyn/<str:input_id_test>/', in_launch_specific_dynmcq_view, name='In Launch Specific DynMcq'),
+	path('manage/stopinlaunch/mcqdyn/<str:input_id_test>/', in_launch_mcq_stop_test, name='Stop mcq launch'),
 
 	# Student
 	path('pass/<str:input_id_test>', test_pass_view, name='Pass test'),

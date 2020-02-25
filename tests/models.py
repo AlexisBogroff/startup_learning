@@ -177,6 +177,9 @@ class DynMCQInfo(models.Model):
 		print_test = True
 		return reverse('tests:In Launch Specific DynMcq', kwargs={'input_id_test': self.id_test})
 		
+	def stop_launch(self):
+		return reverse('tests:Stop mcq launch', kwargs={'input_id_test': self.id_test})
+		
 		
 class DynMCQquestion(models.Model):
 	q_num = models.AutoField(primary_key=True)

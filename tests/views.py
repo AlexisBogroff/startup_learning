@@ -5,6 +5,7 @@ from .models import Test_end_session, Pass_test_end_session, Test_mcq_end_sessio
 import matplotlib.pyplot as plt
 import numpy as np
 import datetime
+import time as tm
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from django.contrib.auth.decorators import login_required,permission_required
 from django.contrib.auth import authenticate, login, logout
@@ -1205,6 +1206,8 @@ def in_launch_specific_dynmcq_view(request, input_id_test):
 	
 	num_questions = get_questions(DynMCQTestInfo.questions)
 	
+	time = get_time(DynMCQTestInfo.time)
+	
 	DynMCQquestions_List = []
 	for i in range(len(num_questions)):
 		DynMCQquestions_List.append(DynMCQquestion.objects.get(q_num = num_questions[i]))
@@ -1222,13 +1225,33 @@ def in_launch_specific_dynmcq_view(request, input_id_test):
 		DynMCQanswers = DynMCQanswer.objects.filter(q_num = question.q_num)
 		for answer in DynMCQanswers:
 			Questions_Answers_List.append(answer)
-			
+		
 	context = {
 		'DynMCQquestions_List':DynMCQquestions_List,
 		'DynMCQTestInfo':DynMCQTestInfo,
 		'Questions_Answers_List': Questions_Answers_List,
+		'time' : time,
 	}
 	return render(request, 'manage_tests/in_launch_specific_dynmcq_test.html', context)
+	
+def in_launch_mcq_stop_test(request, input_id_test):
+	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
+	stop_mcq_test(DynMCQTestInfo)
+	return redirect('/')
+	
+def get_time(time):
+	timer = time.split(':')
+	min = timer[0]
+	sec = int(timer[1])/60
+	sec = str(sec)
+	sec = sec[1:]
+	the_time = min + sec
+	return the_time
+	
+def stop_mcq_test(DynMCQTestInfo):
+	DynMCQTestInfo.activated_for = ""
+	DynMCQTestInfo.time = ""
+	DynMCQTestInfo.save()
 	
 	
 def statistics_view(request, input_id_test):
