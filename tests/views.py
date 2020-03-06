@@ -622,6 +622,11 @@ def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt)
 	Pass_DynMCQInfo = get_object_or_404(Pass_DynMCQTest_Info, id_test=input_id_test, id_student = input_id_student, attempt = input_attempt)
 	num_questions = get_questions(DynMCQTestInfo.questions)
 	
+	release_time = get_date(DynMCQTestInfo.release_time)
+	limit_time = add_time(release_time,DynMCQTestInfo.time)
+	now = get_date(str(datetime.datetime.today()))
+	delta = compare_date(now,limit_time)
+	
 	DynMCQquestionTestList = []
 	DynquestionTestList = []
 	
@@ -745,6 +750,13 @@ def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt)
 						Pass_DynMCQInfo.save()
 						question_count += 1
 						pass_dynMCQtest.save()
+				time_left = compare_date(get_date(str(datetime.datetime.today())),limit_time)
+				if time_left < -0.5:
+					min_left = str(time_left).split(".")
+					Pass_DynMCQInfo.mark += int(min_left[0])
+					if(Pass_DynMCQInfo.mark < 0):
+						Pass_DynMCQInfo.mark = 0
+					Pass_DynMCQInfo.save()
 				return redirect('/')
 				
 	context = {
@@ -756,6 +768,9 @@ def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt)
 		'DynquestionTestList' : DynquestionTestList,
 		'nb_normal_questions':nb_normal_questions,
 		'nb_mcq_questions':nb_mcq_questions,
+		'release_time':release_time,
+		'limit_time':limit_time,
+		'delta':delta,
 	}
 	return render(request, 'pass_tests/dynMCQtest_pass.html', context)
 
@@ -1578,6 +1593,43 @@ def get_time(time):
 	sec = sec[1:]
 	the_time = min + sec
 	return the_time
+	
+def get_date(date):
+	time_date = date.split(".")
+	time_date = time_date[0].split(" ")
+	time_date = time_date[1].split(":")
+	return [int(time_date[0]),int(time_date[1]),int(time_date[2])]
+	
+def add_time(date,time):
+	timer = time.split(":")
+	if(len(timer)==2):
+		h = int(date[0])
+		min = int(timer[0])+int(date[1])
+		sec = int(timer[1])+int(date[2])
+	if(len(timer)==3):
+		h = int(timer[0])+int(date[0])
+		min = int(timer[1])+int(date[1])
+		sec = int(timer[2])+int(date[2])
+	if(sec > 60):
+		min += 1
+		sec -= 60
+	if(min > 60):
+		h += 1
+		min -= 60
+		if h > 24:
+			h -= 24
+	return [h,min,sec]
+	
+def compare_date(date1,date2):
+	h = date2[0] - date1[0]
+	min = date2[1] - date1[1]
+	sec = date2[2] - date1[2]
+	h *= 3600
+	min *= 60
+	time = h + min + sec
+	min = time /60
+	return min
+	
 	
 def stop_mcq_test(DynMCQTestInfo):
 	DynMCQTestInfo.activated_for = ""
