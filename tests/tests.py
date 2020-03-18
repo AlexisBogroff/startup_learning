@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from .models import Pass_test_end_session,DynMCQInfo,DynMCQquestion,DynMCQanswer,Pass_DynMCQTest_Info,Pass_DynMCQTest
+from .models import DynMCQInfo,DynMCQquestion,DynMCQanswer,Pass_DynMCQTest_Info,Pass_DynMCQTest
 from django.test.utils import setup_test_environment
 from tests.views import (
 	Moyenne,
