@@ -12,6 +12,7 @@ from tests.views import (
 	DynMCQquestion_create_view,
 	Dynquestion_create_view,
 	DynMCQanswer_create_view,
+	
 	Manage_questions_view,
 	Question_reallocation_view,
 	Add_difficulty_view,
@@ -60,14 +61,15 @@ urlpatterns = [
 	path('manage/create/dynmcqtestmcqquestion/<str:input_q_num>/', DynMCQquestion_create_view, name='Create DynMCQquestion'),
 	path('manage/create/dynmcqtestquestion/<str:input_q_num>/', Dynquestion_create_view, name='Create Dynquestion'),
 	path('manage/create/dynmcqtestanswer/<str:input_q_num>/', DynMCQanswer_create_view, name='Create DynMCQanswers'),
-	path('manage/create/dynmcqtestaddmcqquestion/', Add_DynMCQquestion_view, name='AddQuestion DynMCQquestion'),
-	path('manage/create/dynmcqtestaddquestion/', Add_Dynquestion_view, name='AddQuestion Dynquestion'),
-	path('manage/create/dynmcqtestaddanswer/<str:input_q_num>', Add_DynMCQanswer_view, name='AddAnswer DynMCQanswer'),
+
 	path('manage/create/managequestions', Manage_questions_view, name='Manage Questions'),
 	path('manage/create/question_reallocation/<str:input_id_test>/', Question_reallocation_view, name='Question_reallocation'),
 	path('manage/create/add_difficulty/<str:input_q_num>/', Add_difficulty_view, name='Add Difficulty'),
 	path('manage/create/add_difficulty_question/<str:input_q_num>/', Add_difficulty_question_view, name='Add Difficulty question'),
 	
+	path('manage/create/dynmcqtestaddmcqquestion/', Add_DynMCQquestion_view, name='AddQuestion DynMCQquestion'),
+	path('manage/create/dynmcqtestaddquestion/', Add_Dynquestion_view, name='AddQuestion Dynquestion'),
+	path('manage/create/dynmcqtestaddanswer/<str:input_q_num>', Add_DynMCQanswer_view, name='AddAnswer DynMCQanswer'),
 	path('manage/edit/dynmcqtestmcqquestion/<str:input_q_num>', Edit_DynMCQquestion_view, name='Edit DynMCQquestion'),
 	path('manage/edit/dynmcqtestquestion/<str:input_q_num>', Edit_Dynquestion_view, name='Edit Dynquestion'),
 	path('manage/edit/dynmcqtestanswer/<str:input_q_num>/<str:input_ans_num>', Edit_DynMCQanswer_view, name='Edit DynMCQanswer'),
