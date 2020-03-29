@@ -11,7 +11,7 @@
 		<br/>
 		<h4><a href="{% url 'tests:AddQuestion DynMCQquestion' %}">Créer une nouvelle question QCM</a></h4>
 		<br/><br/>
-		<h2>Questions :</h2>
+		<h2>Normal Questions :</h2>
 		{% for instance in Dynquestions %}
 			<p><a href='{{ instance.get_absolute_url_question }}'>Question : </a>{{instance.q_text}} &nbsp &nbsp &nbsp <a href='{{ instance.get_absolute_url_delete }}'>Delete</a></p>
 		{% endfor %}
