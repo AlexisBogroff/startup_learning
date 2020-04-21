@@ -5,43 +5,58 @@
 <div class='bg-container'>
     <div class='box-login'>
 
-        <h1>Registration</h1>
+        <h1>Create an account</h1>
+
 
         <form action="{% url 'tests:register' %}" method="post">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="Username"><br>
-            <input type="text" name="last_name" placeholder="Last Name"><br>
-            <input type="text" name="first_name" placeholder="First Name"><br>
-            <input type="email" name="email" placeholder="Email"><br>
-            <input type="text" name="password" placeholder="Password"><br><br>
-            Fonction : 
-            <select name="function" size="1">
-            <option>Student
-            <option>Teacher
+            <div class="form-group">
+                <input type="text" class="form-control" name="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="first_name" placeholder="First Name">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="last_name" placeholder="Last Name">
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" name="email" placeholder="name@example.com">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="password"  placeholder="Password" data-toggle="password"><br>
+            </div>
+
+            <select class='login' name="function" size="1">
+                <option value="" disabled selected>Select your function</option>
+                <option>Student
+                <option>Teacher
             </select><br><br>
-            Groupe 1 :
-            <select name="group1" size="1">
-            <option>esilv_IF1
-            <option>esilv_IF2
-            <option>hec_COM1
-            <option>hec_COM2
-            </select><br>
-            Groupe 2 :
-            <select name="group2" size="1">
-            <option>None
-            <option>esilv_IF1
-            <option>esilv_IF2
-            <option>hec_COM1
-            <option>hec_COM2
+
+            <select class='login' name="group1" size="1">
+                <option value="" disabled selected>Select your primary group</option>
+                <option>esilv_IF1
+                <option>esilv_IF2
+                <option>hec_COM1
+                <option>hec_COM2
+                <option>None
             </select><br><br>
+
+            <select class="mdb-select md-form" name="group2" size="1">
+                <option value="" disabled selected>Select your secondary group</option>
+                <option>esilv_IF1
+                <option>esilv_IF2
+                <option>hec_COM1
+                <option>hec_COM2
+                <option>None
+            </select><br><br><br>
             
-            <input type="submit" value="Register">
+            <button type="submit" class="btn btn-custom">Register</button>
         </form>
 
-        {% for message in messages %}
+        <!-- {% for message in messages %}
             <h3>{{message}}</h3>
-        {% endfor %}
-
+        {% endfor %} -->
+          
     </div>
 </div>
 

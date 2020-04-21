@@ -5,17 +5,26 @@
 <div class='bg-container'>
     <div class='box-login'>
         
+        <h1>Login</h1>
+
         <form action="{% url 'tests:login' %}" method="post">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="username"><br>
-            <input type="password" name="password" placeholder="password"><br>
-            <input type="submit" value="Login">
+            <div class="form-group">
+                <input type="text" class="form-control" name="username" placeholder="username">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="password" placeholder="password"><br>
+            </div>
+
+            <button type="submit" class="btn btn-custom">Login</button>
         </form>
 
         <!-- {% for message in messages %}
             <h3>{{message}}</h3>
         {% endfor %}     -->
+          
     </div>
 </div>
+
 
 {% endblock %}
