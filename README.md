@@ -1,7 +1,7 @@
 # startup_learning
 Help people learn effortlessly
 
-# Dev - Development Branch
-Most up to date branch, containing any developed feature
+# Master Branch
+Most stable version
 
-For a more stable version use the Master's
+For more advanced features try dev branch
