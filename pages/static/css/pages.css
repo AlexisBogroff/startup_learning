@@ -131,6 +131,8 @@ input.login {
 /* ================================== */
 
 .band-home {
+  display: -webkit-flex;  
+  display: flex;
   background-color: white;
   background-size: cover;
   background-image: url("/pages/static/images/bg_blue.JPG");
@@ -142,8 +144,7 @@ input.login {
 
 .clickable-bar-home {
   position: relative;
-  top: 30vh;
-  margin: 0 auto;
+  margin: auto;
   width: 80vw;
   max-width: 60vh;
   height: 100%;
