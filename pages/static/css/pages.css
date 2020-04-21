@@ -48,7 +48,7 @@
 
 
 /* ================================== */
-/*             Login page             */
+/*        Login/Register page         */
 /* ================================== */
 
 .bg-container {
@@ -66,6 +66,17 @@
 .box-login {
     /* Auto center within flex container */
     margin: auto;
+}
+
+.box-login h1 {
+    /* Titles in box-login */
+    color: rgb(130, 130, 136);
+    text-align: center;
+  }
+
+.box-login {
+    /* Text in box-login */
+    color: rgb(130, 130, 136);
 }
 
 
