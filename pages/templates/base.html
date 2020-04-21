@@ -15,14 +15,16 @@
     </head>
 
     <body>
-        <!-- Don't display the navbar for home or login pages -->
-
-        {% url 'home' as home_url %}
-        {% url 'tests:login' as login_url %}
-        
-        {% if request.get_full_path != home_url and request.get_full_path != login_url %}
-            {% include 'navbar.html' %}
-        {% endif %}
+        <!-- Don't display the navbar for home, login or regirtration pages -->
+        {% with path=request.get_full_path %}
+            {% url 'home' as home_url %}
+            {% url 'tests:login' as login_url %}
+            {% url 'tests:register' as register_url %}
+            
+            {% if path != home_url and path != login_url and path != register_url %}
+                {% include 'navbar.html' %}
+            {% endif %}
+        {% endwith %}
 
 
         <div class='content'>
