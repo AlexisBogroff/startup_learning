@@ -1,6 +1,3 @@
-# startup_learning
-Help people learn effortlessly
-
 # Master Branch
 Most stable version
 
