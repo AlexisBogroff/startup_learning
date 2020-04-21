@@ -3,30 +3,36 @@
 {% load static %}
 <html>
 
-<head>
-	<title>QCM Finance</title>
-	<link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" />
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans+Condensed:300">
-	<link rel="stylesheet" href="{% static 'css/pages.css' %}">
-</head>
+    <head>
+        <title>Learn smoothly</title>
+        <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" />
 
-<body>
-	{% url 'home' as home_url %}
-	{% if request.get_full_path != home_url %}
-		{% include 'navbar.html' %}
-	{% endif %}
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans+Condensed:300">
+        
+        <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+    </head>
+
+    <body>
+        <!-- Don't display the navbar for home or login pages -->
+
+        {% url 'home' as home_url %}
+        {% url 'tests:login' as login_url %}
+        
+        {% if request.get_full_path != home_url and request.get_full_path != login_url %}
+            {% include 'navbar.html' %}
+        {% endif %}
 
 
-	<div class='content'>
-		{% block content %}
-			:!: Replaced text :!:
-		{% endblock content %}
-	</div>
+        <div class='content'>
+            {% block content %}
+                :!: Replaced text :!:
+            {% endblock content %}
+        </div>
 
 
-	{% include 'bottombar.html' %}
-</body>
+        {% include 'bottombar.html' %}
+    </body>
 
 </html>
