@@ -77,7 +77,7 @@
 
 .box-login {
     /* Text in box-login */
-    color: rgb(130, 130, 136);
+    color: #828288;
 }
 
 input.login {
@@ -185,17 +185,21 @@ input.login {
 }
 
 #student .box {
-  /* background: rgb(23, 23, 148); */
+  /* background: rgb(27, 34, 77); */
   background-image: url("/pages/static/images/bg_blue.JPG");
 }
 
 #teacher .box {
-  background: rgb(23, 75, 23);
+  background: rgb(50, 75, 50);
 }
 
 .box:hover {
   opacity: 1;
   transition: opacity .5s;
+}
+
+.band-home p {
+    color: rgb(130, 130, 136);
 }
 
 
