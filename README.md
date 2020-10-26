@@ -8,12 +8,12 @@
 - Install Django using pip: "pip install django"
 - Go to the folder containing the code that I provided (you should be able to see a file named manage.py in your folder)
 - Write the command: "python3 manage.py runserver"
-- Click the link (or copy the adress in your ), which is http://127.0.0.1:8000/
+- "Ctrl + click" the link (or copy http://127.0.0.1:8000/ in your web browser)
 
 
 ## The terminal should display something like:
 
-"Watching for file changes with StatReloader
+_Watching for file changes with StatReloader
 Performing system checks...
 
 System check identified no issues (0 silenced).
@@ -24,4 +24,4 @@ Run 'python manage.py migrate' to apply them.
 September 30, 2019 - 20:26:40
 Django version 2.2.5, using settings 'project_esilv.settings'
 Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C."
+Quit the server with CONTROL-C._
