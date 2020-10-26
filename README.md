@@ -11,8 +11,8 @@
 - Click the link (or copy the adress in your ), which is http://127.0.0.1:8000/
 
 
-The terminal should display something like:
-------------------------------------------------
+## The terminal should display something like:
+
 "Watching for file changes with StatReloader
 Performing system checks...
 
@@ -25,6 +25,3 @@ September 30, 2019 - 20:26:40
 Django version 2.2.5, using settings 'project_esilv.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C."
-------------------------------------------------
-
-Clicking the link in the terminal should properly display the website.
