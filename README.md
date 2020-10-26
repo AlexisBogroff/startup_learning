@@ -13,15 +13,15 @@
 
 ## The terminal should display something like:
 
-_Watching for file changes with StatReloader
+*Watching for file changes with StatReloader
 Performing system checks...
 
-System check identified no issues (0 silenced).
+*System check identified no issues (0 silenced).
 
-You have 3 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth.
+*You have 3 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth.
 Run 'python manage.py migrate' to apply them.
 
-September 30, 2019 - 20:26:40
+*September 30, 2019 - 20:26:40
 Django version 2.2.5, using settings 'project_esilv.settings'
 Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C._
+Quit the server with CONTROL-C.
