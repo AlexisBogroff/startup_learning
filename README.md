@@ -5,7 +5,7 @@ Style guides:
 - PEP257: https://www.python.org/dev/peps/pep-0257/
 - Google Style Guide: https://google.github.io/styleguide/pyguide.html
 
-'''
+'''python
 def test_function(arg1):
     """
     Describe the goal of the function in few words, not how
