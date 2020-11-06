@@ -5,6 +5,7 @@ Style guides:
 - PEP257: https://www.python.org/dev/peps/pep-0257/
 - Google Style Guide: https://google.github.io/styleguide/pyguide.html
 
+'
 def test_function(arg1):
     """
     Describe the goal of the function in few words, not how
@@ -22,5 +23,5 @@ def test_function(arg1):
     Notes:
         describe eventual side-effects
     """
-
+'
 Use pylint to highlight mistakes and rate your code.
