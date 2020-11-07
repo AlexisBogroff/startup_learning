@@ -13,12 +13,13 @@ def test_function(arg1):
 
     Args:
         arg1: describe the first parameter
+        arg2: describe the second parameter
 
     Returns:
         describe what is returned
 
     Examples:
-        show some examples
+        show some examples on how to use the function
 
     Notes:
         describe eventual side-effects
