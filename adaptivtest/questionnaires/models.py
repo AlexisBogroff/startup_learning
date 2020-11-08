@@ -69,6 +69,20 @@ class Categories(models.Model):
     id_parent_category = models.CharField(max_length=36, null=False)
 
 
+class Mcqs(models.Model):
+    """
+    Tests for learners in the form of multiple choices questions, built
+    as a pointer to a selection of questions
+
+    Fields:
+        title: name of the quizz
+
+        id_questions: list of id_questions that are used in the quizz
+    """
+    title = models.CharField(max_length=40, null=False)
+    id_questions = models.TextField(null=False)
+
+
 class Parameters(models.Model):
     """
     Static table storing constants for secondary keys
@@ -114,17 +128,3 @@ class Questions(models.Model):
     answers_correct = models.TextField(null=False)
     answers_incorrect_plausible = models.TextField(null=False)
     categories = models.TextField(null=False)
-
-
-class Mcqs(models.Model):
-    """
-    Tests for learners in the form of multiple choices questions, built
-    as a pointer to a selection of questions
-
-    Fields:
-        title: name of the quizz
-
-        id_questions: list of id_questions that are used in the quizz
-    """
-    title = models.CharField(max_length=40, null=False)
-    id_questions = models.TextField(null=False)
