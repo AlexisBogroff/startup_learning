@@ -38,7 +38,9 @@ class Answers(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     text = models.TextField(null=False)
-    id_parent_category = models.CharField(max_length=36, null=False)
+
+    def __str__(self):
+        return f'{self.text}: {self.id}'
 
 
 class Categories(models.Model):
@@ -68,6 +70,9 @@ class Categories(models.Model):
     name = models.CharField(max_length=40, null=False)
     id_parent_category = models.CharField(max_length=36, null=False)
 
+    def __str__(self):
+        return f'{self.name}: {self.id}'
+
 
 class Mcqs(models.Model):
     """
@@ -79,8 +84,12 @@ class Mcqs(models.Model):
 
         id_questions: list of id_questions that are used in the quizz
     """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=40, null=False)
     id_questions = models.TextField(null=False)
+
+    def __str__(self):
+        return f'{self.title}: {self.id}'
 
 
 class Parameters(models.Model):
@@ -117,6 +126,9 @@ class Questions(models.Model):
         are plausible enough to confuse the learner.
 
         categories: direct and most precise categories of the question.
+
+    TODO:alexis(alexis.bogroff.contact@gmail.com): amend field question_level 
+    to make it work (it currently doesn't appear in the admin console)
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     text = models.TextField(null=False)
@@ -124,3 +136,6 @@ class Questions(models.Model):
     answers_correct = models.TextField(null=False)
     answers_incorrect_plausible = models.TextField(null=False)
     categories = models.TextField(null=False)
+
+    def __str__(self):
+        return f'{self.text}: {self.id}'
