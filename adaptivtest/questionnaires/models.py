@@ -93,7 +93,6 @@ class Parameters(models.Model):
     """
     id = models.AutoField(primary_key=True)
     question_level_in_months_of_study = models.IntegerField(
-        max_length=3,
         unique=True,
         null=False)
 
@@ -109,7 +108,7 @@ class Questions(models.Model):
     Fields:
         text: text of the question
 
-        question_level_in_months_of_study: difficulty of the question,
+        question_level: difficulty of the question,
         counted in months of study required on average to to understand it.
 
         answers_correct: answers defined as good for the question.
@@ -121,10 +120,7 @@ class Questions(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     text = models.TextField(null=False)
-    question_level_in_months_of_study = models.ForeignKey(
-        to=Parameters.question_level_in_months_of_study,
-        on_delete=models.PROTECT,
-        null=False)
+    question_level = models.IntegerChoices('level_in_month', '0 1 3 6 12 18 24 36 48')
     answers_correct = models.TextField(null=False)
     answers_incorrect_plausible = models.TextField(null=False)
     categories = models.TextField(null=False)
