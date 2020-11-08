@@ -37,8 +37,8 @@ class Answers(models.Model):
         id_parent_category: TODO:alexis(alexis.bogroff@gmail.com)
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    text = models.TextField()
-    id_parent_category = models.CharField(max_length=36)
+    text = models.TextField(null=False)
+    id_parent_category = models.CharField(max_length=36, null=False)
 
 
 class Categories(models.Model):
@@ -65,8 +65,8 @@ class Categories(models.Model):
     TODO:alexis(alexis.bogroff@gmail.com): reformulate id_parent_category definition
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=40)
-    id_parent_category = models.CharField(max_length=36)
+    name = models.CharField(max_length=40, null=False)
+    id_parent_category = models.CharField(max_length=36, null=False)
 
 
 class Parameters(models.Model):
@@ -78,7 +78,10 @@ class Parameters(models.Model):
         as the average experience required (in months) to understand it.
     """
     id = models.AutoField(primary_key=True)
-    question_level_in_months_of_study = models.IntegerField(max_length=3, unique=True)
+    question_level_in_months_of_study = models.IntegerField(
+        max_length=3,
+        unique=True,
+        null=False)
 
 
 class Questions(models.Model):
@@ -103,13 +106,14 @@ class Questions(models.Model):
         categories: direct and most precise categories of the question.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    text = models.TextField()
+    text = models.TextField(null=False)
     question_level_in_months_of_study = models.ForeignKey(
         to=Parameters.question_level_in_months_of_study,
-        on_delete=models.PROTECT)
-    answers_correct = models.TextField()
-    answers_incorrect_plausible = models.TextField()
-    categories = models.TextField()
+        on_delete=models.PROTECT,
+        null=False)
+    answers_correct = models.TextField(null=False)
+    answers_incorrect_plausible = models.TextField(null=False)
+    categories = models.TextField(null=False)
 
 
 class Mcqs(models.Model):
@@ -118,5 +122,9 @@ class Mcqs(models.Model):
     as a pointer to a selection of questions
 
     Fields:
-        id_question:
+        title: name of the quizz
+
+        id_questions: list of id_questions that are used in the quizz
     """
+    title = models.CharField(max_length=40, null=False)
+    id_questions = models.TextField(null=False)
