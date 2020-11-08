@@ -9,16 +9,17 @@ Classes:
     Categories: knowledge base of the categories with the links between
     parent and child categories.
 
-    Parameters: static model storing constants for secondary keys
+    Parameters: static table storing constants for secondary keys
 
     Questions: questions along with their correct and plausible answers,
     and linked to a category
 
-    Tests: pointer to a selection of questions
+    Mcqs: tests for learners in the form of multiple choices questions
 """
 
 import uuid
 from django.db import models
+
 
 class Answers(models.Model):
     """
@@ -30,14 +31,15 @@ class Answers(models.Model):
     with the same text but for a different category will require another
     entry in the answer model.
 
-    Args:
+    Fields:
         text: the text of the question that will be seen by the learner
 
-        id_parent_category:
+        id_parent_category: 
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     text = models.TextField()
     id_parent_category = models.CharField(max_length=36)
+
 
 class Categories(models.Model):
     """
@@ -49,16 +51,16 @@ class Categories(models.Model):
     Each parent can have multiple children, thus building a knowledge
     base.
 
-    Args:
+    Fields:
         name: name of the category
 
         id_parent_category: id of the single and more precise parent category
-            containing the current child category. If a category name have
-            multiple parents, it should be duplicated for each parent.
-            e.g.: 'functions' would have multiple parents 'fundamentals', 'vba',
-            'python', etc., hence one entry should exist for each of these parents,
-            so that referencing to 'functions' would require to specify which
-            'functions' we are referencing to, by using its specific id.
+        containing the current child category. If a category name have
+        multiple parents, it should be duplicated for each parent.
+        e.g.: 'functions' would have multiple parents 'fundamentals', 'vba',
+        'python', etc., hence one entry should exist for each of these parents,
+        so that referencing to 'functions' would require to specify which
+        'functions' we are referencing to, by using its specific id.
 
     TODO:alexis(alexis.bogroff@gmail.com): reformulate id_parent_category definition
     """
@@ -66,8 +68,30 @@ class Categories(models.Model):
     name = models.CharField(max_length=40)
     id_parent_category = models.CharField(max_length=36)
 
+
 class Parameters(models.Model):
     """
-    TODO:alexis(alexis.bogroff@gmail.com): write docstring
+    Static table storing constants for secondary keys
+
+    Fields:
+        question_level_in_months_of_study: the level of the question defined
+        as the average experience required (in months) to understand it.
     """
+    id = models.AutoField(primary_key=True)
     question_level_in_months_of_study = models.CharField(max_length=10)
+
+
+class Questions(models.Model):
+    """
+
+    """
+
+
+class Mcqs(models.Model):
+    """
+    Tests for learners in the form of multiple choices questions, built
+    as a pointer to a selection of questions
+
+    Fields:
+        id_question: 
+    """
