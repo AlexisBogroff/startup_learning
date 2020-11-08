@@ -34,7 +34,7 @@ class Answers(models.Model):
     Fields:
         text: the text of the question that will be seen by the learner
 
-        id_parent_category: 
+        id_parent_category: TODO:alexis(alexis.bogroff@gmail.com)
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     text = models.TextField()
@@ -78,13 +78,38 @@ class Parameters(models.Model):
         as the average experience required (in months) to understand it.
     """
     id = models.AutoField(primary_key=True)
-    question_level_in_months_of_study = models.CharField(max_length=10)
+    question_level_in_months_of_study = models.IntegerField(max_length=3, unique=True)
 
 
 class Questions(models.Model):
     """
+    Questions along with their correct and plausible answers,
+    and linked to a category.
 
+    The answers_incorrect_plausible should be in great number
+    in order to produce many different quizzes on the same question.
+
+    Fields:
+        text: text of the question
+
+        question_level_in_months_of_study: difficulty of the question,
+        counted in months of study required on average to to understand it.
+
+        answers_correct: answers defined as good for the question.
+
+        answers_incorrect_plausible: answers defined as wrong but
+        are plausible enough to confuse the learner.
+
+        categories: direct and most precise categories of the question.
     """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    text = models.TextField()
+    question_level_in_months_of_study = models.ForeignKey(
+        to=Parameters.question_level_in_months_of_study,
+        on_delete=models.PROTECT)
+    answers_correct = models.TextField()
+    answers_incorrect_plausible = models.TextField()
+    categories = models.TextField()
 
 
 class Mcqs(models.Model):
@@ -93,5 +118,5 @@ class Mcqs(models.Model):
     as a pointer to a selection of questions
 
     Fields:
-        id_question: 
+        id_question:
     """
