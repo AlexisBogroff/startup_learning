@@ -1,0 +1,37 @@
+{% block content %}
+
+		<br>
+
+		<div class="row">
+			<div class="col-md">
+				<div class="card card-body">
+					<h1>Question</h1>
+				</div>
+				<div class="card card-body">
+					<table class="table">
+						<tr>
+							<th>Question</th>
+                            <th>Level</th>
+                            <th>Bonne(s) Reponse(s)</th>
+                            <th>Mauvaise(s) Reponse(s)</th>
+							<th>Categorie(s)</th>	
+						</tr>
+
+						{% for i in list_questions %}
+							<tr>
+								<td>{{i.question_text}}</td>
+                                <td>{{i.question_level}}</td>
+                                <td>{% for k in list_reponses_true %}{{ k }}{% endfor %}</td>
+                                <td>{{i.question_false_reponse}}</td>
+								<td>{{i.question_categorie}}</td>
+								
+							</tr>
+						{% endfor %}
+						
+					</table>
+				</div>
+			</div>
+			
+		</div>
+
+{% endblock content %}

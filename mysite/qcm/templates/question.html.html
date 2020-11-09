@@ -1,0 +1,23 @@
+
+
+{% block content %}
+
+<div class="card card-body">
+    <table class="table">
+        <tr>
+            <th>Question</th>
+            <th>Categorie</th>
+            <th>Reponse</th>
+        </tr>
+
+        {% for i in Question %}
+            <tr>
+                <td>{{i.question_text}}</td>
+                <td>{{i.question_categorie}}</td>
+                <td>{{i.question_true_reponse}}</td>
+        {% endfor %}
+
+    </table>
+</div>
+
+{% endblock content %}
