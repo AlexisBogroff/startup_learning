@@ -1,0 +1,8 @@
+{% block content %}
+<div class='body'>
+    <h2>Categories :</h2>
+    {% for instance in categories_all %}
+        <p><a href='{{ instance.get_absolute_url_question }}'>Category : </a>{{instance.name}}</p>
+    {% endfor %}
+</div>
+{% endblock content %}

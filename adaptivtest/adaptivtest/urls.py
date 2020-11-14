@@ -15,9 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from questionnaires.views import home_view
+from questionnaires.views import home_view, categories_view, questions_view, answers_view, parameters_view, mcqs_view, models_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view, name='home'),
+    path('categories', categories_view, name='categories'),
+    path('questions', questions_view, name='questions'),
+    path('answers', answers_view, name='answers'),
+    path('parameters', parameters_view, name='parameters'),
+    path('mcqs', mcqs_view, name='mcqs'),
+    path('tables', models_view, name='tables'),
 ]

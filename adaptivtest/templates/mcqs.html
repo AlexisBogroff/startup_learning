@@ -1,0 +1,8 @@
+{% block content %}
+<div class='body'>
+    <h2>Mcqs :</h2>
+    {% for instance in mcqs_all %}
+        <p>Mcq : </a>{{instance.title}}</p>
+    {% endfor %}
+</div>
+{% endblock content %}

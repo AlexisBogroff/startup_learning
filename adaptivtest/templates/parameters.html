@@ -1,0 +1,8 @@
+{% block content %}
+<div class='body'>
+    <h2>Parameters :</h2>
+    {% for instance in parameters_all %}
+        <p>Parameter : </a>{{instance.question_level_in_months_of_study}}</p>
+    {% endfor %}
+</div>
+{% endblock content %}
