@@ -2,20 +2,20 @@
 
 {% block content %}
 
-<div class='body'>
-    <h1>Tests List</h1>
+    <div class='body'>
+        <h1>Tests List</h1>
 
-    <h2>Standard:</h2>
+        <h2>Standard:</h2>
 
-	<h2>Dynamic MCQ TEST :</h2>
-	
-	{% for instance in testlist_dynmcqtestinfo_all %}
+        <h2>Dynamic MCQ TEST :</h2>
+
+        {% for instance in testlist_dynmcqtestinfo_all %}
             <p>
-                    <a href='{{ instance.get_absolute_url_display }}'>Test {{ instance.id_test }}</a>: {{ instance.title }}
+                <a href='{{ instance.get_absolute_url_display }}'>Test {{ instance.id_test }}</a>: {{ instance.title }}
                 <!-- {{ instance.description }} -->
             </p>
-    {% endfor %}
+        {% endfor %}
 
-</div>
+    </div>
 
 {% endblock content %}

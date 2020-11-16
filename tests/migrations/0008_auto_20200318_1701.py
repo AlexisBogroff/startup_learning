@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('tests', '0007_dynmcqinfo_release_time'),
     ]

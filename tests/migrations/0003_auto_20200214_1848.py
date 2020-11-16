@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('tests', '0002_dynmcqquestion_difficulty'),
     ]
@@ -23,6 +22,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dynmcqinfo',
             name='id_test',
-            field=models.CharField(max_length=10, primary_key=True, serialize=False),
+            field=models.CharField(max_length=10, primary_key=True,
+                                   serialize=False),
         ),
     ]

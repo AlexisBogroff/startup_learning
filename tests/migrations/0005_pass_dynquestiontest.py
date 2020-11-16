@@ -4,16 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('tests', '0004_auto_20200226_0932'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Pass_DynquestionTest',
+            name='PassDynQuestionTest',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('id_test', models.CharField(max_length=10, null=True)),
                 ('id_student', models.CharField(max_length=10, null=True)),
                 ('attempt', models.IntegerField(null=True)),
@@ -21,7 +21,8 @@ class Migration(migrations.Migration):
                 ('r_ans', models.TextField()),
             ],
             options={
-                'unique_together': {('id_test', 'id_student', 'attempt', 'q_num')},
+                'unique_together': {
+                    ('id_test', 'id_student', 'attempt', 'q_num')},
             },
         ),
     ]
