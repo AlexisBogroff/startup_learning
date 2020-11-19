@@ -1,6 +1,32 @@
-# Dev - Development Branch
-[test_push 3]
-
-Most up to date branch, containing any developed feature
+# Development Branch (Dev)
+Most up to date branch, containing beta features
 
 For a more stable version use the Master's
+
+## Style guide
+- PEP8: https://www.python.org/dev/peps/pep-0008/
+- PEP257: https://www.python.org/dev/peps/pep-0257/
+- Google Style Guide: https://google.github.io/styleguide/pyguide.html
+
+```python
+def test_function(arg1):
+    """
+    Describe the goal of the function in few words, not how
+    the function reaches this goal
+
+    Args:
+        arg1: describe the first parameter
+        arg2: describe the second parameter
+
+    Returns:
+        describe what is returned
+
+    Examples:
+        show some examples on how to use the function
+
+    Notes:
+        describe eventual side-effects
+    """
+```
+
+Use pylint to highlight mistakes and rate your code.
