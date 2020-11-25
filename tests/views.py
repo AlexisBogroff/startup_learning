@@ -47,8 +47,12 @@ def register_view(request):
 				student = Group.objects.get(name='Student')
 				user.groups.add(student)
 			else:
-				teacher = Group.objects.get(name='Teacher')
-				user.groups.add(teacher)
+                # [2020-11-25: provisory attempt to disable creation
+                # of teacher profile from registration page - new version]
+				messages.info(request,'Permission denied')
+				return redirect('tests:register')
+				#teacher = Group.objects.get(name='Teacher')
+				#user.groups.add(teacher)
 			#Class group
 			group_1 = Group.objects.get(name=group1)
 			user.groups.add(group_1)
