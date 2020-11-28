@@ -628,6 +628,14 @@ def DynMCQanswer_create_view(request, input_q_num):
 def DynMCQTest_pass_menu_view(request, input_id_test):
 	"""Function to start to pass a test
 	Returns the page to start a test
+	
+	It refreshes the page and adds a button that enables to begin the
+	new test tentative.
+	
+	Note: The condition blocking a student who would have exceeded
+	the tentative limit is not yet effective.
+
+	TODO: add an argument on the limit of tentatives enabled for the given quiz
 	"""
 	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
 	empty_passdynMCQtest = True
@@ -668,6 +676,10 @@ def DynMCQTest_pass_menu_view(request, input_id_test):
 def DynMCQtest_pass_view(request,input_id_test, input_id_student, input_attempt):
 	"""Function to pass a test
 	Return the page to pass a test
+
+	TODO: add an argument to activate/unactivate random order of questions
+	TODO: add possibility to randomyze questions by sections and not the whole quiz
+	(but should first create a model that enables the creation of sections like DVO)
 	"""
 	#Get the test
 	DynMCQTestInfo = get_object_or_404(DynMCQInfo, id_test=input_id_test)
