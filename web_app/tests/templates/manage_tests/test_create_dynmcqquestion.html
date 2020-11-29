@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class='body'>
+	<form method='POST'> 
+		{% csrf_token %} 	
+		<p><a href="{% url 'tests:Manage Questions' %}">Retour</a></p>
+		<h1>Question :</h1>
+		
+		{% if empty_question is True %}
+			<p>Question : {{ form.q_text }}</p>
+			<p>Nombre de réponses: {{ form.nb_ans }}</p>
+			<p>Utiliser la question : {{ form.activated }}</p>
+			<input type='submit', value='Save'/>
+		{% endif %}
+		
+		{% if empty_question is False %}
+			<h3>Question : {{ DynMCQquestionTest.q_text }}&nbsp &nbsp &nbsp <a href='{{ DynMCQquestionTest.get_absolute_url_edit }}'>Edit</a>&nbsp &nbsp &nbsp <a href='{{ DynMCQquestionTest.get_absolute_url_delete }}'>Delete</a></h3>
+			<p>Nombre de réponses: {{ DynMCQquestionTest.nb_ans }}</p>
+		{% endif %}
+		<br/>
+		
+		{% if empty_question is False and empty_answer is True %}
+			<p><a href='{{ DynMCQquestionTest.get_absolute_url_answers }}'>Remplir les réponses</a></p>
+		{% endif %}
+		
+		{% if empty_answer is False %}
+			{% for instance in DynMCQanswerTest_List %}
+				<h4>Réponse {{instance.ans_num}} : {{instance.ans_text}}&nbsp &nbsp &nbsp <a href='{{ instance.get_absolute_url_edit }}'>Edit</a>&nbsp &nbsp &nbsp <a href='{{ instance.get_absolute_url_delete }}'>Delete</a></h4>
+				{% if instance.right_ans == 1 %}
+					<p>Bonne réponse</p>
+				{% endif %}
+				<br/>
+			{% endfor %}
+			<br/>
+			<br/>
+			<p><a href='{{ DynMCQquestionTest.get_absolute_url_add_answer }}'>Ajouter une nouvelle réponse</a></p>
+			<br/>
+			<p> Difficulty : {{DynMCQquestionTest.difficulty}}</p>
+			<p><a href='{{ DynMCQquestionTest.get_absolute_url_difficulty }}'>Remplir la difficulté</a></p>
+			<br/>
+		{% endif %}
+	</form>
+</div>
+{% endblock content %}
+
