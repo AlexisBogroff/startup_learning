@@ -1,7 +1,7 @@
 # Future official Dev branch
 In the process of extracting code of the business case from the web application layer. The web application will then be importing "adaptive_learning" as a library.
 
-To make it possible, "adaptive_learning" should be a package. Run the following instructinos in a terminal, where the file setup.py is located:
+To make this possible, "adaptive_learning" should be a package. Run the following instructions in a terminal, where the file setup.py is located:
 ```
 python sdist bdist_wheel build
 python setup.py develop
