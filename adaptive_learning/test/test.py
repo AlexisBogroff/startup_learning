@@ -4,12 +4,18 @@ from adaptive_learning import quiz
 Tested functions:
     
     # Manage users
+    test_create_group
+    test_delete_group
     test_add_group_permission
     test_delete_group_permission
+    test_set_user_group
+    test_delete_user_group
     test_register_teacher
     test_register_admin
     test_register_student
     test_login
+    test_logout
+
 
     # Manage Exams
     # ------------
@@ -18,16 +24,54 @@ Tested functions:
     test_create_exam
     test_delete_exam
     test_modify_exam
-    test_get_question
-    test_get_answer
-    test_set_question
-    test_set_answer
-    test_check_answer_is_correct
-    test_set_difficulty
-    test_get_difficulty
-    test_set_category
-    test_get_category
-    test_delete_difficulty
+    test_randomize_sections_order
+    test_randomize_questions_order
+    test_create_question
+    test_create_answer
+    test_delete_question
+    test_delete_answer
+    test_add_question_to_test
+    test_remove_question_from_test
+    test_get_answer_text
+    test_set_answer_text
+    test_set_answer_grade
+    test_get_answer_grade
+    test_update_answer_text
+    test_update_answer_grade
+    test_update_question_text
+    test_set_question_creation_datetime
+    test_set_bool_answer_is_correct
+    test_get_bool_answer_is_correct
+    test_set_question_difficulty
+    test_get_question_difficulty
+    test_set_question_category
+    test_get_question_category
+    test_delete_question_difficulty
+    test_set_exam_keyword
+    test_delete_exam_keyword
+    test_create_category
+    test_delete_category
+    test_set_category_parent
+    test_delete_category_parent
+    test_get_category_children
+    test_create_section
+    test_delete_section
+    test_add_question_to_section
+    test_delete_question_of_section
+    test_get_section_questions
+    test_set_section_description
+    test_get_section_description
+    test_set_exam_description
+    test_get_exam_description
+    test_compute_exam_max_grade
+    test_get_exam_max_grade
+    test_set_exam_max_grade
+    test_set_question_grade
+    test_get_question_grade
+    test_set_bool_use_this_question
+    test_get_bool_use_this_question
+    test_set_question_text
+    test_get_question_text
     
     ## Timer 
     test_teacher_start_timer
@@ -60,7 +104,7 @@ Tested functions:
     test_get_time_student_ended
 
     ## After the exam
-    test_correction_question_auto
+    test_check_student_answer_is_correct
     test_compute_student_grade
 
     ## Exam statistics
@@ -87,10 +131,22 @@ Tested functions:
 
     ## Profile / Progression
     test_plot_radar_of_student_strenghts_by_subject
+    test_should_revise_question
+    test_should_revise_subject
+
 
     # Algorithms
     # ----------
 
     # Create test
     test_algo_create_exam
+    test_algo_predict_student_exam_grade
+    test_algo_predict_student_answer_is_correct
+    test_algo_predict_student_subject_grade
+    test_algo_predict_student_progression
+    test_algo_predict_student_similarity
+
+    test_compute_students_similarity
+
 """
+
