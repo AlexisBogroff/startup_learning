@@ -1,0 +1,10 @@
+# Distribution / packaging
+*.egg-info
+dist
+build
+
+# IDE
+.vscode
+
+# Python
+__pycache__
