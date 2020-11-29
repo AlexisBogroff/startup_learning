@@ -1,3 +1,16 @@
+# Future official Dev branch
+In the process of extracting code of the business case from the web application layer. The web application will then be importing "adaptive_learning" as a library.
+
+To make this possible, "adaptive_learning" should be a package. Run the following instructions in a terminal, where the file setup.py is located:
+```
+python sdist bdist_wheel build
+python setup.py develop
+```
+
+To understand where these come from see [a very quick note](https://github.com/AlexisBogroff/CheatSheets/blob/master/PythonPackaging.md#install-the-package)
+or its [source article](https://python-packaging-tutorial.readthedocs.io/en/latest/setup_py.html)
+
+
 # Development Branch (Dev)
 Most up to date branch, containing beta features
 
