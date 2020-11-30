@@ -1,0 +1,9 @@
+{
+    "paris1": {
+        "mail_domain": "univ-paris1.fr"
+    },
+
+    "esilv": {
+        "mail_domain": "edu.devinci.fr"
+    }
+}
