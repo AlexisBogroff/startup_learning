@@ -1,25 +1,33 @@
-from adaptive_learning import quiz
-
 """
+Main test file for adaptive learning engine
+
 Tested functions:
-    
+
     # Manage users
+    test_register_admin  # I/O ?
+    test_register_teacher
+    test_register_student
+    registering_user_can_be_admin
+    registering_user_can_be_teacher
+    registering_user_can_be_student
     test_create_group
     test_delete_group
     test_add_group_permission
     test_delete_group_permission
     test_set_user_group
+    test_student_can_integrate_this_group
+    test_student_is_from_this_school
     test_delete_user_group
-    test_register_teacher
-    test_register_admin
-    test_register_student
     test_login
     test_logout
+    test_student_is_recognized
+    test_get_school_mail_domain
+    test_extract_mail_domain
 
 
     # Manage Exams
     # ------------
-    
+
     ## Build exams
     test_create_exam
     test_delete_exam
@@ -72,8 +80,8 @@ Tested functions:
     test_get_bool_use_this_question
     test_set_question_text
     test_get_question_text
-    
-    ## Timer 
+
+    ## Timer
     test_teacher_start_timer
     test_teacher_stop_timer
     test_teacher_modify_timer
@@ -82,7 +90,7 @@ Tested functions:
     test_get_timer_remaining_time
     test_get_timer_end_time
     test_get_timer_time_limit
-    
+
     ## Exam conditions
     test_set_datetime_exam_beginning
     test_set_datetime_exam_end
@@ -90,7 +98,7 @@ Tested functions:
     test_get_datetime_exam_end
     test_delete_datetime_exam_beginning
     test_delete_datetime_exam_end
-    
+
     ## During the exam
     test_exam_started
     test_exam_ended
@@ -118,7 +126,7 @@ Tested functions:
     test_compute_question_average_grade
     test_compute_question_frequencies
     test_get_answer_frequencies
-    
+
     ## Exam plots
     test_plot_student_grade_by_question_on_the_exam
     test_plot_grades_of_student_on_all_exams
@@ -150,3 +158,41 @@ Tested functions:
 
 """
 
+import unittest
+
+from adaptive_learning import exam
+from adaptive_learning import user
+
+
+class TestExamManagementMethods(unittest.TestCase):
+    """
+    Test the manipulations on exams (create, amend,
+    delete, launch, etc.)
+    """
+    def test_create_exam(self):
+        self.assertEqual(exam.foo(), 'bar')
+
+
+class TestUserMethods(unittest.TestCase):
+    """
+    Test the user methods
+    """
+    def test_student_is_from_this_school(self):
+        school_name = 'paris1'
+        student_mail = 'stu_1@univ-paris1.fr'
+        bool_is_from_this_school = user.student_is_from_this_school(student_mail, school_name)
+        self.assertTrue(bool_is_from_this_school)
+
+    def test_extract_mail_domain(self):
+        mail_address = 'test_mail-pi@univ-paris1.fr'
+        self.assertEqual(user.extract_mail_domain(mail_address), 'univ-paris1.fr')
+
+    def test_get_school_mail_domain(self):
+        school_mail_domain_1 = user.get_school_mail_domain('paris1')
+        school_mail_domain_2 = user.get_school_mail_domain('esilv')
+        self.assertEqual(school_mail_domain_1, 'univ-paris1.fr')
+        self.assertEqual(school_mail_domain_2, 'edu.devinci.fr')
+
+
+if __name__ == '__main__':
+    unittest.main()
