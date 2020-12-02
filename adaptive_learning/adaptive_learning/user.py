@@ -1,10 +1,11 @@
 """
-Functions for managing users
+Functions for managing users:
 """
 import json
-__PATH_TAB_SCHOOLS_INFOS__ = "/Users/Pro/git_repositories/\
-    adaptive_learning/adaptive_learning/adaptive_learning/\
-        data/table_schools_info.json"
+
+__PATH_TAB_SCHOOLS_INFOS__ = "/Users/Pro/git_repositories/"\
+    "adaptive_learning/adaptive_learning/adaptive_learning/"\
+    "data/table_schools_info.json"
 
 
 def get_school_mail_domain(school_name):
