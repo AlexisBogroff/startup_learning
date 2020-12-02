@@ -23,6 +23,8 @@ Tested functions:
     test_student_is_recognized
     test_get_school_mail_domain
     test_extract_mail_domain
+    test_set_user_rights
+    test_get_user_rights
 
 
     # Manage Exams
@@ -157,9 +159,7 @@ Tested functions:
     test_compute_students_similarity
 
 """
-
 import unittest
-
 from adaptive_learning import exam
 from adaptive_learning import user
 
@@ -170,7 +170,10 @@ class TestExamManagementMethods(unittest.TestCase):
     delete, launch, etc.)
     """
     def test_create_exam(self):
-        self.assertEqual(exam.foo(), 'bar')
+        """
+        Test on exam creation
+        """
+        pass
 
 
 class TestUserMethods(unittest.TestCase):
@@ -180,18 +183,32 @@ class TestUserMethods(unittest.TestCase):
     def test_student_is_from_this_school(self):
         school_name = 'paris1'
         student_mail = 'stu_1@univ-paris1.fr'
-        bool_is_from_this_school = user.student_is_from_this_school(student_mail, school_name)
+        bool_is_from_this_school = user.student_is_from_this_school(
+            student_mail,
+            school_name)
         self.assertTrue(bool_is_from_this_school)
+
 
     def test_extract_mail_domain(self):
         mail_address = 'test_mail-pi@univ-paris1.fr'
-        self.assertEqual(user.extract_mail_domain(mail_address), 'univ-paris1.fr')
+        self.assertEqual(user.extract_mail_domain(mail_address),
+                        'univ-paris1.fr')
+
 
     def test_get_school_mail_domain(self):
         school_mail_domain_1 = user.get_school_mail_domain('paris1')
         school_mail_domain_2 = user.get_school_mail_domain('esilv')
         self.assertEqual(school_mail_domain_1, 'univ-paris1.fr')
         self.assertEqual(school_mail_domain_2, 'edu.devinci.fr')
+
+
+    # def test_set_user_rights(self):
+    #     user_wit_no_home_access = create_user()
+    #     user_wit_no_home_access.set_right('access', 'home')
+    #     bool_has_home_access = user_wit_no_home_access.has_right(
+    #                               'access',
+    #                               'home')
+    #     self.assertTrue(bool_has_home_access)
 
 
 if __name__ == '__main__':
