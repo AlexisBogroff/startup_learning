@@ -20,7 +20,7 @@ def get_school_mail_domain(school_name):
         the school mail domain
     """
     # Retrieve the school domain server from table file
-    tab_schools = get_table_schools_info()
+    tab_schools = load_table_schools_info()
     school_mail_address = tab_schools[school_name]['mail_domain']
     return school_mail_address
 
@@ -40,7 +40,7 @@ def extract_mail_domain(mail_address):
     return mail_domain
 
 
-def get_table_schools_info():
+def load_table_schools_info():
     """
     Returns the content of the json file
     in a dictionary
