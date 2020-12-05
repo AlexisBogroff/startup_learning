@@ -160,39 +160,83 @@ Tested functions:
 
 """
 import unittest
+from unittest.mock import patch
 from adaptive_learning import exam
 from adaptive_learning import user
 
 
 class TestExamManagementMethods(unittest.TestCase):
     """
-    Test the manipulations on exams (create, amend,
-    delete, launch, etc.)
+    Test the manipulations on exams, questions, answers
+    (create, amend, delete, launch, etc.)
     """
-    def test_create_exam(self):
-        """
-        Test on exam creation
-        """
-        pass
+    INPUTS_ANSWER = ('txt_answer_1', 'True', 'True')
+    INPUTS_EXAM = ('Exam VBA 2020', 'This tests your VBA skills',
+                   '20', 'True')
+    INPUTS_QUESTION = ('txt_question_1', 'mcq', 'True',
+                       '2', '3', 'programming, loops',
+                       'num correct answers', 'True')
+
+
+    @patch('builtins.input', side_effect=INPUTS_ANSWER)
+    def test_create_answer(self, mock_inputs):
+        answer = exam.create_answer()
+        expected_answer = {
+            'text': 'txt_answer_1',
+            'is_correct': 'True',
+            'use_answer': 'True',
+        }
+        self.assertEqual(expected_answer, answer)
+
+
+
+    @patch('builtins.input', side_effect=INPUTS_EXAM)
+    def test_create_exam(self, mock_inputs):
+        expected_exam = {
+            'title': 'Exam VBA 2020',
+            'description': 'This tests your VBA skills',
+            'grade_base': '20',
+            'randomize_questions_order': 'True',
+        }
+
+        # Obtained
+        exam_ = exam.create_exam()
+
+        self.assertEqual(expected_exam, exam_)
+
+
+    @patch('builtins.input', side_effect=INPUTS_QUESTION)
+    def test_create_question(self, mock_inputs):
+        expected_question = {
+            'text': 'txt_question_1',
+            'format': 'mcq',
+            'use_question': 'True',
+            'nb_points': '2',
+            'difficulty': '3',
+            'keywords': 'programming, loops',
+            'notif_correct_answers': 'num correct answers',
+            'randomize_answers_order': 'True',
+        }
+
+        # Obtained
+        question = exam.create_question()
+
+        self.assertEqual(expected_question, question)
+
 
 
 class TestUserMethods(unittest.TestCase):
     """
     Test the user methods
     """
-    def test_student_is_from_this_school(self):
-        school_name = 'paris1'
-        student_mail = 'stu_1@univ-paris1.fr'
-        bool_is_from_this_school = user.student_is_from_this_school(
-            student_mail,
-            school_name)
-        self.assertTrue(bool_is_from_this_school)
-
-
     def test_extract_mail_domain(self):
+        expected_domain = 'univ-paris1.fr'
+
+        # Obtained
         mail_address = 'test_mail-pi@univ-paris1.fr'
-        self.assertEqual(user.extract_mail_domain(mail_address),
-                        'univ-paris1.fr')
+        domain = user.extract_mail_domain(mail_address)
+
+        self.assertEqual(expected_domain, domain)
 
 
     def test_get_school_mail_domain(self):
@@ -200,6 +244,15 @@ class TestUserMethods(unittest.TestCase):
         school_mail_domain_2 = user.get_school_mail_domain('esilv')
         self.assertEqual(school_mail_domain_1, 'univ-paris1.fr')
         self.assertEqual(school_mail_domain_2, 'edu.devinci.fr')
+
+
+    def test_student_is_from_this_school(self):
+        school_name = 'paris1'
+        student_mail = 'stu_1@univ-paris1.fr'
+        bool_is_from_this_school = user.student_is_from_this_school(
+            student_mail,
+            school_name)
+        self.assertTrue(bool_is_from_this_school)
 
 
     # def test_set_user_rights(self):
