@@ -165,14 +165,12 @@ from adaptive_learning import exam
 from adaptive_learning import user
 
 
-class TestExamManagementMethods(unittest.TestCase):
+class ExamRelatedMethodsTestCase(unittest.TestCase):
     """
     Test the manipulations on exams, questions, answers
     (create, amend, delete, launch, etc.)
     """
     INPUTS_ANSWER = ('txt_answer_1', 'True', 'True')
-    INPUTS_EXAM = ('Exam VBA 2020', 'This tests your VBA skills',
-                   '20', 'True')
     INPUTS_QUESTION = ('txt_question_1', 'mcq', 'True',
                        '2', '3', 'programming, loops',
                        'num correct answers', 'True')
@@ -187,18 +185,6 @@ class TestExamManagementMethods(unittest.TestCase):
         }
         obtained_answer = exam.create_answer()
         self.assertEqual(expected_answer, obtained_answer)
-
-
-    @patch('builtins.input', side_effect=INPUTS_EXAM)
-    def test_create_exam(self, mock_inputs):
-        expected_exam = {
-            'title': 'Exam VBA 2020',
-            'description': 'This tests your VBA skills',
-            'grade_base': '20',
-            'randomize_questions_order': 'True',
-        }
-        obtained_exam = exam.create_exam()
-        self.assertEqual(expected_exam, obtained_exam)
 
 
     @patch('builtins.input', side_effect=INPUTS_QUESTION)
@@ -218,7 +204,41 @@ class TestExamManagementMethods(unittest.TestCase):
 
 
 
-class TestUserMethods(unittest.TestCase):
+class ExamTestCase(unittest.TestCase):
+    """
+    Test the creation of an exam
+    """
+    def setUp(self):
+        self.exam = exam.Exam('Initial title')
+
+    def test_default_grade_base(self):
+        self.assertEqual(self.exam.grade_base, 20)
+
+    def test_default_auto_rebase_grade(self):
+        self.assertTrue(self.exam.auto_rebase_grade)
+
+    def test_default_randomize_question_order(self):
+        self.assertTrue(self.exam.randomize_questions_order)
+
+
+    INPUT_PROPERTIES = ('new exam title',
+                        'new description',
+                        'False',
+                        'False',
+                        '10')
+
+    @patch('builtins.input', side_effect=INPUT_PROPERTIES)
+    def test_set_properties(self, mock_inputs):
+        self.exam.set_properties()
+        self.assertEqual(self.exam.title, 'new exam title')
+        self.assertEqual(self.exam.description, 'new description')
+        self.assertEqual(self.exam.randomize_questions_order, False)
+        self.assertEqual(self.exam.auto_rebase_grade, False)
+        self.assertEqual(self.exam.grade_base, 10)
+
+
+
+class UserMethodsTestCase(unittest.TestCase):
     """
     Test the user methods
     """
