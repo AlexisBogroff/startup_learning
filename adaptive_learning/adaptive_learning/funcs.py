@@ -3,38 +3,24 @@ General purpose functions that are used in the whole program
 """
 
 
-def get_input(data_structure_along_prompt_messages):
+def get_input(message):
     """
     Get data from user
 
     Args:
-        data_structure_along_prompt_messages: a dictionary with keys and
-            messages providing the user indications on data to enter.
-            It must be of the form:
-            {
-                'data1': 'msg1',
-                'data2': 'msg2',
-                ...
-                'datan': 'msgn',
-            }
-            If no message is used for a key, leave an empty string.
+        message: the message to pass to user
 
     Returns:
-        Input data in a dictionary
+        the data input
 
     Notes:
         Methods:
-        1. via python built-in input function
+        1. extension of python built-in input function
         2. [not implemented] via web interface
     """
     # Method 1:
-    data_output = {}
-
-    # Prompt user with the specified messages and store data
-    for key, msg in data_structure_along_prompt_messages.items():
-        data_output[key] = input(msg + "\n")
-
-    return data_output
+    data_input = input(message)
+    return data_input
 
 
 def cast(data, cast_into_type):

@@ -8,18 +8,15 @@ def create_question():
     """
     Create a question
     """
-    data_structure_along_prompt_messages = {
-        "text": "Enter the question text",
-        "format": "Enter the question format",
-        "use_question": "Use this question? (True/False)",
-        "nb_points": "Enter the number of points",
-        "difficulty": "Enter the difficulty",
-        "keywords": "Enter keywords like the subject, categories, etc.",
-        "type_notif_correct_answers": "Enter the type of notification related"\
-                                      " to the number of correct answers",
-    }
-    question_data = get_input(data_structure_along_prompt_messages)
-    return question_data
+    question = {}
+    question['text'] = get_input("Enter the question text")
+    question['format'] = get_input("Enter the question format")
+    question['use_question'] = get_input("Use this question? (True/False)")
+    question['nb_points'] = get_input("Enter the number of points")
+    question['difficulty'] = get_input("Enter the difficulty")
+    question['keywords'] = get_input("Enter keywords, subject, or categories")
+    question['notif_correct_answers'] = get_input("Inform on correct answers?")
+    return question
 
 
 def create_answer():
@@ -27,15 +24,13 @@ def create_answer():
     Create an answer
 
     Returns:
-        the different elements composing an answer
+        the different elements composing a standard answer
     """
-    data_structure_along_prompt_messages = {
-        "text": "Enter the answer text",
-        "format": "Enter the answer format",
-        "is_correct": "Is the answer correct? (True/False)",
-    }
-    answer_data = get_input(data_structure_along_prompt_messages)
-    return answer_data
+    answer = {}
+    answer['text'] = get_input("Enter the answer text")
+    answer['format'] = get_input("Enter the answer format")
+    answer['text'] = get_input("Is the answer correct? (True/False)")
+    return answer
 
 
 def create_exam():
