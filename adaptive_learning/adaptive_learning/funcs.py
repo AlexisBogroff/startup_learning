@@ -24,16 +24,25 @@ def get_input(message):
     return data_input
 
 
-def cast(data, cast_into_type):
+def cast(data, cast_to_type):
     """
     Cast input data into the specified type
 
     Args:
         data: of any format that can be casted into one of cast_into_type option
-        cast_into_type: to into which the data should be casted. options: 'str',
-                        'int', 'float'
+        cast_into_type: to into which the data should be casted. options: str,
+                        int, float, bool
 
     Returns:
         data casted in the specified type
     """
-    raise NotImplementedError
+    try:
+        casted_data = cast_to_type(data)
+        return casted_data
+    except:
+        error_msg = "The value: {d}, of type {d_type}, cannot be casted into" \
+                    " type: {exp_type}".format(
+                        d=data,
+                        d_type=type(data),
+                        exp_type=cast_to_type)
+        raise TypeError(error_msg)
