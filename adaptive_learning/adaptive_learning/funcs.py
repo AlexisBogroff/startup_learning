@@ -1,6 +1,7 @@
 """
 General purpose functions that are used in the whole program
 """
+from distutils.util import strtobool
 
 
 def get_input(message):
@@ -37,7 +38,12 @@ def cast(data, cast_to_type):
         data casted in the specified type
     """
     try:
-        casted_data = cast_to_type(data)
+        # Booleans must be dealt separatadly
+        # since bool('False') returns True
+        if cast_to_type is bool:
+            casted_data = bool(strtobool(data))
+        else:
+            casted_data = cast_to_type(data)
         return casted_data
     except:
         error_msg = "The value: {d}, of type {d_type}, cannot be casted into" \
