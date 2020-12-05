@@ -180,14 +180,13 @@ class TestExamManagementMethods(unittest.TestCase):
 
     @patch('builtins.input', side_effect=INPUTS_ANSWER)
     def test_create_answer(self, mock_inputs):
-        answer = exam.create_answer()
         expected_answer = {
             'text': 'txt_answer_1',
             'is_correct': 'True',
             'use_answer': 'True',
         }
-        self.assertEqual(expected_answer, answer)
-
+        obtained_answer = exam.create_answer()
+        self.assertEqual(expected_answer, obtained_answer)
 
 
     @patch('builtins.input', side_effect=INPUTS_EXAM)
@@ -198,11 +197,8 @@ class TestExamManagementMethods(unittest.TestCase):
             'grade_base': '20',
             'randomize_questions_order': 'True',
         }
-
-        # Obtained
-        exam_ = exam.create_exam()
-
-        self.assertEqual(expected_exam, exam_)
+        obtained_exam = exam.create_exam()
+        self.assertEqual(expected_exam, obtained_exam)
 
 
     @patch('builtins.input', side_effect=INPUTS_QUESTION)
@@ -217,11 +213,8 @@ class TestExamManagementMethods(unittest.TestCase):
             'notif_correct_answers': 'num correct answers',
             'randomize_answers_order': 'True',
         }
-
-        # Obtained
-        question = exam.create_question()
-
-        self.assertEqual(expected_question, question)
+        obtained_question = exam.create_question()
+        self.assertEqual(expected_question, obtained_question)
 
 
 
@@ -231,12 +224,9 @@ class TestUserMethods(unittest.TestCase):
     """
     def test_extract_mail_domain(self):
         expected_domain = 'univ-paris1.fr'
-
-        # Obtained
         mail_address = 'test_mail-pi@univ-paris1.fr'
-        domain = user.extract_mail_domain(mail_address)
-
-        self.assertEqual(expected_domain, domain)
+        obtained_domain = user.extract_mail_domain(mail_address)
+        self.assertEqual(expected_domain, obtained_domain)
 
 
     def test_get_school_mail_domain(self):
@@ -249,10 +239,10 @@ class TestUserMethods(unittest.TestCase):
     def test_student_is_from_this_school(self):
         school_name = 'paris1'
         student_mail = 'stu_1@univ-paris1.fr'
-        bool_is_from_this_school = user.student_is_from_this_school(
+        is_from_this_school = user.student_is_from_this_school(
             student_mail,
             school_name)
-        self.assertTrue(bool_is_from_this_school)
+        self.assertTrue(is_from_this_school)
 
 
     # def test_set_user_rights(self):
