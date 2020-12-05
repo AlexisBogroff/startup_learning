@@ -1,8 +1,25 @@
 """
 Manage exams, questions and answers
 """
+import json
+
+from adaptive_learning import funcs
 from adaptive_learning.funcs import get_input, \
                                     cast
+
+
+__PATH_EXAMS__ = "/Users/Pro/git_repositories/"\
+    "adaptive_learning/adaptive_learning/adaptive_learning/"\
+    "data/table_exams.json"
+# TODO: see if it could also work with a txt file, since json rows
+# are append, it is rather used as a txt file than a json file
+# (since a json file would require that the whole file be a json)
+# (which I'm preventing to avoid requiring to load the whole base at each I/O)
+# (thus, it like a json, but without the parenthesis that should surround
+# all the rows)
+#
+# Writing on the txt file is working properly.
+# But reading does not work for now, for neither txt nor json
 
 
 def create_question():
@@ -55,6 +72,9 @@ class Exam:
 
     Returns:
         exam instance with its basic properties set, and ready to be composed.
+
+    TODO: implement set_questions function and everything that can link exams
+    with questions and answers
     """
     def __init__(self, title):
         self.title = title
@@ -84,6 +104,60 @@ class Exam:
 
     def set_questions(self):
         raise NotImplementedError
+
+
+    def save(self):
+        """
+        Stores the exam in a JSON file
+
+        It inserts the new content at the end of the file,
+        on a new line, and takes a single line
+        """
+        self.insert_to_exams_file()
+
+
+    def insert_to_exams_file(self):
+        """ Append the new exam to the existing JSON file """
+        with open(__PATH_EXAMS__, 'a') as f:
+            exam_dump = self._prepare_export()
+            funcs.add_end_of_line_to_file(f)
+            json.dump(exam_dump, f)
+
+
+    def _prepare_export(self):
+        """
+        Stores exam information in a dictionary
+
+        Returns:
+            the data in dic format, ready to export in json file
+
+        TODO: add self.questions when set_questions implemented
+        """
+        data_export = {
+            'title': self.title,
+            'description': self.description,
+            'randomize_questions_order': self.randomize_questions_order,
+            'auto_rebase_grade': self.auto_rebase_grade,
+            'grade_base': self.grade_base,
+        }
+        return data_export
+
+
+        # TODO: load data from table exams
+        # when loading, try to load only what is required
+        # (maybe not the whole file)
+        # use readlines:
+        # [json.loads(row) for row in open('table_exams.json','r').readlines()]
+        #
+        # def load_table_exams():
+        #     """
+        #     Returns the content of the json file
+        #     in a dictionary
+        #     """
+        #     with open(__PATH_EXAMS__, 'r') as f_exams:
+        #         table_exams = json.load(f_exams)
+
+        #     return table_exams
 
 
 if __name__ == "__main__":
