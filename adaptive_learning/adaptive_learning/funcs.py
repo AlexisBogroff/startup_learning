@@ -38,8 +38,8 @@ def cast(data, cast_to_type):
         data casted in the specified type
     """
     try:
-        # Booleans must be dealt separatadly
-        # since bool('False') returns True
+        # Booleans must be dealt separatadly since bool('False')
+        # returns True instead of False.
         if cast_to_type is bool:
             casted_data = bool(strtobool(data))
         else:
@@ -52,3 +52,17 @@ def cast(data, cast_to_type):
                         d_type=type(data),
                         exp_type=cast_to_type)
         raise TypeError(error_msg)
+
+
+def add_end_of_line_to_file(f):
+    """
+    Enables further data to be appened on a new line
+
+    Args:
+        f: file that should be opened in write 'w' or append 'a' mode
+
+    Returns:
+        Void. The function only has side effect on the file in argument
+    """
+    # Mac version
+    f.write('\n')
