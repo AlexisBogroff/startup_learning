@@ -207,6 +207,8 @@ class ExamRelatedMethodsTestCase(unittest.TestCase):
 class ExamTestCase(unittest.TestCase):
     """
     Test the creation of an exam
+
+    TODO: add tests for functions related to the .save method
     """
     def setUp(self):
         self.exam = exam.Exam('Initial title')
