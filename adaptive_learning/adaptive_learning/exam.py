@@ -1,7 +1,8 @@
 """
 Manage exams, questions and answers
 """
-from adaptive_learning.funcs import get_input
+from adaptive_learning.funcs import get_input, \
+                                    cast
 
 
 def create_question():
@@ -40,19 +41,51 @@ def create_answer():
     return answer
 
 
-def create_exam():
-    """
-    Create an exam
 
-    The exam 'grade_base' enables to obtain a grade on e.g. /20, although there
+class Exam:
+    """
+    Class to manage exams (creation, modification, deletion) and compose their
+    questions and corresponding answers.
+
+    grade_rebase: enables to obtain a grade on e.g. /20, although there
     are only e.g. 10 questions graded /1 point.
 
+    Args:
+        title: of the exam
+
     Returns:
-        the exam dictionary
+        exam instance with its basic properties set, and ready to be composed.
     """
-    exam_ = {}
-    exam_['title'] = get_input("Enter the exam title")
-    exam_['description'] = get_input("Enter the exam description")
-    exam_['grade_base'] = get_input("Enter the grade base")
-    exam_['randomize_questions_order'] = get_input("Randomize questions order?")
-    return exam_
+    def __init__(self, title):
+        self.title = title
+        self.description = ""
+        self.randomize_questions_order = True
+        self.auto_rebase_grade = True
+        self.grade_base = 20
+
+
+    def set_properties(self):
+        self.title = get_input("Enter the exam title")
+
+        self.description = get_input("Enter the exam description")
+
+        randomize_order = get_input("Randomize questions order?")
+        casted_randomize_order = cast(randomize_order, bool)
+        self.randomize_questions_order = casted_randomize_order
+
+        auto_rebase = get_input("Activate automatic grade rebasing?")
+        casted_auto_rebase = cast(auto_rebase, bool)
+        self.auto_rebase_grade = casted_auto_rebase
+
+        grade_base = get_input("Enter the grade base")
+        casted_grade_base = cast(grade_base, int)
+        self.grade_base = casted_grade_base
+
+
+    def set_questions(self):
+        raise NotImplementedError
+
+
+if __name__ == "__main__":
+    exam = Exam('initial title')
+    exam.set_properties()
