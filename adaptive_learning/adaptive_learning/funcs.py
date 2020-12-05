@@ -19,7 +19,8 @@ def get_input(message):
         2. [not implemented] via web interface
     """
     # Method 1:
-    data_input = input(message)
+    eof = '\n'
+    data_input = input(message + eof)
     return data_input
 
 
