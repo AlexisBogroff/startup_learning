@@ -112,18 +112,18 @@ class Exam:
         It inserts the new content at the end of the file,
         on a new line, and takes a single line
         """
-        self.insert_to_exams_file()
+        exam_dump = self.get_dump()
+        self.insert_to_exams_file(exam_dump)
 
 
-    def insert_to_exams_file(self):
+    def insert_to_exams_file(self, exam_dump):
         """ Append the new exam to the existing JSON file """
         with open(__PATH_EXAMS__, 'a') as f:
-            exam_dump = self._prepare_export()
             json.dump(exam_dump, f)
             funcs.add_end_of_line_to_file(f)
 
 
-    def _prepare_export(self):
+    def get_dump(self):
         """
         Stores exam information in a dictionary
 
@@ -132,7 +132,7 @@ class Exam:
 
         TODO: add self.questions when set_questions implemented
         """
-        data_export = {
+        data_dump = {
             'id': str(uuid.uuid4()),
             'title': self.title,
             'description': self.description,
@@ -140,24 +140,28 @@ class Exam:
             'auto_rebase_grade': self.auto_rebase_grade,
             'grade_base': self.grade_base,
         }
-        return data_export
+        return data_dump
 
 
-        # TODO: load data from table exams
-        # when loading, try to load only what is required
-        # (maybe not the whole file)
-        # use readlines:
-        # [json.loads(row) for row in open('table_exams.json','r').readlines()]
-        #
-        def load_table_exams():
-            """
-            Returns the content of the json file
-            in a dictionary
-            """
-            with open(__PATH_EXAMS__, 'r') as f_exams:
-                table_exams = json.load(f_exams)
 
-            return table_exams
+
+# TODO: load data from table exams
+# when loading, try to load only what is required
+# (maybe not the whole file)
+# use readlines:
+# [json.loads(row) for row in open('table_exams.json','r').readlines()]
+
+# This should not be in the Exam class, only a specific exam should be
+# loaded as an Exam instance. It could be hosted in a Db class
+def load_table_exams():
+    """
+    Returns the content of the json file
+    in a dictionary
+    """
+    with open(__PATH_EXAMS__, 'r') as f_exams:
+        table_exams = json.load(f_exams)
+
+    return table_exams
 
 
 if __name__ == "__main__":
