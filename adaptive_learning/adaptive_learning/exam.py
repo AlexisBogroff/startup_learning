@@ -75,52 +75,12 @@ class Exam:
     TODO: implement set_questions function and everything that can link exams
     with questions and answers
     """
-    def __init__(self, title):
-        self.title = title
+    def __init__(self):
+        self.title = ""
         self.description = ""
         self.randomize_questions_order = True
         self.auto_rebase_grade = True
         self.grade_base = 20
-
-
-    def set_properties(self):
-        self.title = get_input("Enter the exam title")
-
-        self.description = get_input("Enter the exam description")
-
-        randomize_order = get_input("Randomize questions order?")
-        casted_randomize_order = cast(randomize_order, bool)
-        self.randomize_questions_order = casted_randomize_order
-
-        auto_rebase = get_input("Activate automatic grade rebasing?")
-        casted_auto_rebase = cast(auto_rebase, bool)
-        self.auto_rebase_grade = casted_auto_rebase
-
-        grade_base = get_input("Enter the grade base")
-        casted_grade_base = cast(grade_base, int)
-        self.grade_base = casted_grade_base
-
-
-    def set_questions(self):
-        raise NotImplementedError
-
-
-    def save(self):
-        """
-        Stores the exam in a JSON file
-
-        It inserts the new content at the end of the file,
-        on a new line, and takes a single line
-        """
-        exam_dump = self.get_dump()
-        self.insert_to_exams_file(exam_dump)
-
-
-    def insert_to_exams_file(self, exam_dump):
-        """ Append the new exam to the existing JSON file """
-        with open(__PATH_EXAMS__, 'a') as f:
-            json.dump(exam_dump, f)
-            funcs.add_end_of_line_to_file(f)
 
 
     def get_dump(self):
@@ -143,24 +103,87 @@ class Exam:
         return data_dump
 
 
+    def load(self, id_exam):
+        """
+        Load a specific exam from the exam database
+
+        It modifies the properties of the current exam to correspond to the
+        exam selected.
+
+        Returns:
+            void.
+        """
+        raise NotImplementedError
 
 
-# TODO: load data from table exams
-# when loading, try to load only what is required
-# (maybe not the whole file)
-# use readlines:
-# [json.loads(row) for row in open('table_exams.json','r').readlines()]
+    def save(self):
+        """
+        Stores the exam in a JSON file
+
+        It inserts the new content at the end of the file,
+        on a new line, and takes a single line
+        """
+        exam_dump = self.get_dump()
+        self.insert_to_exams_file(exam_dump)
+
+
+    def set_properties_from_user_input(self, *args):
+        """
+        Set the correponding property from user input
+
+        Returns:
+            void
+        """
+        if 'title' in args:
+            self.title = get_input("Enter the exam title")
+
+        if 'description' in args:
+            self.description = get_input("Enter the exam description")
+
+        if 'randomize_order' in args:
+            randomize_order = get_input("Randomize questions order?")
+            casted_randomize_order = cast(randomize_order, bool)
+            self.randomize_questions_order = casted_randomize_order
+
+        if 'auto_rebase' in args:
+            auto_rebase = get_input("Activate automatic grade rebasing?")
+            casted_auto_rebase = cast(auto_rebase, bool)
+            self.auto_rebase_grade = casted_auto_rebase
+
+        if 'grade_base' in args:
+            grade_base = get_input("Enter the grade base")
+            casted_grade_base = cast(grade_base, int)
+            self.grade_base = casted_grade_base
+
+
+    def set_properties_from_db_load(self):
+        raise NotImplementedError
+
+    def set_questions(self):
+        raise NotImplementedError
+
+
+    def insert_to_exams_file(self, exam_dump):
+        """ Append the new exam to the existing JSON file """
+        with open(__PATH_EXAMS__, 'a') as f:
+            json.dump(exam_dump, f)
+            funcs.add_end_of_line_to_file(f)
+
+
 
 # This should not be in the Exam class, only a specific exam should be
 # loaded as an Exam instance. It could be hosted in a Db class
 def load_table_exams():
     """
-    Returns the content of the json file
-    in a dictionary
+    Loads exams data from a json file
+
+    Returns:
+        the whole file content in a list of dictionaries
+
+    TODO: add a method to load only part of the file
     """
     with open(__PATH_EXAMS__, 'r') as f_exams:
-        table_exams = json.load(f_exams)
-
+        table_exams = [json.loads(row) for row in f_exams]
     return table_exams
 
 
