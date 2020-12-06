@@ -2,15 +2,15 @@
 Manage exams, questions and answers
 """
 import json
+import uuid
 
 from adaptive_learning import funcs
 from adaptive_learning.funcs import get_input, \
                                     cast
 
-
 __PATH_EXAMS__ = "/Users/Pro/git_repositories/"\
     "adaptive_learning/adaptive_learning/adaptive_learning/"\
-    "data/table_exams.json"
+    "data/table_exams.txt"
 # TODO: see if it could also work with a txt file, since json rows
 # are append, it is rather used as a txt file than a json file
 # (since a json file would require that the whole file be a json)
@@ -56,7 +56,6 @@ def create_answer():
     answer['is_correct'] = get_input("Is the answer correct? (True/False)")
     answer['use_answer'] = get_input("Do use this answer? (True/False)")
     return answer
-
 
 
 class Exam:
@@ -120,8 +119,8 @@ class Exam:
         """ Append the new exam to the existing JSON file """
         with open(__PATH_EXAMS__, 'a') as f:
             exam_dump = self._prepare_export()
-            funcs.add_end_of_line_to_file(f)
             json.dump(exam_dump, f)
+            funcs.add_end_of_line_to_file(f)
 
 
     def _prepare_export(self):
@@ -134,6 +133,7 @@ class Exam:
         TODO: add self.questions when set_questions implemented
         """
         data_export = {
+            'id': str(uuid.uuid4()),
             'title': self.title,
             'description': self.description,
             'randomize_questions_order': self.randomize_questions_order,
@@ -149,15 +149,15 @@ class Exam:
         # use readlines:
         # [json.loads(row) for row in open('table_exams.json','r').readlines()]
         #
-        # def load_table_exams():
-        #     """
-        #     Returns the content of the json file
-        #     in a dictionary
-        #     """
-        #     with open(__PATH_EXAMS__, 'r') as f_exams:
-        #         table_exams = json.load(f_exams)
+        def load_table_exams():
+            """
+            Returns the content of the json file
+            in a dictionary
+            """
+            with open(__PATH_EXAMS__, 'r') as f_exams:
+                table_exams = json.load(f_exams)
 
-        #     return table_exams
+            return table_exams
 
 
 if __name__ == "__main__":
