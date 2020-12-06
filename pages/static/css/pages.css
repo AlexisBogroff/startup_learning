@@ -158,14 +158,14 @@
   color: crimson;
 }
 
-.launch button{ 
+.launch button{
   background-color:white;
   border: 3px solid  black;
   border-radius: 12px;
   color:black;
-  padding: 20px;    
-  display: inline-block;  
-  width: 125px;   
+  padding: 20px;
+  display: inline-block;
+  width: 125px;
   margin-left: 40%;
   margin-right: 30%;
 }
