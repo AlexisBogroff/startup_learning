@@ -158,6 +158,9 @@ Tested functions:
 
     test_compute_students_similarity
 
+
+TODO: add test for load_table_exams
+TODO: when done, add test for Exam.load()
 """
 import unittest
 from unittest.mock import patch
@@ -209,6 +212,7 @@ class ExamTestCase(unittest.TestCase):
     Test the creation of an exam
 
     TODO: add tests for functions related to the .save method
+    TODO: modify test_set_properties since changes in the function
     """
     def setUp(self):
         self.exam = exam.Exam('Initial title')
