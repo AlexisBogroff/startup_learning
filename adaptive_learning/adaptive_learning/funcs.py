@@ -36,6 +36,8 @@ def cast(data, cast_to_type):
 
     Returns:
         data casted in the specified type
+
+    TODO: add an inplace argument?
     """
     try:
         # Booleans must be dealt separatadly since bool('False')
@@ -47,10 +49,9 @@ def cast(data, cast_to_type):
         return casted_data
     except:
         error_msg = "The value: {d}, of type {d_type}, cannot be casted into" \
-                    " type: {exp_type}".format(
-                        d=data,
-                        d_type=type(data),
-                        exp_type=cast_to_type)
+                    " type: {exp_type}".format(d=data,
+                                               d_type=type(data),
+                                               exp_type=cast_to_type)
         raise TypeError(error_msg)
 
 
