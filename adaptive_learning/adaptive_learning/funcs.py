@@ -54,7 +54,7 @@ def cast(data, cast_to_type):
         raise TypeError(error_msg)
 
 
-def add_end_of_line_to_file(f):
+def add_end_of_line_to_file(f_without_empty_line):
     """
     Enables further data to be appened on a new line
 
@@ -65,4 +65,4 @@ def add_end_of_line_to_file(f):
         Void. The function only has side effect on the file in argument
     """
     # Mac version
-    f.write('\n')
+    f_without_empty_line.write('\n')

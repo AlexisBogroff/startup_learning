@@ -121,7 +121,7 @@ class Exam:
             (which would be the case with a json file).
         """
         exam_dump = self.get_dump()
-        self.insert_to_exams_file(exam_dump)
+        insert_to_exams_file(exam_dump)
 
 
     def set_properties(self):
@@ -172,22 +172,24 @@ class Exam:
         raise NotImplementedError
 
 
-    def insert_to_exams_file(self, exam_dump):
-        """ Append the new exam to the existing JSON file """
-        with open(__PATH_EXAMS__, 'a') as f:
-            json.dump(exam_dump, f)
-            funcs.add_end_of_line_to_file(f)
+
+def insert_to_exams_file(exam_dump):
+    """ Append the new exam to the existing JSON file """
+    with open(__PATH_EXAMS__, 'a') as f_exams:
+        json.dump(exam_dump, f_exams)
+        funcs.add_end_of_line_to_file(f_exams)
 
 
-
-# This should not be in the Exam class, only a specific exam should be
-# loaded as an Exam instance. It could be hosted in a Db class
 def load_table_exams():
     """
     Loads exams data from a json file
 
     Returns:
         the whole file content in a list of dictionaries
+
+    Notes:
+        This should not be in the Exam class, only a specific exam should be
+        loaded as an Exam instance. It could be hosted in a Db class
 
     TODO: add a method to load only part of the file
     """
