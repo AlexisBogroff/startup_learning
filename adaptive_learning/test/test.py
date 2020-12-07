@@ -212,36 +212,65 @@ class ExamTestCase(unittest.TestCase):
     Test the creation of an exam
 
     TODO: add tests for functions related to the .save method
-    TODO: modify test_set_properties since changes in the function
     """
     def setUp(self):
-        self.exam = exam.Exam('Initial title')
+        self.exam = exam.Exam()
+        self.DEFAULT_PROPERTIES = {
+            'id': 'some_uuid4_chain',
+            'title': '',
+            'description': '',
+            'randomize_questions_order': True,
+            'auto_rebase_grade': True,
+            'grade_base': 20,
+    }
 
-    def test_default_grade_base(self):
-        self.assertEqual(self.exam.grade_base, 20)
+    def test_default_properties(self):
+        self.assertEqual(self.exam.grade_base,
+                         self.DEFAULT_PROPERTIES['grade_base'])
+        self.assertEqual(self.exam.auto_rebase_grade,
+                         self.DEFAULT_PROPERTIES['auto_rebase_grade'])
+        self.assertEqual(self.exam.randomize_questions_order,
+                         self.DEFAULT_PROPERTIES['randomize_questions_order'])
 
-    def test_default_auto_rebase_grade(self):
-        self.assertTrue(self.exam.auto_rebase_grade)
 
-    def test_default_randomize_question_order(self):
-        self.assertTrue(self.exam.randomize_questions_order)
+    def test_get_dump(self):
+        # Controls that:
+        # - it returns a dictionary
+        # - the following keys are included in the dump
+        # - the corresponding values are correctly matching
+        expected_dump = self.DEFAULT_PROPERTIES
+        dump = self.exam.get_dump()
+
+        self.assertEqual(dump['title'],
+                expected_dump['title'])
+        self.assertEqual(dump['description'],
+                expected_dump['description'])
+        self.assertEqual(dump['randomize_questions_order'],
+                expected_dump['randomize_questions_order'])
+        self.assertEqual(dump['auto_rebase_grade'],
+                expected_dump['auto_rebase_grade'])
+        self.assertEqual(dump['grade_base'],
+                expected_dump['grade_base'])
 
 
-    INPUT_PROPERTIES = ('new exam title',
-                        'new description',
-                        'False',
-                        'False',
-                        '10')
+    INPUT_NEW_PROPERTIES = ('new exam title',
+                            'new exam description',
+                            'False',
+                            'False',
+                            '10')
 
-    @patch('builtins.input', side_effect=INPUT_PROPERTIES)
+    @patch('builtins.input', side_effect=INPUT_NEW_PROPERTIES)
     def test_set_properties(self, mock_inputs):
         self.exam.set_properties()
         self.assertEqual(self.exam.title, 'new exam title')
-        self.assertEqual(self.exam.description, 'new description')
+        self.assertEqual(self.exam.description, 'new exam description')
         self.assertEqual(self.exam.randomize_questions_order, False)
         self.assertEqual(self.exam.auto_rebase_grade, False)
         self.assertEqual(self.exam.grade_base, 10)
 
+        # Re-instanciate exam object to re-establish default parameters
+        self.setUp()
+        self.assertEqual(self.exam.grade_base, 20)
 
 
 class UserMethodsTestCase(unittest.TestCase):
