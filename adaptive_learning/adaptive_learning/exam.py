@@ -127,33 +127,45 @@ class Exam:
         self.insert_to_exams_file(exam_dump)
 
 
-    def set_properties_from_user_input(self, *args):
+    def set_properties(self):
         """
-        Set the correponding property from user input
+        Set all the properties from user input
 
         Returns:
             void
         """
-        if 'title' in args:
-            self.title = get_input("Enter the exam title")
+        self.set_title()
+        self.set_description()
+        self.set_randomize_order()
+        self.set_auto_rebase_grade()
+        self.set_grade_base()
 
-        if 'description' in args:
-            self.description = get_input("Enter the exam description")
 
-        if 'randomize_order' in args:
-            randomize_order = get_input("Randomize questions order?")
-            casted_randomize_order = cast(randomize_order, bool)
-            self.randomize_questions_order = casted_randomize_order
+    def set_title(self):
+        """ Set title property """
+        self.title = get_input("Enter the exam title")
 
-        if 'auto_rebase' in args:
-            auto_rebase = get_input("Activate automatic grade rebasing?")
-            casted_auto_rebase = cast(auto_rebase, bool)
-            self.auto_rebase_grade = casted_auto_rebase
+    def set_description(self):
+        """ Set description property """
+        self.description = get_input("Enter the exam description")
 
-        if 'grade_base' in args:
-            grade_base = get_input("Enter the grade base")
-            casted_grade_base = cast(grade_base, int)
-            self.grade_base = casted_grade_base
+    def set_randomize_order(self):
+        """ Set randomize_order property """
+        randomize_order = get_input("Randomize questions order?")
+        casted_randomize_order = cast(randomize_order, bool)
+        self.randomize_questions_order = casted_randomize_order
+
+    def set_auto_rebase_grade(self):
+        """ Set auto_rebase_grade property """
+        auto_rebase = get_input("Activate automatic grade rebasing?")
+        casted_auto_rebase = cast(auto_rebase, bool)
+        self.auto_rebase_grade = casted_auto_rebase
+
+    def set_grade_base(self):
+        """ Set grade_base property """
+        grade_base = get_input("Enter the grade base")
+        casted_grade_base = cast(grade_base, int)
+        self.grade_base = casted_grade_base
 
 
     def set_properties_from_db_load(self):
@@ -188,5 +200,5 @@ def load_table_exams():
 
 
 if __name__ == "__main__":
-    exam = Exam('initial title')
+    exam = Exam()
     exam.set_properties()
