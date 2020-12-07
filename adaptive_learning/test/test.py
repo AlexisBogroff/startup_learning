@@ -292,7 +292,7 @@ class ExamTestCase(unittest.TestCase):
                            )
 
     @patch('builtins.input', side_effect=INPUTS_NEW_QUESTION)
-    def test_set_questions(self, mock_inputs):
+    def test_add_question(self, mock_inputs):
         expected_questions_data = [
             {
                 'id': 1,
@@ -307,7 +307,7 @@ class ExamTestCase(unittest.TestCase):
                 'randomize_answers_order': True,
             }
         ]
-        self.exam.set_questions()
+        self.exam.add_question()
         self.assertEqual(self.exam.questions, expected_questions_data)
 
 
