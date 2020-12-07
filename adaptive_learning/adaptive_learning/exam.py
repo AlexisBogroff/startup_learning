@@ -11,15 +11,6 @@ from adaptive_learning.funcs import get_input, \
 __PATH_EXAMS__ = "/Users/Pro/git_repositories/"\
     "adaptive_learning/adaptive_learning/adaptive_learning/"\
     "data/table_exams.txt"
-# TODO: see if it could also work with a txt file, since json rows
-# are append, it is rather used as a txt file than a json file
-# (since a json file would require that the whole file be a json)
-# (which I'm preventing to avoid requiring to load the whole base at each I/O)
-# (thus, it like a json, but without the parenthesis that should surround
-# all the rows)
-#
-# Writing on the txt file is working properly.
-# But reading does not work for now, for neither txt nor json
 
 
 def create_question():
@@ -122,6 +113,12 @@ class Exam:
 
         It inserts the new content at the end of the file,
         on a new line, and takes a single line
+
+        Notes:
+            Each exam is stored in json format, but the file is in text format.
+            This enables to store new exams by appending them in the first empty
+            rows, without the need to read and parse the whole file
+            (which would be the case with a json file).
         """
         exam_dump = self.get_dump()
         self.insert_to_exams_file(exam_dump)
