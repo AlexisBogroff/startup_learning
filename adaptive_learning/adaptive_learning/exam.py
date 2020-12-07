@@ -154,6 +154,17 @@ class Exam:
             This enables to store new exams by appending them in the first empty
             rows, without the need to read and parse the whole file
             (which would be the case with a json file).
+
+        TODO: save should add the exam if does not exist, and update the
+        existing exam in the db otherwise. Implement a method to find a
+        specific id in the db file, and get the corresponding row number.
+        Then delete this row. Finally, add the new exam (updated version).
+        For now, it stores a new exam (with new id) each time the save
+        method is used. It should rather update the exam (since an other
+        instance of exam should have been constructed otherwise). For example,
+        the id of the exam could be generated when exam is instanciated. Thus,
+        there would be no additional exam with a different id when save is used
+        within a single exam.
         """
         exam_dump = self.get_dump()
         insert_to_exams_file(exam_dump)
@@ -203,13 +214,18 @@ class Exam:
     def set_properties_from_db_load(self):
         raise NotImplementedError
 
-    def set_questions(self):
-        """ Add a question to the exam list of questions property """
+    def add_question(self):
+        """
+        Add a question to the exam list of questions property
+
+        Returns:
+            void.
+
+        TODO: Enable add from existing questions
+        """
         # Add a new question
         question = create_question()
         question['id'] = self.get_question_id()
-
-        # Add from existing questions
 
         # Add to exam list of questions property
         self.questions.append(question)
