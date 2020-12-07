@@ -97,6 +97,7 @@ class Exam:
     with questions and answers
     """
     def __init__(self):
+        self._id = generate_uuid()
         self.title = ""
         self.description = ""
         self.questions = []
@@ -116,7 +117,7 @@ class Exam:
         TODO: add self.questions when set_questions implemented
         """
         data_dump = {
-            'id': str(uuid.uuid4()),
+            'id': self._id,
             'title': self.title,
             'description': self.description,
             'parameters': {
@@ -167,6 +168,10 @@ class Exam:
         within a single exam.
         """
         exam_dump = self.get_dump()
+
+        # if already_in_db(exam_dump):
+            # update_exam_file(exam_dump)
+        # else:
         insert_to_exams_file(exam_dump)
 
 
@@ -242,6 +247,11 @@ class Exam:
         question_id = num_of_questions + 1
         return question_id
 
+
+def generate_uuid(type=str):
+    """ Generate unique identifier """
+    if type is str:
+        return str(uuid.uuid4())
 
 
 def insert_to_exams_file(exam_dump):
