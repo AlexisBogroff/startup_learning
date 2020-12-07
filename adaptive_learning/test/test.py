@@ -159,8 +159,8 @@ Tested functions:
     test_compute_students_similarity
 
 
-TODO: add test for load_table_exams?
-TODO: when done, add test for Exam.load()
+TODO: add test for load_table_exams
+TODO: add test for load_exam
 """
 import unittest
 from unittest.mock import patch
@@ -307,7 +307,7 @@ class ExamTestCase(unittest.TestCase):
                 'randomize_answers_order': True,
             }
         ]
-        self.exam.add_question()
+        self.exam.create_question()
         self.assertEqual(self.exam.questions, expected_questions_data)
 
 
