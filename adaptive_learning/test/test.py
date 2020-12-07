@@ -159,7 +159,7 @@ Tested functions:
     test_compute_students_similarity
 
 
-TODO: add test for load_table_exams
+TODO: add test for load_table_exams?
 TODO: when done, add test for Exam.load()
 """
 import unittest
@@ -174,10 +174,6 @@ class ExamRelatedMethodsTestCase(unittest.TestCase):
     (create, amend, delete, launch, etc.)
     """
     INPUTS_ANSWER = ('txt_answer_1', 'True', 'True')
-    INPUTS_QUESTION = ('txt_question_1', 'mcq', 'True',
-                       '2', '3', 'programming, loops',
-                       'num correct answers', 'True')
-
 
     @patch('builtins.input', side_effect=INPUTS_ANSWER)
     def test_create_answer(self, mock_inputs):
@@ -190,17 +186,28 @@ class ExamRelatedMethodsTestCase(unittest.TestCase):
         self.assertEqual(expected_answer, obtained_answer)
 
 
+    INPUTS_QUESTION = ('New question',
+                       'mcq',
+                       'True',
+                       '0.5',
+                       '3',
+                       'programming, loops',
+                       'True',
+                       'True',
+                       'True')
+
     @patch('builtins.input', side_effect=INPUTS_QUESTION)
     def test_create_question(self, mock_inputs):
         expected_question = {
-            'text': 'txt_question_1',
-            'format': 'mcq',
-            'use_question': 'True',
-            'nb_points': '2',
-            'difficulty': '3',
+            'text': 'New question',
+            'type': 'mcq',
+            'use_question': True,
+            'nb_points': 0.5,
+            'difficulty': 3,
             'keywords': 'programming, loops',
-            'notif_correct_answers': 'num correct answers',
-            'randomize_answers_order': 'True',
+            'notif_correct_answers': True,
+            'notif_num_exact_answers': True,
+            'randomize_answers_order': True,
         }
         obtained_question = exam.create_question()
         self.assertEqual(expected_question, obtained_question)
@@ -245,21 +252,21 @@ class ExamTestCase(unittest.TestCase):
                 expected_dump['title'])
         self.assertEqual(dump['description'],
                 expected_dump['description'])
-        self.assertEqual(dump['randomize_questions_order'],
+        self.assertEqual(dump['parameters']['randomize_questions_order'],
                 expected_dump['randomize_questions_order'])
-        self.assertEqual(dump['auto_rebase_grade'],
+        self.assertEqual(dump['parameters']['auto_rebase_grade'],
                 expected_dump['auto_rebase_grade'])
-        self.assertEqual(dump['grade_base'],
+        self.assertEqual(dump['parameters']['grade_base'],
                 expected_dump['grade_base'])
 
 
-    INPUT_NEW_PROPERTIES = ('new exam title',
+    INPUTS_NEW_PROPERTIES = ('new exam title',
                             'new exam description',
                             'False',
                             'False',
                             '10')
 
-    @patch('builtins.input', side_effect=INPUT_NEW_PROPERTIES)
+    @patch('builtins.input', side_effect=INPUTS_NEW_PROPERTIES)
     def test_set_properties(self, mock_inputs):
         self.exam.set_properties()
         self.assertEqual(self.exam.title, 'new exam title')
@@ -271,6 +278,37 @@ class ExamTestCase(unittest.TestCase):
         # Re-instanciate exam object to re-establish default parameters
         self.setUp()
         self.assertEqual(self.exam.grade_base, 20)
+
+
+    INPUTS_NEW_QUESTION = ('New question',
+                           'mcq',
+                           'True',
+                           '0.5',
+                           '1',
+                           'Programming, VBA, Introduction',
+                           'True',
+                           'True',
+                           'True',
+                           )
+
+    @patch('builtins.input', side_effect=INPUTS_NEW_QUESTION)
+    def test_set_questions(self, mock_inputs):
+        expected_questions_data = [
+            {
+                'id': 1,
+                'text': 'New question',
+                'type': 'mcq',
+                'use_question': True,
+                'nb_points': 0.5,
+                'difficulty': 1,
+                'keywords': 'Programming, VBA, Introduction',
+                'notif_correct_answers': True,
+                'notif_num_exact_answers': True,
+                'randomize_answers_order': True,
+            }
+        ]
+        self.exam.set_questions()
+        self.assertEqual(self.exam.questions, expected_questions_data)
 
 
 class UserMethodsTestCase(unittest.TestCase):

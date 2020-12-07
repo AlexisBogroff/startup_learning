@@ -22,16 +22,46 @@ def create_question():
 
     Returns:
         the question dictonary
+
+    Notes:
+        text: string
+        type: string, can be:
+        - mcq (single or mulitple correct answers)
+        - exact
+        - develop (developpement answer that can hardly be auto-corrected)
+        use_question: bool
+        nb_points: float
+        difficulty: int
+        keywords: string with comma separated words
+        notif_correct_answers: bool:
+        - False (informs that question has one or multiple correct answers)
+        - True (informs wether question has multiple correct answers or not)
+        notif_num_exact_answers: bool (only if notif_correct_answers is True)
+        randomize_answers_order: bool
     """
+    # Get informations from user input
     question = {}
     question['text'] = get_input("Enter the question text")
-    question['format'] = get_input("Enter the question format")
-    question['use_question'] = get_input("Use this question? (True/False)")
+    question['type'] = get_input("Enter the question type")
+    question['use_question'] = get_input("Use this question?")
     question['nb_points'] = get_input("Enter the number of points")
     question['difficulty'] = get_input("Enter the difficulty")
     question['keywords'] = get_input("Enter keywords, subject, or categories")
-    question['notif_correct_answers'] = get_input("Inform num correct answers?")
+    question['notif_correct_answers'] = get_input("Inform on num of answers?")
+    question['notif_num_exact_answers'] = get_input("Inform exact num?")
     question['randomize_answers_order'] = get_input("Randomize answers order?")
+
+    # Cast variables to expected type
+    question['use_question'] = cast(question['use_question'], bool)
+    question['nb_points'] = cast(question['nb_points'], float)
+    question['difficulty'] = cast(question['difficulty'], int)
+    question['notif_correct_answers'] = cast(
+        question['notif_correct_answers'], bool)
+    question['notif_num_exact_answers'] = cast(
+        question['notif_num_exact_answers'], bool)
+    question['randomize_answers_order'] = cast(
+        question['randomize_answers_order'], bool)
+
     return question
 
 
@@ -69,6 +99,8 @@ class Exam:
     def __init__(self):
         self.title = ""
         self.description = ""
+        self.questions = []
+        # Parameters
         self.randomize_questions_order = True
         self.auto_rebase_grade = True
         self.grade_base = 20
@@ -87,9 +119,12 @@ class Exam:
             'id': str(uuid.uuid4()),
             'title': self.title,
             'description': self.description,
-            'randomize_questions_order': self.randomize_questions_order,
-            'auto_rebase_grade': self.auto_rebase_grade,
-            'grade_base': self.grade_base,
+            'parameters': {
+                'randomize_questions_order': self.randomize_questions_order,
+                'auto_rebase_grade': self.auto_rebase_grade,
+                'grade_base': self.grade_base,
+            },
+            'questions': self.questions,
         }
         return data_dump
 
@@ -169,7 +204,27 @@ class Exam:
         raise NotImplementedError
 
     def set_questions(self):
-        raise NotImplementedError
+        """ Add a question to the exam list of questions property """
+        # Add a new question
+        question = create_question()
+        question['id'] = self.get_question_id()
+
+        # Add from existing questions
+
+        # Add to exam list of questions property
+        self.questions.append(question)
+
+
+    def get_question_id(self):
+        """
+        Generate question id
+
+        Id is defined as the number of the question. Since the question is
+        added last, it is an incremented id.
+        """
+        num_of_questions = len(self.questions)
+        question_id = num_of_questions + 1
+        return question_id
 
 
 
