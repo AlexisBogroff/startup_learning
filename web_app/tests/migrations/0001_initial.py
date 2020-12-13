@@ -192,7 +192,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Pass_DynMCQTest_Info',
+            name='PassDynMCQTestInfo',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('id_test', models.CharField(max_length=10, null=True)),
@@ -206,7 +206,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Pass_DynMCQTest',
+            name='PassDynMCQTest',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('id_test', models.CharField(max_length=10, null=True)),
