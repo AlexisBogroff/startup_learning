@@ -714,6 +714,25 @@ class QuestionTestCase(unittest.TestCase):
         )
 
 
+    ANSWER_PROPERTIES = ['Debug answer', 'True', 'False']
+
+    @patch('builtins.input', side_effect=ANSWER_PROPERTIES)
+    def test_add_answer(self, mock_inputs):
+        self.question.add_answer()
+        obtained = self.question.answers
+        expected = [
+            {
+                'text': 'Debug answer',
+                'is_correct': True,
+                'use_answer': False,
+                'position_id': 1,
+            }
+        ]
+        self.assertEqual(obtained, expected)
+        # Restore default parameters
+        self.setUp()
+
+
     def test_get_exportable(self):
         # Controls that:
         # - it returns a dictionary with the expected structure
