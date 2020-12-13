@@ -139,6 +139,19 @@ class Exam:
         self.questions = []
 
 
+    def add_question(self, method='create', load_id=None):
+        """
+        Choose add method: create or load
+        """
+        if method == 'create':
+            self.create_question()
+        elif method == 'load':
+            q = Question()
+            q.load_question(load_id)
+            q_export = q.get_exportable()
+            self.questions.append(q_export)
+
+
     def create_question(self):
         """
         Create and add a question to the exam list of questions property
@@ -315,7 +328,7 @@ class Exam:
         """
         questions = self.questions
         text_questions = ["({nb_points}) {type}: {text}"\
-            .format(nb_points=q['nb_points'],
+            .format(nb_points=q['parameters']['nb_points'],
                     type=q['type'],
                     text=q['text']) \
                         for q in questions]
@@ -612,3 +625,5 @@ if __name__ == "__main__":
     ## Display list of questions
     question = Question()
     question.show_list_of_questions()
+
+
