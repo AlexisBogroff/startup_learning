@@ -268,6 +268,7 @@ class Exam:
         self.set_auto_rebase_grade_from_existing(exam)
         self.set_grade_base_from_existing(exam)
 
+
     def set_properties_from_input_extra(self):
         """
         Set the extra properties from user input
@@ -275,6 +276,7 @@ class Exam:
         self.set_randomize_questions_order_from_input()
         self.set_auto_rebase_grade_from_input()
         self.set_grade_base_from_input()
+
 
     def set_properties_from_input_main(self):
         """
@@ -289,6 +291,7 @@ class Exam:
         param = exam['parameters']['randomize_questions_order']
         self.randomize_questions_order = param
 
+
     def set_randomize_questions_order_from_input(self):
         """ Set randomize_order property """
         randomize_order = get_input("Randomize questions order?")
@@ -300,9 +303,43 @@ class Exam:
         """ Load title from existing exam """
         self.title = exam['title']
 
+
     def set_title_from_input(self):
         """ Set title property """
         self.title = get_input("Enter the exam title")
+
+
+    def show(self):
+        """
+        Display the exam properties
+        """
+        questions = self.questions
+        text_questions = ["({nb_points}) {type}: {text}"\
+            .format(nb_points=q['nb_points'],
+                    type=q['type'],
+                    text=q['text']) \
+                        for q in questions]
+
+        text_questions = "\n\t".join(text_questions)
+        text = "id: {id}\n" \
+               "title: {title}\n" \
+               "description: {description}\n" \
+               "parameters\n" \
+               "\trandomize_questions_order: {randomize_questions_order}\n" \
+               "\tauto_rebase_grade: {auto_rebase_grade}\n" \
+               "\tgrade_base: {grade_base}\n" \
+               "questions\n" \
+               "\t{text_questions}" \
+               .format(
+                    id=self._id,
+                    title=self.title,
+                    description=self.description,
+                    randomize_questions_order=self.randomize_questions_order,
+                    auto_rebase_grade=self.auto_rebase_grade,
+                    grade_base=self.grade_base,
+                    text_questions=text_questions,
+                )
+        print(text)
 
 
     @staticmethod
@@ -518,8 +555,6 @@ class Question:
     def show(self):
         """
         Display the question properties
-
-        TODO: make a list comprehension to add answers
         """
         answers = self.answers
         text_answers = ["{}".format(ans) for ans in answers]
@@ -551,8 +586,6 @@ class Question:
                     text_answers=text_answers,
                 )
         print(text)
-
-
 
 
     @staticmethod
