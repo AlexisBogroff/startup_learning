@@ -294,7 +294,7 @@ class ExamTestCase(unittest.TestCase):
                 'position_id': 1,
             }
         ]
-        self.exam.create_question()
+        self.exam._create_question()
         self.assertEqual(self.exam.questions, expected_questions_data)
         # Restore default parameters
         self.setUp()
