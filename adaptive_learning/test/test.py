@@ -243,11 +243,9 @@ class ExamTestCase(unittest.TestCase):
             'id': 'id_foo',
             'title': 'title_foo',
             'description': 'desc foo',
-            'parameters': {
-                'auto_rebase_grade': False,
-                'grade_base': 100,
-                'randomize_questions_order': False,
-            },
+            'auto_rebase_grade': False,
+            'grade_base': 100,
+            'randomize_questions_order': False,
             'questions': [
                 {'foo'},
                 {'bar'},
@@ -286,14 +284,12 @@ class ExamTestCase(unittest.TestCase):
                 'text': 'New question',
                 'type': 'mcq',
                 'keywords': 'Programming, VBA, Introduction',
-                'parameters': {
-                    'use_question': True,
-                    'nb_points': 1.,
-                    'difficulty': 1,
-                    'notif_correct_answers': True,
-                    'notif_num_exact_answers': False,
-                    'randomize_answers_order': True,
-                },
+                'use_question': True,
+                'nb_points': 1.,
+                'difficulty': 1,
+                'notif_correct_answers': True,
+                'notif_num_exact_answers': False,
+                'randomize_answers_order': True,
                 'answers': [],
                 'position_id': 1,
             }
@@ -338,11 +334,11 @@ class ExamTestCase(unittest.TestCase):
         self.assertEqual(obtained['id'], expected['id'])
         self.assertEqual(obtained['title'], expected['title'])
         self.assertEqual(obtained['description'], expected['description'])
-        self.assertEqual(obtained['parameters']['randomize_questions_order'],
+        self.assertEqual(obtained['randomize_questions_order'],
                 expected['randomize_questions_order'])
-        self.assertEqual(obtained['parameters']['auto_rebase_grade'],
+        self.assertEqual(obtained['auto_rebase_grade'],
                 expected['auto_rebase_grade'])
-        self.assertEqual(obtained['parameters']['grade_base'],
+        self.assertEqual(obtained['grade_base'],
                 expected['grade_base'])
 
 
@@ -350,22 +346,18 @@ class ExamTestCase(unittest.TestCase):
         {
             'description': 'foo',
             'id': 'c85779fd',
-            'parameters': {
-                'auto_rebase_grade': False,
-                'grade_base': 5,
-                'randomize_questions_order': False
-            },
+            'auto_rebase_grade': False,
+            'grade_base': 5,
+            'randomize_questions_order': False,
             'questions': ['foo'],
             'title': ''
         },
         {
             'description': '',
             'id': 'f67d625b',
-            'parameters': {
-                'auto_rebase_grade': True,
-                'grade_base': 20,
-                'randomize_questions_order': True
-            },
+            'auto_rebase_grade': True,
+            'grade_base': 20,
+            'randomize_questions_order': True,
             'questions': ['bar'],
             'title': ''
         },
@@ -387,7 +379,7 @@ class ExamTestCase(unittest.TestCase):
     def test_set_auto_rebase_grade_from_existing(self):
         self.exam.set_auto_rebase_grade_from_existing(self.LOADED_EXAM)
         obtained = self.exam.auto_rebase_grade
-        expected = self.LOADED_EXAM['parameters']['auto_rebase_grade']
+        expected = self.LOADED_EXAM['auto_rebase_grade']
         self.assertEqual(obtained, expected)
         # Restore default parameters
         self.setUp()
@@ -405,7 +397,7 @@ class ExamTestCase(unittest.TestCase):
     def test_set_grade_base_from_existing(self):
         self.exam.set_grade_base_from_existing(self.LOADED_EXAM)
         obtained = self.exam.grade_base
-        expected = self.LOADED_EXAM['parameters']['grade_base']
+        expected = self.LOADED_EXAM['grade_base']
         self.assertEqual(obtained, expected)
         # Restore default parameters
         self.setUp()
@@ -463,7 +455,7 @@ class ExamTestCase(unittest.TestCase):
     def test_set_randomize_questions_order_from_existing(self):
         self.exam.set_randomize_questions_order_from_existing(self.LOADED_EXAM)
         obtained = self.exam.randomize_questions_order
-        expected = self.LOADED_EXAM['parameters']['randomize_questions_order']
+        expected = self.LOADED_EXAM['randomize_questions_order']
         self.assertEqual(obtained, expected)
         # Restore default parameters
         self.setUp()
@@ -603,14 +595,12 @@ class QuestionTestCase(unittest.TestCase):
             'text': '',
             'type': '',
             'keywords': '',
-            'parameters': {
-                'use_question': True,
-                'nb_points': 1.,
-                'difficulty': 1,
-                'notif_correct_answers': True,
-                'notif_num_exact_answers': False,
-                'randomize_answers_order': True,
-            },
+            'use_question': True,
+            'nb_points': 1.,
+            'difficulty': 1,
+            'notif_correct_answers': True,
+            'notif_num_exact_answers': False,
+            'randomize_answers_order': True,
             'answers': [],
         }
         self.QUESTION_LOADED = {
@@ -619,14 +609,12 @@ class QuestionTestCase(unittest.TestCase):
             'type': 'mcq',
             'keywords': 'programming, python, structures',
             # TODO: transform into list
-            'parameters': {
-                'use_question': False,
-                'nb_points': 0.5,
-                'difficulty': 3,
-                'notif_correct_answers': False,
-                'notif_num_exact_answers': False,
-                'randomize_answers_order': False,
-            },
+            'use_question': False,
+            'nb_points': 0.5,
+            'difficulty': 3,
+            'notif_correct_answers': False,
+            'notif_num_exact_answers': False,
+            'randomize_answers_order': False,
             'answers': [],
         }
 
@@ -650,27 +638,27 @@ class QuestionTestCase(unittest.TestCase):
         )
         self.assertEqual(
             self.question.use_question,
-            self.DEFAULT_PROPERTIES['parameters']['use_question'],
+            self.DEFAULT_PROPERTIES['use_question'],
         )
         self.assertEqual(
             self.question.nb_points,
-            self.DEFAULT_PROPERTIES['parameters']['nb_points'],
+            self.DEFAULT_PROPERTIES['nb_points'],
         )
         self.assertEqual(
             self.question.difficulty,
-            self.DEFAULT_PROPERTIES['parameters']['difficulty'],
+            self.DEFAULT_PROPERTIES['difficulty'],
         )
         self.assertEqual(
             self.question.notif_correct_answers,
-            self.DEFAULT_PROPERTIES['parameters']['notif_correct_answers'],
+            self.DEFAULT_PROPERTIES['notif_correct_answers'],
         )
         self.assertEqual(
             self.question.notif_num_exact_answers,
-            self.DEFAULT_PROPERTIES['parameters']['notif_num_exact_answers'],
+            self.DEFAULT_PROPERTIES['notif_num_exact_answers'],
         )
         self.assertEqual(
             self.question.randomize_answers_order,
-            self.DEFAULT_PROPERTIES['parameters']['randomize_answers_order'],
+            self.DEFAULT_PROPERTIES['randomize_answers_order'],
         )
         self.assertEqual(
             self.question.answers,
@@ -727,27 +715,27 @@ class QuestionTestCase(unittest.TestCase):
         )
         self.assertEqual(
             self.question.use_question,
-            self.QUESTION_LOADED['parameters']['use_question'],
+            self.QUESTION_LOADED['use_question'],
         )
         self.assertEqual(
             self.question.nb_points,
-            self.QUESTION_LOADED['parameters']['nb_points'],
+            self.QUESTION_LOADED['nb_points'],
         )
         self.assertEqual(
             self.question.difficulty,
-            self.QUESTION_LOADED['parameters']['difficulty'],
+            self.QUESTION_LOADED['difficulty'],
         )
         self.assertEqual(
             self.question.notif_correct_answers,
-            self.QUESTION_LOADED['parameters']['notif_correct_answers'],
+            self.QUESTION_LOADED['notif_correct_answers'],
         )
         self.assertEqual(
             self.question.notif_num_exact_answers,
-            self.QUESTION_LOADED['parameters']['notif_num_exact_answers'],
+            self.QUESTION_LOADED['notif_num_exact_answers'],
         )
         self.assertEqual(
             self.question.randomize_answers_order,
-            self.QUESTION_LOADED['parameters']['randomize_answers_order'],
+            self.QUESTION_LOADED['randomize_answers_order'],
         )
         self.assertEqual(
             self.question.answers,

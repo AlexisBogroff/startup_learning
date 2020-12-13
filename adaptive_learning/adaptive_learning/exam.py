@@ -96,42 +96,20 @@ class Exam:
     Returns:
         exam instance with its basic properties set, and ready to be composed.
 
-    Methods:
-        create_question
-        extract_exam
-        get_exportable
-        get_question_position_id
-        load_exam
-        save_new_to_db
-        set_auto_rebase_grade_from_existing
-        set_auto_rebase_grade_from_input
-        set_description_from_existing
-        set_description_from_input
-        set_grade_base_from_existing
-        set_grade_base_from_input
-        set_id_from_existing
-        set_properties_from_existing_all
-        set_properties_from_input_extra
-        set_properties_from_input_main
-        set_randomize_order_from_existing
-        set_randomize_questions_order_from_input
-        set_title_from_existing
-        set_title_from_input
-        update
-
-
     Notes:
         The structure of exam has its main and secondary parameters at the same
         level. The structure of the dump is different and may lead to useless
         complexity and confusion, since its secondary parameters are stored in
         a list called 'parameters'.
+
+    TODO: add method to save questions of the exam to the library questions.json
     """
     def __init__(self):
         self._id = ''
         # Main parameters
         self.title = ""
         self.description = ""
-        # Extra parameters
+        # Other parameters
         self.randomize_questions_order = True
         self.auto_rebase_grade = True
         self.grade_base = 20
@@ -139,12 +117,16 @@ class Exam:
         self.questions = []
 
 
+    def __str__(self):
+        return "title: {title}, id: {id}".format(title=self.title, id=self._id)
+
+
     def add_question(self, method='create', load_id=None):
         """
         Choose add method: create or load
         """
         if method == 'create':
-            self.create_question()
+            self._create_question()
         elif method == 'load':
             q = Question()
             q.load_question(load_id)
@@ -152,12 +134,12 @@ class Exam:
             self.questions.append(q_export)
 
 
-    def create_question(self):
+    def _create_question(self):
         """
         Create and add a question to the exam list of questions property
         """
         question = Question()
-        question.set_parameters_from_input_main()
+        question.create_question()
         question_export = question.get_exportable()
         question_export['position_id'] = \
             funcs.generate_position_id(self.questions)
@@ -175,11 +157,9 @@ class Exam:
             'id': self._id,
             'title': self.title,
             'description': self.description,
-            'parameters': {
-                'randomize_questions_order': self.randomize_questions_order,
-                'auto_rebase_grade': self.auto_rebase_grade,
-                'grade_base': self.grade_base,
-            },
+            'randomize_questions_order': self.randomize_questions_order,
+            'auto_rebase_grade': self.auto_rebase_grade,
+            'grade_base': self.grade_base,
             'questions': self.questions,
         }
         return data_export
@@ -225,8 +205,9 @@ class Exam:
 
     def set_auto_rebase_grade_from_existing(self, exam):
         """ Load auto_rebase_grade parameter from existing exam """
-        param = exam['parameters']['auto_rebase_grade']
+        param = exam['auto_rebase_grade']
         self.auto_rebase_grade = param
+
 
     def set_auto_rebase_grade_from_input(self):
         """ Set auto_rebase_grade property """
@@ -239,6 +220,7 @@ class Exam:
         """ Load description from existing exam """
         self.description = exam['description']
 
+
     def set_description_from_input(self):
         """ Set description property """
         self.description = get_input("Enter the exam description")
@@ -246,7 +228,7 @@ class Exam:
 
     def set_grade_base_from_existing(self, exam):
         """ Load grade_base parameter from existing exam """
-        param = exam['parameters']['grade_base']
+        param = exam['grade_base']
         self.grade_base = param
 
 
@@ -291,7 +273,7 @@ class Exam:
 
     def set_randomize_questions_order_from_existing(self, exam):
         """ Load randomize_questions_order parameter from existing exam """
-        param = exam['parameters']['randomize_questions_order']
+        param = exam['randomize_questions_order']
         self.randomize_questions_order = param
 
 
@@ -315,24 +297,27 @@ class Exam:
     def show(self):
         """
         Display the exam properties
+
+        TODO: split into multiple functions
         """
         questions = self.questions
-        print(questions)
         if questions:
             text_questions = ["({nb_points}) {type}: {text}"\
-                .format(nb_points=q['parameters']['nb_points'],
+                .format(nb_points=q['nb_points'],
                         type=q['type'],
                         text=q['text']) \
                             for q in questions]
 
-        text_questions = "\n\t".join(text_questions)
+            text_questions = "\n\t".join(text_questions)
+        else:
+            text_questions = "No question registered"
+
         text = "id: {id}\n" \
                "title: {title}\n" \
-               "description: {description}\n" \
-               "parameters\n" \
-               "\trandomize_questions_order: {randomize_questions_order}\n" \
-               "\tauto_rebase_grade: {auto_rebase_grade}\n" \
-               "\tgrade_base: {grade_base}\n" \
+               "description: {description}\n\n" \
+               "randomize_questions_order: {randomize_questions_order}\n" \
+               "auto_rebase_grade: {auto_rebase_grade}\n" \
+               "grade_base: {grade_base}\n\n" \
                "questions\n" \
                "\t{text_questions}" \
                .format(
@@ -373,16 +358,6 @@ class Question:
 
     They can be dealt independantly (of exams) or be called in the creation
     of an exam. The answers are called in the creation of a question.
-
-    Methods:
-        create_answer
-        get_exportable
-        save_new_to_db
-        set_parameters_from_input_extra
-        set_parameters_from_input_main
-        load_question
-        extract_question
-        set_properties_from_existing
     """
     def __init__(self):
         self._id = ''
@@ -428,14 +403,12 @@ class Question:
             'text': self.text,
             'type': self.type,
             'keywords': self.keywords,
-            'parameters': {
-                'use_question': self.use_question,
-                'nb_points': self.nb_points,
-                'difficulty': self.difficulty,
-                'notif_correct_answers': self.notif_correct_answers,
-                'notif_num_exact_answers': self.notif_num_exact_answers,
-                'randomize_answers_order': self.randomize_answers_order,
-            },
+            'use_question': self.use_question,
+            'nb_points': self.nb_points,
+            'difficulty': self.difficulty,
+            'notif_correct_answers': self.notif_correct_answers,
+            'notif_num_exact_answers': self.notif_num_exact_answers,
+            'randomize_answers_order': self.randomize_answers_order,
             'answers': self.answers,
         }
         return data_export
@@ -517,11 +490,11 @@ class Question:
         self.randomize_answers_order = cast(self.randomize_answers_order, bool)
 
 
-    def set_parameters_from_input_main(self):
+    def create_question(self):
         """
-        Set the question necessary informations
+        Create question
 
-        These parameters can not have a default value
+        Some parameters are add with their default value
 
         Notes:
             text: string
@@ -542,39 +515,38 @@ class Question:
         self.text = question['text']
         self.type = question['type']
         self.keywords = question['keywords']
-        self.use_question = \
-            question['parameters']['use_question']
-        self.nb_points = \
-            question['parameters']['nb_points']
-        self.difficulty = \
-            question['parameters']['difficulty']
-        self.notif_correct_answers = \
-            question['parameters']['notif_correct_answers']
-        self.notif_num_exact_answers = \
-            question['parameters']['notif_num_exact_answers']
-        self.randomize_answers_order = \
-            question['parameters']['randomize_answers_order']
+        self.use_question = question['use_question']
+        self.nb_points = question['nb_points']
+        self.difficulty = question['difficulty']
+        self.notif_correct_answers = question['notif_correct_answers']
+        self.notif_num_exact_answers = question['notif_num_exact_answers']
+        self.randomize_answers_order = question['randomize_answers_order']
         self.answers = question['answers']
 
 
     def show(self):
         """
         Display the question properties
+
+        TODO: split into multiple functions
         """
         answers = self.answers
-        text_answers = ["{}".format(ans) for ans in answers]
-        text_answers = "\n\t".join(text_answers)
+        if answers:
+            text_answers = ["{}".format(ans) for ans in answers]
+            text_answers = "\n\t".join(text_answers)
+        else:
+            text_answers = "No answer registered"
+
         text = "id: {id}\n" \
                "text: {text}\n" \
                "type: {type}\n" \
-               "keywords: {keywords}\n" \
-               "parameters\n" \
-               "\tuse_question: {use_question}\n" \
-               "\tnb_points: {nb_points}\n" \
-               "\tdifficulty: {difficulty}\n" \
-               "\tnotif_correct_answers: {notif_correct_answers}\n" \
-               "\tnotif_num_exact_answers: {notif_num_exact_answers}\n" \
-               "\trandomize_answers_order: {randomize_answers_order}\n" \
+               "keywords: {keywords}\n\n" \
+               "use_question: {use_question}\n" \
+               "nb_points: {nb_points}\n" \
+               "difficulty: {difficulty}\n" \
+               "notif_correct_answers: {notif_correct_answers}\n" \
+               "notif_num_exact_answers: {notif_num_exact_answers}\n" \
+               "randomize_answers_order: {randomize_answers_order}\n\n" \
                "answers\n" \
                "\t{text_answers}" \
                .format(
