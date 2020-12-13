@@ -182,19 +182,19 @@ class Exam:
         Returns:
             void.
         """
-        exam_data = funcs.retrieve_sample_from_table(id_exam, __PATH_EXAMS__)
-        self.set_exam_from_existing(exam_data)
+        exam = funcs.retrieve_sample_from_table(id_exam, __PATH_EXAMS__)
+        self.set_exam_from_existing(exam)
 
 
-    def set_exam_from_existing(self, exam_data):
+    def set_exam_from_existing(self, exam):
         """
         Set exam properties and questions (wt answers)
 
         Returns:
             Void
         """
-        self.set_properties_from_existing_all(exam_data)
-        self.questions = exam_data['questions']
+        self.set_properties_from_existing_all(exam)
+        self.questions = exam['questions']
 
 
     def save_new_to_db(self):
@@ -220,9 +220,9 @@ class Exam:
         append_to_file(exam_dump, __PATH_EXAMS__)
 
 
-    def set_auto_rebase_grade_from_existing(self, exam_data):
+    def set_auto_rebase_grade_from_existing(self, exam):
         """ Load auto_rebase_grade parameter from existing exam """
-        param = exam_data['parameters']['auto_rebase_grade']
+        param = exam['parameters']['auto_rebase_grade']
         self.auto_rebase_grade = param
 
     def set_auto_rebase_grade_from_input(self):
@@ -232,18 +232,18 @@ class Exam:
         self.auto_rebase_grade = casted_auto_rebase
 
 
-    def set_description_from_existing(self, exam_data):
+    def set_description_from_existing(self, exam):
         """ Load description from existing exam """
-        self.description = exam_data['description']
+        self.description = exam['description']
 
     def set_description_from_input(self):
         """ Set description property """
         self.description = get_input("Enter the exam description")
 
 
-    def set_grade_base_from_existing(self, exam_data):
+    def set_grade_base_from_existing(self, exam):
         """ Load grade_base parameter from existing exam """
-        param = exam_data['parameters']['grade_base']
+        param = exam['parameters']['grade_base']
         self.grade_base = param
 
 
@@ -254,19 +254,19 @@ class Exam:
         self.grade_base = casted_grade_base
 
 
-    def set_id_from_existing(self, exam_data):
+    def set_id_from_existing(self, exam):
         """ Load id from existing exam """
-        self._id = exam_data['id']
+        self._id = exam['id']
 
 
-    def set_properties_from_existing_all(self, exam_data):
+    def set_properties_from_existing_all(self, exam):
         """ Set the properties from an existing exam """
-        self.set_id_from_existing(exam_data)
-        self.set_title_from_existing(exam_data)
-        self.set_description_from_existing(exam_data)
-        self.set_randomize_questions_order_from_existing(exam_data)
-        self.set_auto_rebase_grade_from_existing(exam_data)
-        self.set_grade_base_from_existing(exam_data)
+        self.set_id_from_existing(exam)
+        self.set_title_from_existing(exam)
+        self.set_description_from_existing(exam)
+        self.set_randomize_questions_order_from_existing(exam)
+        self.set_auto_rebase_grade_from_existing(exam)
+        self.set_grade_base_from_existing(exam)
 
     def set_properties_from_input_extra(self):
         """
@@ -284,9 +284,9 @@ class Exam:
         self.set_description_from_input()
 
 
-    def set_randomize_questions_order_from_existing(self, exam_data):
+    def set_randomize_questions_order_from_existing(self, exam):
         """ Load randomize_questions_order parameter from existing exam """
-        param = exam_data['parameters']['randomize_questions_order']
+        param = exam['parameters']['randomize_questions_order']
         self.randomize_questions_order = param
 
     def set_randomize_questions_order_from_input(self):
@@ -296,9 +296,9 @@ class Exam:
         self.randomize_questions_order = casted_randomize_order
 
 
-    def set_title_from_existing(self, exam_data):
+    def set_title_from_existing(self, exam):
         """ Load title from existing exam """
-        self.title = exam_data['title']
+        self.title = exam['title']
 
     def set_title_from_input(self):
         """ Set title property """
@@ -478,30 +478,30 @@ class Question:
         Returns:
             void.
         """
-        question_data = funcs.retrieve_sample_from_table(id_question,
+        question = funcs.retrieve_sample_from_table(id_question,
                                                          __PATH_QUESTIONS__)
-        self.set_question_from_existing(question_data)
+        self.set_question_from_existing(question)
 
 
-    def set_question_from_existing(self, question_data):
+    def set_question_from_existing(self, question):
         """ Set properties from an existing question """
-        self._id = question_data['id']
-        self.text = question_data['text']
-        self.type = question_data['type']
-        self.keywords = question_data['keywords']
+        self._id = question['id']
+        self.text = question['text']
+        self.type = question['type']
+        self.keywords = question['keywords']
         self.use_question = \
-            question_data['parameters']['use_question']
+            question['parameters']['use_question']
         self.nb_points = \
-            question_data['parameters']['nb_points']
+            question['parameters']['nb_points']
         self.difficulty = \
-            question_data['parameters']['difficulty']
+            question['parameters']['difficulty']
         self.notif_correct_answers = \
-            question_data['parameters']['notif_correct_answers']
+            question['parameters']['notif_correct_answers']
         self.notif_num_exact_answers = \
-            question_data['parameters']['notif_num_exact_answers']
+            question['parameters']['notif_num_exact_answers']
         self.randomize_answers_order = \
-            question_data['parameters']['randomize_answers_order']
-        self.answers = question_data['answers']
+            question['parameters']['randomize_answers_order']
+        self.answers = question['answers']
 
 
 
