@@ -175,6 +175,20 @@ def load_table(f_path):
     return table
 
 
+def show_table(table, fields):
+    """
+    Display a table
+
+    Implementation is currently for command-line use
+
+    Args:
+        fields: list of fields to display
+    """
+    for row in table:
+        text = [(key, row[key]) for key in fields]
+        print(*text)
+
+
 def retrieve_sample_from_table(id_sample, path_table):
     """
     Retrieve unique sample from table given its id

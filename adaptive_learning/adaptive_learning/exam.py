@@ -305,6 +305,13 @@ class Exam:
         self.title = get_input("Enter the exam title")
 
 
+    @staticmethod
+    def show_list_of_exams():
+        """ Display the list of exams stored in db """
+        table = load_table(f_path=__PATH_EXAMS__)
+        funcs.show_table(table, ['title', 'id'])
+
+
     def update(self, id_exam):
         """
         Update an existing exam
@@ -352,6 +359,10 @@ class Question:
         self.answers = []
 
 
+    def __str__(self):
+        return "text: {text}, id: {id}".format(text=self.text, id=self._id)
+
+
     def add_answer(self):
         """
         Create and add an answer to the current question
@@ -386,6 +397,21 @@ class Question:
             'answers': self.answers,
         }
         return data_export
+
+
+    def load_question(self, id_question):
+        """
+        Load a specific question from the questions library
+
+        Modifies the properties of the current question to correspond to the
+        selected question.
+
+        Returns:
+            void.
+        """
+        question = funcs.retrieve_sample_from_table(id_question,
+                                                         __PATH_QUESTIONS__)
+        self.set_question_from_existing(question)
 
 
     def save_new_to_db(self):
@@ -468,21 +494,6 @@ class Question:
         self.keywords = get_input("Enter keywords, subject, or categories")
 
 
-    def load_question(self, id_question):
-        """
-        Load a specific question from the questions library
-
-        Modifies the properties of the current question to correspond to the
-        selected question.
-
-        Returns:
-            void.
-        """
-        question = funcs.retrieve_sample_from_table(id_question,
-                                                         __PATH_QUESTIONS__)
-        self.set_question_from_existing(question)
-
-
     def set_question_from_existing(self, question):
         """ Set properties from an existing question """
         self._id = question['id']
@@ -504,21 +515,67 @@ class Question:
         self.answers = question['answers']
 
 
+    def show(self):
+        """
+        Display the question properties
+
+        TODO: make a list comprehension to add answers
+        """
+        answers = self.answers
+        text_answers = ["{}".format(ans) for ans in answers]
+        text_answers = "\n\t".join(text_answers)
+        text = "id: {id}\n" \
+               "text: {text}\n" \
+               "type: {type}\n" \
+               "keywords: {keywords}\n" \
+               "parameters\n" \
+               "\tuse_question: {use_question}\n" \
+               "\tnb_points: {nb_points}\n" \
+               "\tdifficulty: {difficulty}\n" \
+               "\tnotif_correct_answers: {notif_correct_answers}\n" \
+               "\tnotif_num_exact_answers: {notif_num_exact_answers}\n" \
+               "\trandomize_answers_order: {randomize_answers_order}\n" \
+               "answers\n" \
+               "\t{text_answers}" \
+               .format(
+                    id=self._id,
+                    text=self.text,
+                    type=self.type,
+                    keywords=self.keywords,
+                    use_question=self.use_question,
+                    nb_points=self.nb_points,
+                    difficulty=self.difficulty,
+                    notif_correct_answers=self.notif_correct_answers,
+                    notif_num_exact_answers=self.notif_num_exact_answers,
+                    randomize_answers_order=self.randomize_answers_order,
+                    text_answers=text_answers,
+                )
+        print(text)
+
+
+
+
+    @staticmethod
+    def show_list_of_questions():
+        """ Display the list of questions stored in db """
+        table = load_table(f_path=__PATH_QUESTIONS__)
+        funcs.show_table(table, ['text', 'id'])
+
+
+
 
 if __name__ == "__main__":
-    # Test exam
-    # exam = Exam()
-    # exam.load_exam("f67d625b-b569-487e-91fc-0ac14ca0bc81")
-    # print('end')
-
-    # Test question
-    # question1 = Question()
-    # question1.set_parameters_from_input_main()
-    # question1.save_new_to_db()
-
     # Test answer
-    question2 = Question()
-    question2.load_question('9b693fe2-6732-4daf-83a8-00ad25ceaadb')
-    question2.add_answer()
-    question2.add_answer()
-    print('end')
+    # question2 = Question()
+    # question2.load_question('9b693fe2-6732-4daf-83a8-00ad25ceaadb')
+    # question2.add_answer()
+    # question2.add_answer()
+
+    # Test displays
+    ## Display list of exams
+    # exam = Exam()
+    # exam.get_list_of_exams()
+
+    ## Display list of questions
+    question = Question()
+    question.show_list_of_questions()
