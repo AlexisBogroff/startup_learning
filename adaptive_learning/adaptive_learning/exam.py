@@ -196,16 +196,6 @@ class Exam:
             void.
         """
         exam = funcs.retrieve_sample_from_table(id_exam, __PATH_EXAMS__)
-        self.set_exam_from_existing(exam)
-
-
-    def set_exam_from_existing(self, exam):
-        """
-        Set exam properties and questions (wt answers)
-
-        Returns:
-            Void
-        """
         self.set_properties_from_existing_all(exam)
         self.questions = exam['questions']
 
@@ -327,11 +317,13 @@ class Exam:
         Display the exam properties
         """
         questions = self.questions
-        text_questions = ["({nb_points}) {type}: {text}"\
-            .format(nb_points=q['parameters']['nb_points'],
-                    type=q['type'],
-                    text=q['text']) \
-                        for q in questions]
+        print(questions)
+        if questions:
+            text_questions = ["({nb_points}) {type}: {text}"\
+                .format(nb_points=q['parameters']['nb_points'],
+                        type=q['type'],
+                        text=q['text']) \
+                            for q in questions]
 
         text_questions = "\n\t".join(text_questions)
         text = "id: {id}\n" \

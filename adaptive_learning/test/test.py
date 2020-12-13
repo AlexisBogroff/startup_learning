@@ -159,7 +159,7 @@ Tested functions:
     test_compute_students_similarity
 
 TODO: test_add_answer (QuestionTestCase)
-TODO: class AnswerTestCase
+TODO: test_add_question (ExamTestCase)
 """
 import unittest
 from unittest.mock import patch
@@ -416,42 +416,6 @@ class ExamTestCase(unittest.TestCase):
         obtained = self.exam._id
         expected = self.LOADED_EXAM['id']
         self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_set_exam_from_existing(self):
-        self.exam.set_exam_from_existing(self.LOADED_EXAM)
-        # Questions
-        self.assertEqual(
-            self.exam.questions,
-            self.LOADED_EXAM['questions'],
-        )
-        # Parameters
-        self.assertEqual(
-            self.exam._id,
-            self.LOADED_EXAM['id'],
-        )
-        self.assertEqual(
-            self.exam.title,
-            self.LOADED_EXAM['title'],
-        )
-        self.assertEqual(
-            self.exam.description,
-            self.LOADED_EXAM['description'],
-        )
-        self.assertEqual(
-            self.exam.randomize_questions_order,
-            self.LOADED_EXAM['parameters']['randomize_questions_order'],
-        )
-        self.assertEqual(
-            self.exam.auto_rebase_grade,
-            self.LOADED_EXAM['parameters']['auto_rebase_grade'],
-        )
-        self.assertEqual(
-            self.exam.grade_base,
-            self.LOADED_EXAM['parameters']['grade_base'],
-        )
         # Restore default parameters
         self.setUp()
 
