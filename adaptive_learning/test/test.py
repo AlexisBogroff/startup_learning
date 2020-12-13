@@ -157,11 +157,69 @@ Tested functions:
     test_algo_predict_student_similarity
 
     test_compute_students_similarity
+
+TODO: test_add_answer (QuestionTestCase)
+TODO: class AnswerTestCase
 """
 import unittest
 from unittest.mock import patch
 from adaptive_learning import exam, user, funcs
-from adaptive_learning.exam import Exam, Question
+from adaptive_learning.exam import Exam, Question, Answer
+
+
+class AnswerTestCase(unittest.TestCase):
+    """
+    Test the creation of an answer
+    """
+    def setUp(self):
+        self.answer = Answer()
+        self.DEFAULT_PROPERTIES = {
+            'text': '',
+            'is_correct': False,
+            'use_answer': True,
+        }
+
+
+    def test_get_exportable(self):
+        obtained = self.answer.get_exportable()
+        self.assertEqual(obtained, self.DEFAULT_PROPERTIES)
+
+
+    INPUTS_ANSWER = ('Debug answer', 'True', 'False')
+
+    @patch('builtins.input', side_effect=INPUTS_ANSWER)
+    def test_set_properties(self, mock_inputs):
+        self.answer.set_properties_from_input()
+        self.assertEqual(self.answer.text, 'Debug answer')
+        self.assertEqual(self.answer.is_correct, True)
+        self.assertEqual(self.answer.use_answer, False)
+        # Restore default parameters
+        self.setUp()
+
+
+    @patch('builtins.input', return_value='Debug answer')
+    def test_set_text_from_input(self, mock_input):
+        self.answer.set_text_from_input()
+        self.assertEqual(self.answer.text, 'Debug answer')
+        # Restore default parameters
+        self.setUp()
+
+
+    @patch('builtins.input', return_value='True')
+    def test_set_is_correct_from_input(self, mock_input):
+        self.answer.set_is_correct_from_input()
+        self.assertEqual(self.answer.is_correct, True)
+        # Restore default parameters
+        self.setUp()
+
+
+    @patch('builtins.input', return_value='False')
+    def test_set_use_answer_from_input(self, mock_input):
+        self.answer.set_use_answer_from_input()
+        self.assertEqual(self.answer.use_answer, False)
+        # Restore default parameters
+        self.setUp()
+
 
 
 class ExamTestCase(unittest.TestCase):
@@ -256,7 +314,7 @@ class ExamTestCase(unittest.TestCase):
 
 
     def test_generate_position_id_when_no_questions(self):
-        obtained = self.exam.generate_position_id()
+        obtained = funcs.generate_position_id(self.exam.questions)
         expected = 1
         self.assertEqual(obtained, expected)
 
@@ -265,7 +323,7 @@ class ExamTestCase(unittest.TestCase):
         self.exam.questions.append({'dummy question 1'})
         self.exam.questions.append({'dummy question 2'})
 
-        obtained = self.exam.generate_position_id()
+        obtained = funcs.generate_position_id(self.exam.questions)
         expected = 3
         self.assertEqual(obtained, expected)
 
@@ -654,19 +712,6 @@ class QuestionTestCase(unittest.TestCase):
             self.question.answers,
             self.DEFAULT_PROPERTIES['answers'],
         )
-
-
-    INPUTS_ANSWER = ('txt_answer_1', 'True', 'True')
-
-    @patch('builtins.input', side_effect=INPUTS_ANSWER)
-    def test_create_answer(self, mock_inputs):
-        expected_answer = {
-            'text': 'txt_answer_1',
-            'is_correct': 'True',
-            'use_answer': 'True',
-        }
-        obtained_answer = exam.create_answer()
-        self.assertEqual(expected_answer, obtained_answer)
 
 
     def test_get_exportable(self):

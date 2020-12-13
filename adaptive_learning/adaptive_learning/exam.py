@@ -24,20 +24,61 @@ __PATH_QUESTIONS__ = "/Users/Pro/git_repositories/"\
     "data/table_questions.txt"
 
 
-def create_answer():
+class Answer:
     """
-    Create an answer. Add to answers list.
-
-    Returns:
-        void.
-
-    TODO: create a class Answer (with default use_answer=True)
+    Class to manage answers
     """
-    answer = {}
-    answer['text'] = get_input("Enter the answer text")
-    answer['is_correct'] = get_input("Is the answer correct? (True/False)")
-    answer['use_answer'] = get_input("Do use this answer? (True/False)")
-    return answer
+    def __init__(self):
+        self.text = ''
+        self.is_correct = False
+        self.use_answer = True
+
+
+    def set_properties_from_input(self):
+        """
+        Create an answer
+
+        Returns:
+            None, it modifies the answer properties.
+        """
+        self.set_text_from_input()
+        self.set_is_correct_from_input()
+        self.set_use_answer_from_input()
+
+
+    def set_text_from_input(self):
+        """ Set is_correct property """
+        self.text = get_input("Enter the answer text")
+
+
+    def set_is_correct_from_input(self):
+        """ Set is_correct property """
+        is_correct = get_input("Is the answer correct? (True/False)")
+        casted_is_correct = cast(is_correct, bool)
+        self.is_correct = casted_is_correct
+
+
+    def set_use_answer_from_input(self):
+        """ Set use_answer property """
+        use_answer = get_input("Use this answer? (True/False)")
+        casted_use_answer = cast(use_answer, bool)
+        self.use_answer = casted_use_answer
+
+
+    def get_exportable(self):
+        """
+        Stores the answer properties in a dictionary
+
+        Returns:
+            the data in dic format, ready to be added to the list of answers
+            of a question.
+        """
+        data_export = {
+            'text': self.text,
+            'is_correct': self.is_correct,
+            'use_answer': self.use_answer,
+        }
+        return data_export
 
 
 
@@ -105,7 +146,8 @@ class Exam:
         question = Question()
         question.set_parameters_from_input_main()
         question_export = question.get_exportable()
-        question_export['position_id'] = self.generate_position_id()
+        question_export['position_id'] = \
+            funcs.generate_position_id(self.questions)
         self.questions.append(question_export)
 
 
@@ -128,18 +170,6 @@ class Exam:
             'questions': self.questions,
         }
         return data_export
-
-
-    def generate_position_id(self):
-        """
-        Generate question id based on its relative position
-
-        Id is defined as the number of the question. Since the question is
-        added last, it is an incremented id.
-        """
-        num_of_questions = len(self.questions)
-        question_id = num_of_questions + 1
-        return question_id
 
 
     def load_exam(self, id_exam):
@@ -322,6 +352,17 @@ class Question:
         self.answers = []
 
 
+    def add_answer(self):
+        """
+        Create and add an answer to the current question
+        """
+        answer = Answer()
+        answer.set_properties_from_input()
+        answer_export = answer.get_exportable()
+        answer_export['position_id'] = funcs.generate_position_id(self.answers)
+        self.answers.append(answer_export)
+
+
     def get_exportable(self):
         """
         Stores the question properties in a dictionary
@@ -469,9 +510,15 @@ if __name__ == "__main__":
     # exam = Exam()
     # exam.load_exam("f67d625b-b569-487e-91fc-0ac14ca0bc81")
     # print('end')
+
+    # Test question
     # question1 = Question()
     # question1.set_parameters_from_input_main()
     # question1.save_new_to_db()
+
+    # Test answer
     question2 = Question()
     question2.load_question('9b693fe2-6732-4daf-83a8-00ad25ceaadb')
+    question2.add_answer()
+    question2.add_answer()
     print('end')

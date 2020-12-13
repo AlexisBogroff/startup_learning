@@ -85,6 +85,24 @@ def extract_data(id, data):
     return samples
 
 
+def generate_position_id(table):
+    """
+    Generate element id based on its relative position
+
+    Id is defined as the number of existing elements. Since the new element
+    is added last, it has an incremented id.
+
+    Args:
+        table (list)
+
+    Returns:
+        id (int)
+    """
+    num_of_elements = len(table)
+    new_id = num_of_elements + 1
+    return new_id
+
+
 def generate_uuid(type=str):
     """ Generate unique identifier """
     if type is str:
