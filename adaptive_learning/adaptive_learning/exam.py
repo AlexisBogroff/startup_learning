@@ -277,23 +277,3 @@ class Exam:
             updated version of the exam.
         """
         raise NotImplementedError
-
-
-
-if __name__ == "__main__":
-    # Test answer
-    # question2 = Question()
-    # question2.load_question('9b693fe2-6732-4daf-83a8-00ad25ceaadb')
-    # question2.add_answer()
-    # question2.add_answer()
-
-    # Test displays
-    ## Display list of exams
-    # exam = Exam()
-    # exam.get_list_of_exams()
-
-    ## Display list of questions
-    question = Question()
-    question.show_list_of_questions()
-
-
