@@ -164,7 +164,9 @@ TODO: test_add_question (ExamTestCase)
 import unittest
 from unittest.mock import patch
 from adaptive_learning import exam, user, funcs
-from adaptive_learning.exam import Exam, Question, Answer
+from adaptive_learning.exam import Exam
+from adaptive_learning.question import Question
+from adaptive_learning.answer import Answer
 
 
 class AnswerTestCase(unittest.TestCase):
