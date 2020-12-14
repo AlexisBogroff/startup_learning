@@ -106,14 +106,11 @@ class Exam:
     """
     def __init__(self):
         self._id = ''
-        # Main parameters
         self.title = ""
         self.description = ""
-        # Other parameters
         self.randomize_questions_order = True
         self.auto_rebase_grade = True
         self.grade_base = 20
-        # Questions
         self.questions = []
 
 
@@ -361,18 +358,15 @@ class Question:
     """
     def __init__(self):
         self._id = ''
-        # Main parameters
         self.text = ''
         self.type = ''
         self.keywords = ''  # TODO: transform into a list rather than a string
-        # Extra parameters (with default value)
         self.use_question = True
         self.nb_points = 1.
         self.difficulty = 1
         self.notif_correct_answers = True
         self.notif_num_exact_answers = False
         self.randomize_answers_order = True
-        # Answers
         self.answers = []
 
 
