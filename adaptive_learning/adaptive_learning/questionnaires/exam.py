@@ -1,9 +1,9 @@
 """
 Manage exams
-
-TODO: create a class db for functions interacting with tables
-and extracting data (e.g. extract_question)
 """
+#TODO: create a class db for functions interacting with tables
+# and extracting data (e.g. extract_question)
+
 from adaptive_learning.questionnaires import funcs
 from adaptive_learning.questionnaires.funcs import cast, get_input
 from adaptive_learning.questionnaires.question import Question
@@ -32,11 +32,9 @@ class Exam:
         level. The structure of the dump is different and may lead to useless
         complexity and confusion, since its secondary parameters are stored in
         a list called 'parameters'.
-
-    TODO: add method to save questions of the exam to the library questions.json
     """
     def __init__(self):
-        self._id = ''
+        self.id = funcs.generate_uuid()
         self.title = ""
         self.description = ""
         self.randomize_questions_order = True
@@ -46,31 +44,17 @@ class Exam:
 
 
     def __str__(self):
-        return "title: {title}, id: {id}".format(title=self.title, id=self._id)
+        return "title: {title}, id: {id}".format(title=self.title, id=self.id)
 
 
-    def add_question(self, method='create', load_id=None):
+    def add_question(self, id_question):
         """
-        Choose add method: create or load
-        """
-        if method == 'create':
-            self._create_question()
-        elif method == 'load':
-            q = Question()
-            q.load_question(load_id)
-            q_export = q.get_exportable()
-            self.questions.append(q_export)
-
-
-    def _create_question(self):
-        """
-        Create and add a question to the exam list of questions property
+        Add existing question to the exam
         """
         question = Question()
-        question.create_question()
+        question.load_question(id_question)
         question_export = question.get_exportable()
-        question_export['position_id'] = \
-            funcs.generate_position_id(self.questions)
+        question_export['position'] = funcs.generate_position_id(self.questions)
         self.questions.append(question_export)
 
 
@@ -82,7 +66,7 @@ class Exam:
             the data in dic format, ready to export in json file
         """
         data_export = {
-            'id': self._id,
+            'id': self.id,
             'title': self.title,
             'description': self.description,
             'randomize_questions_order': self.randomize_questions_order,
@@ -108,16 +92,12 @@ class Exam:
         self.questions = exam['questions']
 
 
-    def save_new_to_db(self):
+    def save(self):
         """
         Stores the exam in database
 
         It inserts the new content at the end of the file,
         on a new line, and takes a single line (each in json like format)
-
-        Method should be executed one time only, when finished with the creation
-        of the exam. Otherwise, the exam would be stored (with a new id) each
-        time save method would be called.
 
         Notes:
             To increase performances, each exam is stored in json format,
@@ -125,8 +105,9 @@ class Exam:
             This enables to store new exams by appending them in the first empty
             rows, without the need to read and parse the whole file
             (which would be the case with a json file).
+
+            A method should contol that no duplicates can be added to the db
         """
-        self._id = funcs.generate_uuid()
         exam_dump = self.get_exportable()
         funcs.append_to_file(exam_dump, __PATH_EXAMS__)
 
@@ -169,7 +150,7 @@ class Exam:
 
     def set_id_from_existing(self, exam):
         """ Load id from existing exam """
-        self._id = exam['id']
+        self.id = exam['id']
 
 
     def set_properties_from_existing_all(self, exam):
@@ -225,9 +206,8 @@ class Exam:
     def show(self):
         """
         Display the exam properties
-
-        TODO: split into multiple functions
         """
+        # TODO: split into multiple functions
         questions = self.questions
         if questions:
             text_questions = ["({nb_points}) {type}: {text}"\
@@ -249,7 +229,7 @@ class Exam:
                "questions\n" \
                "\t{text_questions}" \
                .format(
-                    id=self._id,
+                    id=self.id,
                     title=self.title,
                     description=self.description,
                     randomize_questions_order=self.randomize_questions_order,
@@ -276,4 +256,5 @@ class Exam:
             corresponding row number. Then delete this row. Finally, add the
             updated version of the exam.
         """
+        # TODO: Implement
         raise NotImplementedError

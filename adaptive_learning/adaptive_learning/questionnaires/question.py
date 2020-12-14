@@ -18,9 +18,9 @@ class Question:
     of an exam. Answers however are only called within a question.
     """
     def __init__(self):
-        self._id = ''
-        self.text = ''
+        self.id = funcs.generate_uuid()
         self.type = ''
+        self.text = ''
         self.keywords = ''  # TODO: transform into a list
         self.use_question = True
         self.nb_points = 1.
@@ -32,7 +32,7 @@ class Question:
 
 
     def __str__(self):
-        return "text: {text}, id: {id}".format(text=self.text, id=self._id)
+        return "text: {text}, id: {id}".format(text=self.text, id=self.id)
 
 
     def add_answer(self):
@@ -54,9 +54,9 @@ class Question:
             the data in dic format, ready to export in json file
         """
         data_export = {
-            'id': self._id,
-            'text': self.text,
+            'id': self.id,
             'type': self.type,
+            'text': self.text,
             'keywords': self.keywords,
             'use_question': self.use_question,
             'nb_points': self.nb_points,
@@ -84,7 +84,7 @@ class Question:
         self.set_question_from_existing(question)
 
 
-    def save_new_to_db(self):
+    def save(self):
         """
         Stores the question in database
 
@@ -102,7 +102,6 @@ class Question:
             empty rows, without the need to read and parse the whole file
             (which would be the case with a json file).
         """
-        self._id = funcs.generate_uuid()
         question_dump = self.get_exportable()
         funcs.append_to_file(question_dump, __PATH_QUESTIONS__)
 
@@ -145,11 +144,11 @@ class Question:
         self.randomize_answers_order = cast(self.randomize_answers_order, bool)
 
 
-    def create_question(self):
+    def create(self):
         """
         Create question
 
-        Some parameters are add with their default value
+        Some parameters are added with their default value
 
         Notes:
             text: string
@@ -159,16 +158,16 @@ class Question:
             - develop (developpement answer that can hardly be auto-corrected)
             keywords: string with comma separated words
         """
-        self.text = get_input("Enter the question text")
         self.type = get_input("Enter the question type")
+        self.text = get_input("Enter the question text")
         self.keywords = get_input("Enter keywords, subject, or categories")
 
 
     def set_question_from_existing(self, question):
         """ Set properties from an existing question """
-        self._id = question['id']
-        self.text = question['text']
+        self.id = question['id']
         self.type = question['type']
+        self.text = question['text']
         self.keywords = question['keywords']
         self.use_question = question['use_question']
         self.nb_points = question['nb_points']
@@ -182,9 +181,8 @@ class Question:
     def show(self):
         """
         Display the question properties
-
-        TODO: split into multiple functions
         """
+        # TODO: split into multiple functions
         answers = self.answers
         if answers:
             text_answers = ["{}".format(ans) for ans in answers]
@@ -205,9 +203,9 @@ class Question:
                "answers\n" \
                "\t{text_answers}" \
                .format(
-                    id=self._id,
-                    text=self.text,
+                    id=self.id,
                     type=self.type,
+                    text=self.text,
                     keywords=self.keywords,
                     use_question=self.use_question,
                     nb_points=self.nb_points,
@@ -233,7 +231,6 @@ class MCQ(Question):
 
     Automatic grading system
     """
-    pass
 
 
 
@@ -243,7 +240,6 @@ class Dev(Question):
 
     Teacher must set the grade
     """
-    pass
 
 
 
@@ -253,7 +249,6 @@ class Exact(Question):
 
     Automatic grading system
     """
-    pass
 
 
 
@@ -263,7 +258,6 @@ class Approx(Question):
 
     Automatic grading system
     """
-    pass
 
 
 
@@ -273,4 +267,3 @@ class Code(Question):
 
     Semi-automatic grading system
     """
-    pass

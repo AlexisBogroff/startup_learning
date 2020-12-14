@@ -260,7 +260,8 @@ class ExamTestCase(unittest.TestCase):
         # Controls that:
         # - object is properly instanciated
         # - properties have the expected default values
-        self.assertEqual(self.exam._id, self.DEFAULT_PROPERTIES['id'])
+        self.assertEqual(type(self.exam.id), type(self.DEFAULT_PROPERTIES['id']))
+        self.assertEqual(len(self.exam.id), 36)
         self.assertEqual(self.exam.title, self.DEFAULT_PROPERTIES['title'])
         self.assertEqual(self.exam.description,
                          self.DEFAULT_PROPERTIES['description'])
@@ -272,35 +273,6 @@ class ExamTestCase(unittest.TestCase):
                          self.DEFAULT_PROPERTIES['grade_base'])
         self.assertEqual(self.exam.questions,
                          self.DEFAULT_PROPERTIES['questions'])
-
-
-    INPUTS_NEW_QUESTION = ('New question',
-                           'mcq',
-                           'Programming, VBA, Introduction',
-                           )
-
-    @patch('builtins.input', side_effect=INPUTS_NEW_QUESTION)
-    def test_create_question(self, mock_inputs):
-        expected_questions_data = [
-            {
-                'id': '',  # it has an ussid only once dumped
-                'text': 'New question',
-                'type': 'mcq',
-                'keywords': 'Programming, VBA, Introduction',
-                'use_question': True,
-                'nb_points': 1.,
-                'difficulty': 1,
-                'notif_correct_answers': True,
-                'notif_num_exact_answers': False,
-                'randomize_answers_order': True,
-                'answers': [],
-                'position_id': 1,
-            }
-        ]
-        self.exam._create_question()
-        self.assertEqual(self.exam.questions, expected_questions_data)
-        # Restore default parameters
-        self.setUp()
 
 
     def test_default_properties(self):
@@ -334,7 +306,8 @@ class ExamTestCase(unittest.TestCase):
         # - the corresponding values are correctly matching
         expected = self.DEFAULT_PROPERTIES
         obtained = self.exam.get_exportable()
-        self.assertEqual(obtained['id'], expected['id'])
+        self.assertEqual(type(obtained['id']), type(expected['id']))
+        self.assertEqual(len(obtained['id']), 36)
         self.assertEqual(obtained['title'], expected['title'])
         self.assertEqual(obtained['description'], expected['description'])
         self.assertEqual(obtained['randomize_questions_order'],
@@ -408,7 +381,7 @@ class ExamTestCase(unittest.TestCase):
 
     def test_set_id_from_existing(self):
         self.exam.set_id_from_existing(self.LOADED_EXAM)
-        obtained = self.exam._id
+        obtained = self.exam.id
         expected = self.LOADED_EXAM['id']
         self.assertEqual(obtained, expected)
         # Restore default parameters
@@ -417,7 +390,7 @@ class ExamTestCase(unittest.TestCase):
 
     def test_set_properties_from_existing_all(self):
         self.exam.set_properties_from_existing_all(self.LOADED_EXAM)
-        self.assertEqual(self.exam._id, 'id_foo')
+        self.assertEqual(self.exam.id, 'id_foo')
         self.assertEqual(self.exam.title, 'title_foo')
         self.assertEqual(self.exam.description, "desc foo")
         self.assertEqual(self.exam.randomize_questions_order, False)
@@ -624,9 +597,14 @@ class QuestionTestCase(unittest.TestCase):
 
     def test__init(self):
         self.assertEqual(
-            self.question._id,
-            self.DEFAULT_PROPERTIES['id'],
+            type(self.question.id),
+            type(self.DEFAULT_PROPERTIES['id']),
         )
+        self.assertEqual(
+            len(self.question.id),
+            36,
+        )
+
         self.assertEqual(
             self.question.text,
             self.DEFAULT_PROPERTIES['text'],
@@ -688,6 +666,35 @@ class QuestionTestCase(unittest.TestCase):
         self.setUp()
 
 
+    INPUTS_NEW_QUESTION = ('mcq',
+                           'New question',
+                           'Programming, VBA, Introduction')
+
+    @patch('builtins.input', side_effect=INPUTS_NEW_QUESTION)
+    def test_create(self, mock_inputs):
+        expected = {
+            'id': 'uuid4_string',
+            'type': 'mcq',
+            'text': 'New question',
+            'keywords': 'Programming, VBA, Introduction',
+            'use_question': self.DEFAULT_PROPERTIES['use_question'],
+            'nb_points': self.DEFAULT_PROPERTIES['nb_points'],
+            'difficulty': self.DEFAULT_PROPERTIES['difficulty'],
+            'notif_correct_answers': self.DEFAULT_PROPERTIES['notif_correct_answers'],
+            'notif_num_exact_answers': self.DEFAULT_PROPERTIES['notif_num_exact_answers'],
+            'randomize_answers_order': self.DEFAULT_PROPERTIES['randomize_answers_order'],
+            'answers': [],
+        }
+        self.question.create()
+        obtained = self.question.get_exportable()
+        # Delete id since uuid is different at each call
+        del expected['id']
+        del obtained['id']
+        self.assertEqual(obtained, expected)
+        # Restore default parameters
+        self.setUp()
+
+
     def test_get_exportable(self):
         # Controls that:
         # - it returns a dictionary with the expected structure
@@ -695,13 +702,16 @@ class QuestionTestCase(unittest.TestCase):
         # - the corresponding values are correctly matching
         expected = self.DEFAULT_PROPERTIES
         obtained = self.question.get_exportable()
+        # Delete id since uuid is different at each call
+        del expected['id']
+        del obtained['id']
         self.assertEqual(obtained, expected)
 
 
     def test_set_question_from_existing(self):
         self.question.set_question_from_existing(self.QUESTION_LOADED)
         self.assertEqual(
-            self.question._id,
+            self.question.id,
             self.QUESTION_LOADED['id'],
         )
         self.assertEqual(
