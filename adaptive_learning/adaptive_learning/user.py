@@ -69,3 +69,55 @@ def student_is_from_this_school(student_mail, school_name):
     student_mail_domain = extract_mail_domain(student_mail)
     school_mail_domain = get_school_mail_domain(school_name)
     return student_mail_domain == school_mail_domain
+
+
+
+class User:
+    """
+    Manage user
+    """
+    def __init__(self, first_name, last_name):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.mail = ''
+
+    def __str__(self):
+        return "{} {}: {}".format(self.first_name, self.last_name, self.mail)
+
+
+
+class Teacher(User):
+    """
+    Manage teacher
+    """
+    def __init__(self, first_name, last_name):
+        User.__init__(self, first_name, last_name)
+
+
+
+class Student(User):
+    """
+    Manage student
+    """
+    pass
+
+
+class StudentCertified(Student):
+    """
+    Manage student that is logged through its school student id
+    """
+    pass
+
+
+class StudentIndependent(Student):
+    """
+    Manage student that is not logged through its school
+    """
+    pass
+
+
+class Admin(User):
+    """
+    Manage admin
+    """
+    pass

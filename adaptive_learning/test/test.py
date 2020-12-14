@@ -163,10 +163,11 @@ TODO: test_add_question (ExamTestCase)
 """
 import unittest
 from unittest.mock import patch
-from adaptive_learning import exam, user, funcs
-from adaptive_learning.exam import Exam
-from adaptive_learning.question import Question
-from adaptive_learning.answer import Answer
+from adaptive_learning import user
+from adaptive_learning.questionnaires import exam, funcs
+from adaptive_learning.questionnaires.exam import Exam
+from adaptive_learning.questionnaires.question import Question
+from adaptive_learning.questionnaires.answer import Answer
 
 
 class AnswerTestCase(unittest.TestCase):
@@ -364,7 +365,7 @@ class ExamTestCase(unittest.TestCase):
             'title': ''
         },
     ]
-    @patch('adaptive_learning.funcs.load_table', return_value=TABLE_EXAMS_LONG)
+    @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EXAMS_LONG)
     def test_load_exam(self, mock_table):
         # Almost duplicate of test_retrieve_exam_from_table
         self.exam.load_exam(id_exam='c85779fd')
@@ -555,7 +556,7 @@ class FuncsTestCase(unittest.TestCase):
         {'title': '', 'id': 'c85779fd', 'questions': [...]},
         {'title': '', 'id': '327e93a3', 'questions': [...]},
     ]
-    @patch('adaptive_learning.funcs.load_table', return_value=TABLE_EXAMS_SHORT)
+    @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EXAMS_SHORT)
     def test_retrieve_sample_from_table(self, mock_table):
         obtained = funcs.retrieve_sample_from_table(id_sample='c85779fd',
                                                     path_table='')
@@ -564,7 +565,7 @@ class FuncsTestCase(unittest.TestCase):
 
 
     TABLE_EMPTY = []
-    @patch('adaptive_learning.funcs.load_table', return_value=TABLE_EMPTY)
+    @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EMPTY)
     def test_retrieve_sample_from_table_when_is_empty(self, mock_table):
         with self.assertRaises(ValueError) as context:
             funcs.retrieve_sample_from_table(id_sample='c85779fd',
@@ -576,7 +577,7 @@ class FuncsTestCase(unittest.TestCase):
         {'title': '', 'id': 'c85779fd', 'questions': [...]},
         {'title': '', 'id': 'c85779fd', 'questions': [...]},
     ]
-    @patch('adaptive_learning.funcs.load_table', return_value=TABLE_DUPLICATES)
+    @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_DUPLICATES)
     def test_retrieve_sample_from_table_when_duplicates(self, mock_table):
         with self.assertRaises(ValueError) as context:
             funcs.retrieve_sample_from_table(id_sample='c85779fd',

@@ -1,8 +1,8 @@
 """
 Manage answers
 """
-from adaptive_learning import funcs
-from adaptive_learning.funcs import cast, get_input
+from adaptive_learning.questionnaires import funcs
+from adaptive_learning.questionnaires.funcs import cast, get_input
 
 
 class Answer:

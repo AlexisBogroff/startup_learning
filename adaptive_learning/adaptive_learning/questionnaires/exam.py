@@ -4,9 +4,9 @@ Manage exams
 TODO: create a class db for functions interacting with tables
 and extracting data (e.g. extract_question)
 """
-from adaptive_learning import funcs
-from adaptive_learning.funcs import cast, get_input
-from adaptive_learning.question import Question
+from adaptive_learning.questionnaires import funcs
+from adaptive_learning.questionnaires.funcs import cast, get_input
+from adaptive_learning.questionnaires.question import Question
 
 __PATH_EXAMS__ = "/Users/Pro/git_repositories/"\
     "adaptive_learning/adaptive_learning/adaptive_learning/"\

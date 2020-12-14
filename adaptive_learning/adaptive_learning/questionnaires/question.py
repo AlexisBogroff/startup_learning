@@ -1,9 +1,9 @@
 """
 Manage questions
 """
-from adaptive_learning import funcs
-from adaptive_learning.funcs import cast, get_input
-from adaptive_learning.answer import Answer
+from adaptive_learning.questionnaires import funcs
+from adaptive_learning.questionnaires.funcs import cast, get_input
+from adaptive_learning.questionnaires.answer import Answer
 
 __PATH_QUESTIONS__ = "/Users/Pro/git_repositories/"\
     "adaptive_learning/adaptive_learning/adaptive_learning/"\
@@ -12,16 +12,16 @@ __PATH_QUESTIONS__ = "/Users/Pro/git_repositories/"\
 
 class Question:
     """
-    Class for the questions.
+    Class for the questions
 
-    They can be dealt independantly (of exams) or be called in the creation
-    of an exam. The answers are called in the creation of a question.
+    They can be dealt independently (of exams) or be called in the creation
+    of an exam. Answers however are only called within a question.
     """
     def __init__(self):
         self._id = ''
         self.text = ''
         self.type = ''
-        self.keywords = ''  # TODO: transform into a list rather than a string
+        self.keywords = ''  # TODO: transform into a list
         self.use_question = True
         self.nb_points = 1.
         self.difficulty = 1
@@ -225,3 +225,52 @@ class Question:
         """ Display the list of questions stored in db """
         table = funcs.load_table(f_path=__PATH_QUESTIONS__)
         funcs.show_table(table, ['text', 'id'])
+
+
+class MCQ(Question):
+    """
+    Manage MCQ
+
+    Automatic grading system
+    """
+    pass
+
+
+
+class Dev(Question):
+    """
+    Manage questions with development
+
+    Teacher must set the grade
+    """
+    pass
+
+
+
+class Exact(Question):
+    """
+    Manage questions with exact answers
+
+    Automatic grading system
+    """
+    pass
+
+
+
+class Approx(Question):
+    """
+    Manage questions with approximated answers considered correct
+
+    Automatic grading system
+    """
+    pass
+
+
+
+class Code(Question):
+    """
+    Manage questions with code as answers
+
+    Semi-automatic grading system
+    """
+    pass
