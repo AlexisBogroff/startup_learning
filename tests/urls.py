@@ -45,6 +45,8 @@ from tests.views import (
 	launch_specific_dynmcq_view,
 	in_launch_specific_dynmcq_view,
 	in_launch_mcq_stop_test,
+
+	toto_create_test_view,
 )
 
 app_name = 'tests'
@@ -95,4 +97,6 @@ urlpatterns = [
 	path('pass/menudynmcqtest/<str:input_id_test>', DynMCQTest_pass_menu_view, name='Menu Pass dynmcqtest'),
 	path('pass/list/', tests_list_student_view, name='List tests student'),
 	path('pass/history/', tests_history_view, name='Tests history'),
+
+	path('manage/toto_create_test/', toto_create_test_view, name='Toto Apply Test'),
 ]

@@ -1,4 +1,7 @@
 <div class='band-home'>
+    {% if user.is_authenticated %}
+        <div class="ani_button" onclick="location.href='{% url 'tests:Toto Apply Test' %}'"><span>Test </span></div>
+    {% endif %}
     <div class="clickable-bar-home">
 		{% if user.is_authenticated %}
 			<p><b>Hello {{user.first_name}} {{user.last_name}} !</b></p>
@@ -19,5 +22,6 @@
 				<div class="box"><a href="{% url 'tests:register' %}"><div class="inner">Register</div></a></div>
 			</div>
 		{% endif %}
+
     </div>
 </div>

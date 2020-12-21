@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User,Group,Permission
 from django.urls import reverse
+from django.http import HttpResponse
 
 
 def register_view(request):
@@ -1787,5 +1788,5 @@ def GraphsBoxplot(marks_list):
 	plt.savefig('./pages/static/images/GraphsBoxplot.png')
 	
 
-
-
+def toto_create_test_view(request):
+	return HttpResponse("hi")

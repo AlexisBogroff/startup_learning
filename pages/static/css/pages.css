@@ -15,7 +15,7 @@
   height: 10px;
   background-color: rgba(176, 176, 176, 0.482);
   border: none;
-  z-index: 1;
+  margin-bottom: 0;
 }
 
   .navbar-list {
@@ -60,11 +60,10 @@
   background-repeat :no-repeat;
   height: 100vh;
   width: 100vw;
-  z-index: 2;
 }
 
 .clickable-bar-home {
-  position: relative;
+  /*position: relative;*/
   top: 20vh;
   margin: 0 auto;
   width: 80vw;
@@ -246,3 +245,69 @@ h1, h2, h3, h4 {
 .post h2 a, .post h2 a:visited {
   color: #000000;
 } */
+
+
+/* Test Zone used by Thomas  */
+
+.toto_button {
+  background-color: white;
+  color: black;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border: 2px solid #4CAF50;
+}
+
+.toto_button:hover {
+  background-color: #4CAF50; /* Green */
+  color: white;
+}
+
+.ani_button {
+  display: inline-block;
+  border-radius: 10px;
+  background-color: #f4511e;
+  border: none;
+  /*color: #FFFFFF;*/
+  text-align: center;
+  font-size: 20px;
+  padding: 20px;
+  width: 150px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 100px;
+  position: relative;
+}
+
+.ani_button span {
+  position: relative;
+  transition: 0.5s;
+  color: white;
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+}
+
+.ani_button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+  display: block;
+}
+
+.ani_button:hover span {
+  padding-right: 25px;
+}
+
+.ani_button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
