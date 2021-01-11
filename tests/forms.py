@@ -146,3 +146,29 @@ class Pass_DynquestionTestForm(forms.ModelForm):
 			'r_answer',
 		]
 
+
+class toto_create_test_form(forms.ModelForm):
+	ans_text = forms.CharField(
+		widget=forms.Textarea(attrs={'rows': 1, 'cols': 100}))
+	right_ans = forms.BooleanField(
+		required=False,
+		label="Réponse correcte"
+	)
+
+	class Meta:
+		model = DynMCQanswer
+		fields = [
+			'ans_text',
+			'right_ans',
+		]
+
+
+class toto_create_another_form(forms.ModelForm):
+	q_text = forms.CharField(
+		widget=forms.Textarea(attrs={'rows': 1, 'cols': 100}))
+
+	class Meta:
+		model = Dynquestion
+		fields = [
+			'q_text',
+		]

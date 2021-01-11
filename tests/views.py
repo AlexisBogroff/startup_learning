@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import formset_factory
-from .forms import DynMCQTestInfoForm,DynMCQquestionForm,DynMCQanswerForm,Pass_DynMCQTestForm,DynMCQquestionForm_question,DynMCQTestInfoForm,DynMCQTestInfoForm_questions,Question_difficulty_form,MCQQuestion_difficulty_form,DynMCQTestInfoForm_launch,DynquestionForm,Pass_DynquestionTestForm
+from .forms import DynMCQTestInfoForm,DynMCQquestionForm,DynMCQanswerForm,Pass_DynMCQTestForm,DynMCQquestionForm_question,DynMCQTestInfoForm,DynMCQTestInfoForm_questions,Question_difficulty_form,MCQQuestion_difficulty_form,DynMCQTestInfoForm_launch,DynquestionForm,Pass_DynquestionTestForm, toto_create_test_form, toto_create_another_form
 from .models import DynMCQInfo,DynMCQquestion,DynMCQanswer,Pass_DynMCQTest,Pass_DynMCQTest_Info,Dynquestion,Pass_DynquestionTest
 import matplotlib.pyplot as plt
 import numpy as np
@@ -584,7 +584,7 @@ def DynMCQanswer_create_view(request, input_q_num):
 	#If there are not answers in the test, we display the formset of the answers
 	if empty_answer == True:
 		#We crate a formset of nb_answers forms of DynMCQanswerForm
-		DynMCQanswerSet = formset_factory(DynMCQanswerForm, extra = int(nb_answers))
+		DynMCQanswerSet = formset_factory(DynMCQanswerForm, extra=int(nb_answers))
 		
 		#Three mandatory properties for formset
 		data = {
@@ -608,7 +608,7 @@ def DynMCQanswer_create_view(request, input_q_num):
 					dynMCQanswer.save()
 					empty_answer = False
 					#We get the answers to display it
-					DynMCQanswerTest = DynMCQanswer.objects.filter(q_num = input_q_num)
+					DynMCQanswerTest = DynMCQanswer.objects.filter(q_num=input_q_num)
 					DynMCQanswerTest_List = []
 					for instance in DynMCQanswerTest:
 						DynMCQanswerTest_List.append(instance)
@@ -1786,7 +1786,40 @@ def GraphsBoxplot(marks_list):
 	ax.boxplot(data,vert=False,)
 	ax.set_title('Boxplot du test')
 	plt.savefig('./pages/static/images/GraphsBoxplot.png')
-	
+
 
 def toto_create_test_view(request):
-	return HttpResponse("hi")
+	# question_form
+	question_form = []
+
+	# answers_form
+	answer_set = formset_factory(toto_create_test_form, extra=4)
+	answers_form = answer_set()
+
+	if request.method == 'POST':
+		question_form = toto_create_another_form(request.POST)
+		answers_form = answer_set(request.POST)
+		if question_form.is_valid():
+			pass
+		if answers_form.is_valid():
+			answer_count = 1
+			for instance in answers_form:
+				dynMCQanswer = instance.save(commit=False)
+				dynMCQanswer.q_num = 7070  # method that create an id
+				dynMCQanswer.ans_num = answer_count
+				answer_count += 1
+				dynMCQanswer.save()
+
+				DynMCQanswerTest = DynMCQanswer.objects.filter(q_num=7070)
+				DynMCQanswerTest_List = []
+				for bibi in DynMCQanswerTest:
+					DynMCQanswerTest_List.append(bibi)
+
+			answers_form = answer_set()
+	else:
+		question_form = toto_create_another_form()
+	context = {
+		'question_form': question_form,
+		'answers_form': answers_form,
+	}
+	return render(request, 'manage_tests/toto_test.html', context)
