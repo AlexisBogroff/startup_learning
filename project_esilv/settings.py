@@ -21,10 +21,12 @@ APPEND_SLASH=False
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')t2s_xbcuov83@+h#ngtxq46%-xrbs&-=+2#-m6#2kd*y(*f7r'
+#SECRET_KEY = ')t2s_xbcuov83@+h#ngtxq46%-xrbs&-=+2#-m6#2kd*y(*f7r'
+with open('/./home/ubuntu/.pssd_django_V0/pssd', 'r') as f:
+    SECRET_KEY = f.read()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
