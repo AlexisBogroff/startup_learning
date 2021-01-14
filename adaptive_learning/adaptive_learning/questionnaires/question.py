@@ -1,13 +1,75 @@
 """
 Manage questions
 """
-from adaptive_learning.questionnaires import funcs
-from adaptive_learning.questionnaires.funcs import cast, get_input
-from adaptive_learning.questionnaires.answer import Answer
+from adaptive_learning import settings
+from adaptive_learning import funcs
+from adaptive_learning.funcs import cast, get_input
+from adaptive_learning import db
+from adaptive_learning.questionnaires.answer import Answer, McqAnswer
 
-__PATH_QUESTIONS__ = "/Users/Pro/git_repositories/"\
-    "adaptive_learning/adaptive_learning/adaptive_learning/"\
-    "data/table_questions.txt"
+
+def create_question():
+    """
+    Generate the question of specific type defined by user
+
+    Returns:
+        question object
+    """
+    q_type = funcs.input_from_list(
+        message="Choose question type",
+        vals=['mcq', 'dev', 'exact', 'approx', 'code'])
+
+    return generate_specific_question(q_type)
+
+
+def generate_specific_question(q_type, question_dic=None):
+    """
+    Generate a question of type 'q_type'
+
+    Returns:
+        child question object
+
+    Notes:
+        It loads the question if question_dic is passed
+        Otherwise, it creates a question
+    """
+    if q_type == 'mcq':
+        return McqQuestion(load_dic=question_dic)
+    elif q_type == 'dev':
+        return DevQuestion(load_dic=question_dic)
+    elif q_type == 'exact':
+        return ExactQuestion(load_dic=question_dic)
+    elif q_type == 'approx':
+        return ApproxQuestion(load_dic=question_dic)
+    elif q_type == 'code':
+        return CodeQuestion(load_dic=question_dic)
+
+
+def load_question(load_id=None, question_dic=None):
+    """
+    Load a specific question from the questions library
+
+    Args:
+        load_id: the id of the question to load from table
+        question_dic: the question in dictionary format
+
+    Returns:
+        question object
+
+    Note:
+        At least one of the two args must be set.
+
+        The question must be a specific object defined by its type (mcq, dev,
+        etc.). Idem for its answers.
+    """
+    if not question_dic:
+        question_dic = db.retrieve_sample_from_table(
+                                    load_id,
+                                    settings.__PATH_QUESTIONS__)
+    q_type = question_dic['type']
+
+    return generate_specific_question(q_type=q_type, question_dic=question_dic)
+
 
 
 class Question:
@@ -16,72 +78,54 @@ class Question:
 
     They can be dealt independently (of exams) or be called in the creation
     of an exam. Answers however are only called within a question.
+
+    TODO: add possibility to create question (by selecting the question type)
+    from the Question class directly (for now, a question can only be created
+    using the subclasses McqQuestion, etc.).
     """
     def __init__(self):
-        self.id = funcs.generate_uuid()
-        self.type = ''
-        self.text = ''
-        self.keywords = ''  # TODO: transform into a list
-        self.use_question = True
-        self.nb_points = 1.
-        self.difficulty = 1
-        self.notif_correct_answers = True
-        self.notif_num_exact_answers = False
-        self.randomize_answers_order = True
-        self.answers = []
+        self._id = funcs.generate_uuid()
+        self._text = ""
+        self._keywords = ""
+        self._use_question = True
+        self._nb_points = 1.
+        self._difficulty = 1
+        self._answers = []
+
+        self.set_text_from_input()
+        self.set_keywords_from_input() # TODO make a list
 
 
     def __str__(self):
-        return "text: {text}, id: {id}".format(text=self.text, id=self.id)
+        return "text: {text}, id: {id}".format(text=self._text, id=self._id)
 
 
-    def add_answer(self):
+    def load(self, load_dic):
+        """ Set main properties to correspond to an existing question """
+        self._id = load_dic['id']
+        self._text = load_dic['text']
+        self._keywords = load_dic['keywords']
+        self._use_question = load_dic['use_question']
+        self._nb_points = load_dic['nb_points']
+        self._difficulty = load_dic['difficulty']
+
+
+    def make_exportable(self):
         """
-        Create and add an answer to the current question
-        """
-        answer = Answer()
-        answer.set_properties_from_input()
-        answer_export = answer.get_exportable()
-        answer_export['position_id'] = funcs.generate_position_id(self.answers)
-        self.answers.append(answer_export)
-
-
-    def get_exportable(self):
-        """
-        Stores the question properties in a dictionary
+        Stores the main question properties in a dictionary
 
         Returns:
             the data in dic format, ready to export in json file
         """
-        data_export = {
-            'id': self.id,
-            'type': self.type,
-            'text': self.text,
-            'keywords': self.keywords,
-            'use_question': self.use_question,
-            'nb_points': self.nb_points,
-            'difficulty': self.difficulty,
-            'notif_correct_answers': self.notif_correct_answers,
-            'notif_num_exact_answers': self.notif_num_exact_answers,
-            'randomize_answers_order': self.randomize_answers_order,
-            'answers': self.answers,
+        exportable = {
+            'id': self._id,
+            'text': self._text,
+            'keywords': self._keywords,
+            'use_question': self._use_question,
+            'nb_points': self._nb_points,
+            'difficulty': self._difficulty,
         }
-        return data_export
-
-
-    def load_question(self, id_question):
-        """
-        Load a specific question from the questions library
-
-        Modifies the properties of the current question to correspond to the
-        selected question.
-
-        Returns:
-            void.
-        """
-        question = funcs.retrieve_sample_from_table(id_question,
-                                                         __PATH_QUESTIONS__)
-        self.set_question_from_existing(question)
+        return exportable
 
 
     def save(self):
@@ -102,94 +146,38 @@ class Question:
             empty rows, without the need to read and parse the whole file
             (which would be the case with a json file).
         """
-        question_dump = self.get_exportable()
-        funcs.append_to_file(question_dump, __PATH_QUESTIONS__)
+        question_dump = self.make_exportable()
+        funcs.append_to_file(question_dump, settings.__PATH_QUESTIONS__)
 
 
-    def set_parameters_from_input_extra(self):
-        """
-        Set question parameters
+    def set_keywords_from_input(self):
+        """ Set property keywords """
+        self._keywords = get_input("Enter the question keywords")
 
-        These parameters all have a default value, and their manual setting
-        is not necessary.
+    def set_text_from_input(self):
+        """ Set property text """
+        self._text = get_input("Enter the question text")
 
-        It is important to fill the 'keywords' argument, since it enables
-        the filtering of questions on these keywords when building exams. It
-        is a rich data for algorithms.
+    def set_difficulty_from_input(self):
+        """ Set property difficulty """
+        ans = get_input("Enter the question difficulty")
+        self._difficulty = cast(ans, int)
 
-        Notes:
-            use_question: bool
-            nb_points: float
-            difficulty: int
-            notif_correct_answers: bool:
-            - False (informs that question has one or multiple correct answers)
-            - True (informs wether question has multiple correct answers or not)
-            notif_num_exact_answers: bool (only if notif_correct_answers is True)
-            randomize_answers_order: bool
-        """
-        # Get informations from user input
-        self.use_question = get_input("Use this question?")
-        self.nb_points = get_input("Enter the number of points")
-        self.difficulty = get_input("Enter the difficulty")
-        self.notif_correct_answers = get_input("Inform on num of answers?")
-        self.notif_num_exact_answers = get_input("Inform exact num?")
-        self.randomize_answers_order = get_input("Randomize answers order?")
+    def set_nb_points_from_input(self):
+        """ Set property nb_points """
+        ans = get_input("Enter the number of points")
+        self._nb_points = cast(ans, float)
 
-        # Cast variables to expected type
-        self.use_question = cast(self.use_question, bool)
-        self.nb_points = cast(self.nb_points, float)
-        self.difficulty = cast(self.difficulty, int)
-        self.notif_correct_answers = cast(self.notif_correct_answers, bool)
-        self.notif_num_exact_answers = cast(self.notif_num_exact_answers, bool)
-        self.randomize_answers_order = cast(self.randomize_answers_order, bool)
-
-
-    def create(self):
-        """
-        Create question
-
-        Some parameters are added with their default value
-
-        Notes:
-            text: string
-            type: string, can be:
-            - mcq (single or mulitple correct answers)
-            - exact
-            - develop (developpement answer that can hardly be auto-corrected)
-            keywords: string with comma separated words
-        """
-        self.type = get_input("Enter the question type")
-        self.text = get_input("Enter the question text")
-        self.keywords = get_input("Enter keywords, subject, or categories")
-
-
-    def set_question_from_existing(self, question):
-        """ Set properties from an existing question """
-        self.id = question['id']
-        self.type = question['type']
-        self.text = question['text']
-        self.keywords = question['keywords']
-        self.use_question = question['use_question']
-        self.nb_points = question['nb_points']
-        self.difficulty = question['difficulty']
-        self.notif_correct_answers = question['notif_correct_answers']
-        self.notif_num_exact_answers = question['notif_num_exact_answers']
-        self.randomize_answers_order = question['randomize_answers_order']
-        self.answers = question['answers']
+    def set_use_question_from_input(self):
+        """ Set property use_question """
+        ans = get_input("Use this question?")
+        self._use_question = cast(ans, bool)
 
 
     def show(self):
         """
-        Display the question properties
+        Display the main question properties
         """
-        # TODO: split into multiple functions
-        answers = self.answers
-        if answers:
-            text_answers = ["{}".format(ans) for ans in answers]
-            text_answers = "\n\t".join(text_answers)
-        else:
-            text_answers = "No answer registered"
-
         text = "id: {id}\n" \
                "text: {text}\n" \
                "type: {type}\n" \
@@ -197,73 +185,181 @@ class Question:
                "use_question: {use_question}\n" \
                "nb_points: {nb_points}\n" \
                "difficulty: {difficulty}\n" \
+               .format(
+                    id=self._id,
+                    text=self._text,
+                    keywords=self._keywords,
+                    use_question=self._use_question,
+                    nb_points=self._nb_points,
+                    difficulty=self._difficulty,
+                )
+        print(text)
+
+
+class McqQuestion(Question):
+    """
+    Manage an MCQ question
+
+    Note:
+        has an automatic grading system
+        _notif_correct_answers: says if single or multiple answers TODO: rename
+        _
+    """
+    def __init__(self, load_dic=None):
+        if load_dic:
+            self.load(load_dic=load_dic)
+        else:
+            Question.__init__(self)
+            self._type = 'mcq'
+            self._notif_correct_answers = True
+            self._notif_num_exact_answers = False
+            self._randomize_answers_order = True
+
+            self.add_answers()
+
+
+    def add_answers(self):
+        """
+        Add answers to the question
+        """
+        new_answer = True
+
+        while new_answer:
+            answer = McqAnswer()
+            self._answers.append(answer)
+            new_answer = funcs.input_bool("Create new answer?")
+
+
+    def get_type(self):
+        """ Get property type """
+        return self._type
+
+    def get_randomize(self):
+        """ Get property randomize_answers_order """
+        return self._randomize_answers_order
+
+    def get_notif_exact_answers(self):
+        """ Get property notif_num_exact_answers """
+        return self._notif_num_exact_answers
+
+    def get_notif_answers(self):
+        """ Get property notif_correct_answers """
+        return self._notif_correct_answers
+
+
+    def load(self, load_dic):
+        """
+        Set the properties according to an existing question
+        """
+        super().load(load_dic=load_dic)
+        self.type = load_dic['type']
+        self.notif_correct_answers = load_dic['notif_correct_answers']
+        self.notif_num_exact_answers = load_dic['notif_num_exact_answers']
+        self.randomize_answers_order = load_dic['randomize_answers_order']
+        self._answers = [McqAnswer(load_dic=ans) for ans in load_dic['answers']]
+
+
+    def make_exportable(self):
+        """
+        Stores the question properties in a dictionary
+
+        Returns:
+            the data in dic format, ready to export in json file
+        """
+        exportable = super().make_exportable()
+        exportable['type'] = self._type
+        exportable['notif_correct_answers'] = self._notif_correct_answers
+        exportable['notif_num_exact_answers'] = self._notif_num_exact_answers
+        exportable['randomize_answers_order'] = self._randomize_answers_order
+        exportable['answers'] = [ans.make_exportable() for ans in self._answers]
+        return exportable
+
+
+    def set_randomize(self):
+        """ Set property randomize_answers_order """
+        ans = get_input("Randomize answers order?")
+        self.randomize_answers_order = cast(ans, bool)
+
+    def set_notif_exact_answers(self):
+        """ Set property notif_num_exact_answers """
+        ans = get_input("Inform exact num?")
+        self.notif_num_exact_answers = cast(ans, bool)
+
+    def set_notif_answers(self):
+        """ Set property notif_correct_answers """
+        ans = get_input("Inform on num of answers?")
+        self.notif_correct_answers = cast(ans, bool)
+
+
+    def show_detailed(self):
+        """
+        Display the question properties
+        """
+        super().show()
+
+        answers = self._answers
+        if answers:
+            text_answers = ["{}".format(ans.make_exportable()) for ans in answers]
+            text_answers = "\n\t".join(text_answers)
+        else:
+            text_answers = "No answer registered"
+
+        text = "type: {type}\n" \
                "notif_correct_answers: {notif_correct_answers}\n" \
                "notif_num_exact_answers: {notif_num_exact_answers}\n" \
                "randomize_answers_order: {randomize_answers_order}\n\n" \
                "answers\n" \
                "\t{text_answers}" \
                .format(
-                    id=self.id,
-                    type=self.type,
-                    text=self.text,
-                    keywords=self.keywords,
-                    use_question=self.use_question,
-                    nb_points=self.nb_points,
-                    difficulty=self.difficulty,
-                    notif_correct_answers=self.notif_correct_answers,
-                    notif_num_exact_answers=self.notif_num_exact_answers,
-                    randomize_answers_order=self.randomize_answers_order,
+                    type=self._type,
+                    notif_correct_answers=self._notif_correct_answers,
+                    notif_num_exact_answers=self._notif_num_exact_answers,
+                    randomize_answers_order=self._randomize_answers_order,
                     text_answers=text_answers,
                 )
         print(text)
 
 
-    @staticmethod
-    def show_list_of_questions():
-        """ Display the list of questions stored in db """
-        table = funcs.load_table(f_path=__PATH_QUESTIONS__)
-        funcs.show_table(table, ['text', 'id'])
 
 
-class MCQ(Question):
-    """
-    Manage MCQ
-
-    Automatic grading system
-    """
-
-
-
-class Dev(Question):
+class DevQuestion(Question):
     """
     Manage questions with development
 
     Teacher must set the grade
     """
+    def __init__(self, load_dic=None):
+        Question.__init__(self)
 
 
 
-class Exact(Question):
+class ExactQuestion(Question):
     """
     Manage questions with exact answers
 
     Automatic grading system
     """
+    def __init__(self, load_dic=None):
+        Question.__init__(self)
 
 
 
-class Approx(Question):
+class ApproxQuestion(Question):
     """
     Manage questions with approximated answers considered correct
 
     Automatic grading system
     """
+    def __init__(self, load_dic=None):
+        Question.__init__(self)
 
 
 
-class Code(Question):
+class CodeQuestion(Question):
     """
     Manage questions with code as answers
 
     Semi-automatic grading system
     """
+    def __init__(self, load_dic=None):
+        Question.__init__(self)

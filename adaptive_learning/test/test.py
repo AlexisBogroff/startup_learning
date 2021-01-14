@@ -1,561 +1,425 @@
 """
 Main test file for adaptive learning engine
-
-Tested functions:
-
-    # Manage users
-    test_register_admin  # I/O ?
-    test_register_teacher
-    test_register_student
-    registering_user_can_be_admin
-    registering_user_can_be_teacher
-    registering_user_can_be_student
-    test_create_group
-    test_delete_group
-    test_add_group_permission
-    test_delete_group_permission
-    test_set_user_group
-    test_student_can_integrate_this_group
-    test_student_is_from_this_school
-    test_delete_user_group
-    test_login
-    test_logout
-    test_student_is_recognized
-    test_get_school_mail_domain
-    test_extract_mail_domain
-    test_set_user_rights
-    test_get_user_rights
-
-
-    # Manage Exams
-    # ------------
-
-    ## Build exams
-    test_create_exam
-    test_delete_exam
-    test_modify_exam
-    test_randomize_sections_order
-    test_randomize_questions_order
-    test_create_question
-    test_create_answer
-    test_delete_question
-    test_delete_answer
-    test_add_question_to_test
-    test_remove_question_from_test
-    test_get_answer_text
-    test_set_answer_text
-    test_set_answer_grade
-    test_get_answer_grade
-    test_update_answer_text
-    test_update_answer_grade
-    test_update_question_text
-    test_set_question_creation_datetime
-    test_set_bool_answer_is_correct
-    test_get_bool_answer_is_correct
-    test_set_question_difficulty
-    test_get_question_difficulty
-    test_set_question_category
-    test_get_question_category
-    test_delete_question_difficulty
-    test_set_exam_keyword
-    test_delete_exam_keyword
-    test_create_category
-    test_delete_category
-    test_set_category_parent
-    test_delete_category_parent
-    test_get_category_children
-    test_create_section
-    test_delete_section
-    test_add_question_to_section
-    test_delete_question_of_section
-    test_get_section_questions
-    test_set_section_description
-    test_get_section_description
-    test_set_exam_description
-    test_get_exam_description
-    test_compute_exam_max_grade
-    test_get_exam_max_grade
-    test_set_exam_max_grade
-    test_set_question_grade
-    test_get_question_grade
-    test_set_bool_use_this_question
-    test_get_bool_use_this_question
-    test_set_question_text
-    test_get_question_text
-
-    ## Timer
-    test_teacher_start_timer
-    test_teacher_stop_timer
-    test_teacher_modify_timer
-    test_timer_ended
-    test_get_timer_initial_time
-    test_get_timer_remaining_time
-    test_get_timer_end_time
-    test_get_timer_time_limit
-
-    ## Exam conditions
-    test_set_datetime_exam_beginning
-    test_set_datetime_exam_end
-    test_get_datetime_exam_beginning
-    test_get_datetime_exam_end
-    test_delete_datetime_exam_beginning
-    test_delete_datetime_exam_end
-
-    ## During the exam
-    test_exam_started
-    test_exam_ended
-    test_compare_now_with_datetime_beginning
-    test_compare_now_with_datetime_end
-    test_get_answer
-    test_get_question
-    test_get_time_student_submitted_question
-    test_compute_time_student_spent_on_question
-    test_get_time_student_started
-    test_get_time_student_ended
-
-    ## After the exam
-    test_check_student_answer_is_correct
-    test_compute_student_grade
-
-    ## Exam statistics
-    test_compute_exam_min_grade
-    test_compute_exam_max_grade
-    test_compute_exam_average_grade
-    test_compute_exam_median_grade
-    test_compute_exam_frequencies
-    test_compute_question_min_grade
-    test_compute_question_max_grade
-    test_compute_question_average_grade
-    test_compute_question_frequencies
-    test_get_answer_frequencies
-
-    ## Exam plots
-    test_plot_student_grade_by_question_on_the_exam
-    test_plot_grades_of_student_on_all_exams
-    test_plot_barplot_grades_exam_by_group
-    test_plot_radar_of_student_grades_by_sections_on_the_exam
-
-
-    # Student
-    # -------
-
-    ## Profile / Progression
-    test_plot_radar_of_student_strenghts_by_subject
-    test_should_revise_question
-    test_should_revise_subject
-
-
-    # Algorithms
-    # ----------
-
-    # Create test
-    test_algo_create_exam
-    test_algo_predict_student_exam_grade
-    test_algo_predict_student_answer_is_correct
-    test_algo_predict_student_subject_grade
-    test_algo_predict_student_progression
-    test_algo_predict_student_similarity
-
-    test_compute_students_similarity
-
-TODO: test_add_answer (QuestionTestCase)
-TODO: test_add_question (ExamTestCase)
 """
 import unittest
 from unittest.mock import patch
-from adaptive_learning import user
-from adaptive_learning.questionnaires import exam, funcs
+from adaptive_learning import user, funcs
+from adaptive_learning.questionnaires import exam
 from adaptive_learning.questionnaires.exam import Exam
-from adaptive_learning.questionnaires.question import Question
-from adaptive_learning.questionnaires.answer import Answer
+from adaptive_learning.questionnaires.question import Question, \
+    create_question, McqQuestion
+from adaptive_learning.questionnaires.answer import Answer, McqAnswer
 
 
 class AnswerTestCase(unittest.TestCase):
     """
-    Test the creation of an answer
+    Test methods of parent class Answer
     """
-    def setUp(self):
+    @patch('builtins.input', return_value='Debug answer')
+    def setUp(self, mock_input):
         self.answer = Answer()
-        self.DEFAULT_PROPERTIES = {
-            'text': '',
-            'is_correct': False,
-            'use_answer': True,
-        }
-
-
-    def test_get_exportable(self):
-        obtained = self.answer.get_exportable()
-        self.assertEqual(obtained, self.DEFAULT_PROPERTIES)
-
-
-    INPUTS_ANSWER = ('Debug answer', 'True', 'False')
-
-    @patch('builtins.input', side_effect=INPUTS_ANSWER)
-    def test_set_properties(self, mock_inputs):
-        self.answer.set_properties_from_input()
-        self.assertEqual(self.answer.text, 'Debug answer')
-        self.assertEqual(self.answer.is_correct, True)
-        self.assertEqual(self.answer.use_answer, False)
-        # Restore default parameters
-        self.setUp()
 
 
     @patch('builtins.input', return_value='Debug answer')
-    def test_set_text_from_input(self, mock_input):
-        self.answer.set_text_from_input()
-        self.assertEqual(self.answer.text, 'Debug answer')
-        # Restore default parameters
-        self.setUp()
+    def test__init__(self, mock_input):
+        answer = Answer()
+        self.assertEqual(answer._text, 'Debug answer')
 
 
-    @patch('builtins.input', return_value='True')
-    def test_set_is_correct_from_input(self, mock_input):
-        self.answer.set_is_correct_from_input()
-        self.assertEqual(self.answer.is_correct, True)
-        # Restore default parameters
-        self.setUp()
+    def test_make_exportable(self):
+        obtained = self.answer.make_exportable()
+        expected = {'text': 'Debug answer'}
+        self.assertEqual(expected, obtained)
 
 
-    @patch('builtins.input', return_value='False')
-    def test_set_use_answer_from_input(self, mock_input):
-        self.answer.set_use_answer_from_input()
-        self.assertEqual(self.answer.use_answer, False)
-        # Restore default parameters
-        self.setUp()
+    def test_load(self):
+        answer_dic = {'text': 'Other debug text'}
+        self.answer.load(load_dic=answer_dic)
+        self.assertEqual(self.answer._text, answer_dic['text'])
 
 
 
-class ExamTestCase(unittest.TestCase):
+class McqAnswerTestCase(unittest.TestCase):
     """
-    Test the creation of an exam
-
-    TODO: add tests for functions related to the .save method
+    Test the creation and loading of an McqAnswer
     """
-    def setUp(self):
-        self.exam = Exam()
-        self.DEFAULT_PROPERTIES = {
-            'id': '',
-            'title': '',
-            'description': '',
-            'randomize_questions_order': True,
-            'auto_rebase_grade': True,
-            'grade_base': 20,
-            'questions': [],
-        }
-        self.LOADED_EXAM = {
-            'id': 'id_foo',
-            'title': 'title_foo',
-            'description': 'desc foo',
-            'auto_rebase_grade': False,
-            'grade_base': 100,
-            'randomize_questions_order': False,
-            'questions': [
-                {'foo'},
-                {'bar'},
-            ],
-        }
+    INPUTS_ANSWER = ('Debug answer', 'True', 'True')
+
+    @patch('builtins.input', side_effect=INPUTS_ANSWER)
+    def setUp(self, mock_input):
+        self.answer = McqAnswer()
+        self.VALS = {'text': 'Debug answer',
+                     'is_correct': True,
+                     'use_answer': True}
 
 
-    def test__init(self):
-        # Controls that:
-        # - object is properly instanciated
-        # - properties have the expected default values
-        self.assertEqual(type(self.exam.id), type(self.DEFAULT_PROPERTIES['id']))
-        self.assertEqual(len(self.exam.id), 36)
-        self.assertEqual(self.exam.title, self.DEFAULT_PROPERTIES['title'])
-        self.assertEqual(self.exam.description,
-                         self.DEFAULT_PROPERTIES['description'])
-        self.assertEqual(self.exam.randomize_questions_order,
-                         self.DEFAULT_PROPERTIES['randomize_questions_order'])
-        self.assertEqual(self.exam.auto_rebase_grade,
-                         self.DEFAULT_PROPERTIES['auto_rebase_grade'])
-        self.assertEqual(self.exam.grade_base,
-                         self.DEFAULT_PROPERTIES['grade_base'])
-        self.assertEqual(self.exam.questions,
-                         self.DEFAULT_PROPERTIES['questions'])
+    def test__init__when_loading(self):
+        answer = McqAnswer(load_dic=self.VALS)
+        self.assertEqual(answer._text,
+                         self.VALS['text'])
+        self.assertEqual(answer._is_correct,
+                         self.VALS['is_correct'])
+        self.assertEqual(answer._use_answer,
+                         self.VALS['use_answer'])
 
 
-    def test_default_properties(self):
-        self.assertEqual(self.exam.grade_base,
-                         self.DEFAULT_PROPERTIES['grade_base'])
-        self.assertEqual(self.exam.auto_rebase_grade,
-                         self.DEFAULT_PROPERTIES['auto_rebase_grade'])
-        self.assertEqual(self.exam.randomize_questions_order,
-                         self.DEFAULT_PROPERTIES['randomize_questions_order'])
+    @patch('builtins.input', side_effect=INPUTS_ANSWER)
+    def test__init__when_creating(self, mock_inputs):
+        answer = McqAnswer()
+        self.assertEqual(answer._text,
+                         self.VALS['text'])
+        self.assertEqual(answer._is_correct,
+                         self.VALS['is_correct'])
+        self.assertEqual(answer._use_answer,
+                         self.VALS['use_answer'])
 
 
-    def test_generate_position_id_when_no_questions(self):
-        obtained = funcs.generate_position_id(self.exam.questions)
-        expected = 1
-        self.assertEqual(obtained, expected)
+    def test_load(self):
+        self.answer.load(load_dic=self.VALS)
+        self.assertEqual(self.answer._text,
+                         self.VALS['text'])
+        self.assertEqual(self.answer._is_correct,
+                         self.VALS['is_correct'])
+        self.assertEqual(self.answer._use_answer,
+                         self.VALS['use_answer'])
 
 
-    def test_generate_position_id_when_two_questions(self):
-        self.exam.questions.append({'dummy question 1'})
-        self.exam.questions.append({'dummy question 2'})
-
-        obtained = funcs.generate_position_id(self.exam.questions)
-        expected = 3
-        self.assertEqual(obtained, expected)
-
-
-    def test_get_exportable(self):
-        # Controls that:
-        # - it returns a dictionary with the expected structure
-        # - the following keys are included in the exportable (sort of dump)
-        # - the corresponding values are correctly matching
-        expected = self.DEFAULT_PROPERTIES
-        obtained = self.exam.get_exportable()
-        self.assertEqual(type(obtained['id']), type(expected['id']))
-        self.assertEqual(len(obtained['id']), 36)
-        self.assertEqual(obtained['title'], expected['title'])
-        self.assertEqual(obtained['description'], expected['description'])
-        self.assertEqual(obtained['randomize_questions_order'],
-                expected['randomize_questions_order'])
-        self.assertEqual(obtained['auto_rebase_grade'],
-                expected['auto_rebase_grade'])
-        self.assertEqual(obtained['grade_base'],
-                expected['grade_base'])
-
-
-    TABLE_EXAMS_LONG = [
-        {
-            'description': 'foo',
-            'id': 'c85779fd',
-            'auto_rebase_grade': False,
-            'grade_base': 5,
-            'randomize_questions_order': False,
-            'questions': ['foo'],
-            'title': ''
-        },
-        {
-            'description': '',
-            'id': 'f67d625b',
-            'auto_rebase_grade': True,
-            'grade_base': 20,
-            'randomize_questions_order': True,
-            'questions': ['bar'],
-            'title': ''
-        },
-    ]
-    @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EXAMS_LONG)
-    def test_load_exam(self, mock_table):
-        # Almost duplicate of test_retrieve_exam_from_table
-        self.exam.load_exam(id_exam='c85779fd')
-        self.assertEqual(self.exam.questions, ['foo'])
-        self.assertEqual(self.exam.description, 'foo')
-        self.assertFalse(self.exam.auto_rebase_grade)
-        self.assertEqual(self.exam.grade_base, 5)
-        self.assertFalse(self.exam.randomize_questions_order)
-
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_set_auto_rebase_grade_from_existing(self):
-        self.exam.set_auto_rebase_grade_from_existing(self.LOADED_EXAM)
-        obtained = self.exam.auto_rebase_grade
-        expected = self.LOADED_EXAM['auto_rebase_grade']
-        self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_set_description_from_existing(self):
-        self.exam.set_description_from_existing(self.LOADED_EXAM)
-        obtained = self.exam.description
-        expected = self.LOADED_EXAM['description']
-        self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_set_grade_base_from_existing(self):
-        self.exam.set_grade_base_from_existing(self.LOADED_EXAM)
-        obtained = self.exam.grade_base
-        expected = self.LOADED_EXAM['grade_base']
-        self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_set_id_from_existing(self):
-        self.exam.set_id_from_existing(self.LOADED_EXAM)
-        obtained = self.exam.id
-        expected = self.LOADED_EXAM['id']
-        self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_set_properties_from_existing_all(self):
-        self.exam.set_properties_from_existing_all(self.LOADED_EXAM)
-        self.assertEqual(self.exam.id, 'id_foo')
-        self.assertEqual(self.exam.title, 'title_foo')
-        self.assertEqual(self.exam.description, "desc foo")
-        self.assertEqual(self.exam.randomize_questions_order, False)
-        self.assertEqual(self.exam.auto_rebase_grade, False)
-        self.assertEqual(self.exam.grade_base, 100)
-        # Restore default parameters
-        self.setUp()
-
-
-    INPUTS_PROPERTIES_MAIN = (
-        'new exam title',
-        'new exam description',
-        )
-    @patch('builtins.input', side_effect=INPUTS_PROPERTIES_MAIN)
-    def test_set_properties_from_input_main(self, mock_inputs):
-        self.exam.set_properties_from_input_main()
-        self.assertEqual(self.exam.title, 'new exam title')
-        self.assertEqual(self.exam.description, 'new exam description')
-        # Restore default parameters
-        self.setUp()
-
-
-    INPUTS_PROPERTIES_EXTRA = (
-        'False',
-        'False',
-        '10',
-        )
-    @patch('builtins.input', side_effect=INPUTS_PROPERTIES_EXTRA)
-    def test_set_properties_from_input_extra(self, mock_inputs):
-        self.exam.set_properties_from_input_extra()
-        self.assertEqual(self.exam.randomize_questions_order, False)
-        self.assertEqual(self.exam.auto_rebase_grade, False)
-        self.assertEqual(self.exam.grade_base, 10)
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_set_randomize_questions_order_from_existing(self):
-        self.exam.set_randomize_questions_order_from_existing(self.LOADED_EXAM)
-        obtained = self.exam.randomize_questions_order
-        expected = self.LOADED_EXAM['randomize_questions_order']
-        self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_set_title_from_existing(self):
-        self.exam.set_title_from_existing(self.LOADED_EXAM)
-        obtained = self.exam.title
-        expected = self.LOADED_EXAM['title']
-        self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
+    def test_make_exportable(self):
+        obtained = self.answer.make_exportable()
+        self.assertEqual(obtained, self.VALS)
 
 
 
-class FuncsTestCase(unittest.TestCase):
-    """
-    Test the functions of general order
-    """
-    def test_cast_when_bool(self):
-        obtained = funcs.cast('True', bool)
-        expected = True
-        self.assertEqual(obtained, expected)
+# class ExamTestCase(unittest.TestCase):
+#     """
+#     Test the creation of an exam
+
+#     TODO: add tests for functions related to the .save method
+#     """
+#     INPUTS_INIT = (
+#         'Title debug exam',
+#         'Description debug exam',
+#         'mcq',
+#         'Text debug question',
+#         'Keywords debug question',
+#         'No',
+#     )
+
+#     @patch('builtins.input', side_effect=INPUTS_INIT)
+#     def setUp(self, mock_inputs):
+#         self.exam = Exam()
+
+#         self.DEFAULT_PROPERTIES = {
+#             'id': '',
+#             'title': '',
+#             'description': '',
+#             'randomize_questions': True,
+#             'auto_rebase_grade': True,
+#             'grade_base': 20,
+#             'questions': [],
+#         }
+#         self.LOADED_EXAM = {
+#             'id': 'id_foo',
+#             'title': 'title_foo',
+#             'description': 'desc foo',
+#             'auto_rebase_grade': False,
+#             'grade_base': 100,
+#             'randomize_questions': False,
+#             'questions': [
+#                 {'foo'},
+#                 {'bar'},
+#             ],
+#         }
 
 
-    def test_cast_when_int(self):
-        obtained = funcs.cast('12', int)
-        expected = 12
-        self.assertEqual(obtained, expected)
+#     def test__init(self):
+#         # Controls that:
+#         # - object is properly instanciated
+#         # - properties have the expected default values
+#         # TODO
+#         self.assertEqual(type(self.exam.id), type(self.DEFAULT_PROPERTIES['id']))
+#         self.assertEqual(len(self.exam.id), 36)
+#         self.assertEqual(self.exam.title, self.DEFAULT_PROPERTIES['title'])
+#         self.assertEqual(self.exam.description,
+#                          self.DEFAULT_PROPERTIES['description'])
+#         self.assertEqual(self.exam.randomize_questions,
+#                          self.DEFAULT_PROPERTIES['randomize_questions'])
+#         self.assertEqual(self.exam.auto_rebase_grade,
+#                          self.DEFAULT_PROPERTIES['auto_rebase_grade'])
+#         self.assertEqual(self.exam.grade_base,
+#                          self.DEFAULT_PROPERTIES['grade_base'])
+#         self.assertEqual(self.exam.questions,
+#                          self.DEFAULT_PROPERTIES['questions'])
 
 
-    def test_cast_when_float(self):
-        obtained = funcs.cast('12', float)
-        expected = 12.
-        self.assertEqual(obtained, expected)
+#     def test_default_properties(self):
+#         self.assertEqual(self.exam.grade_base,
+#                          self.DEFAULT_PROPERTIES['grade_base'])
+#         self.assertEqual(self.exam.auto_rebase_grade,
+#                          self.DEFAULT_PROPERTIES['auto_rebase_grade'])
+#         self.assertEqual(self.exam.randomize_questions,
+#                          self.DEFAULT_PROPERTIES['randomize_questions'])
 
 
-    def test_cast_when_not_possible(self):
-        with self.assertRaises(TypeError) as context:
-            funcs.cast('12', bool)
-
-        expected = "The value: 12, of type <class 'str'>, " \
-                   "cannot be casted into type: <class 'bool'>"
-        self.assertTrue(expected in str(context.exception))
-
-
-    def test_extract_data(self):
-        data = [
-            {'id': 123, 'foo1': 'bar1'},
-            {'id': 433, 'foo2': 'bar2'},
-        ]
-        obtained = funcs.extract_data(id=433, data=data)
-        expected = [{'id': 433, 'foo2': 'bar2'}]
-        self.assertEqual(obtained, expected)
-
-
-    def test_get_single_elem(self):
-        obtained = funcs.get_single_elem([4])
-        expected = 4
-        self.assertEqual(obtained, expected)
+#     def test_make_exportable(self):
+#         # Controls that:
+#         # - it returns a dictionary with the expected structure
+#         # - the following keys are included in the exportable (sort of dump)
+#         # - the corresponding values are correctly matching
+#         expected = self.DEFAULT_PROPERTIES
+#         obtained = self.exam.make_exportable()
+#         self.assertEqual(type(obtained['id']), type(expected['id']))
+#         self.assertEqual(len(obtained['id']), 36)
+#         self.assertEqual(obtained['title'], expected['title'])
+#         self.assertEqual(obtained['description'], expected['description'])
+#         self.assertEqual(obtained['randomize_questions'],
+#                 expected['randomize_questions'])
+#         self.assertEqual(obtained['auto_rebase_grade'],
+#                 expected['auto_rebase_grade'])
+#         self.assertEqual(obtained['grade_base'],
+#                 expected['grade_base'])
 
 
-    def test_is_single_when_duplicate_found(self):
-        table = [
-            {'id':12, 'title': 'foo'},
-            {'id':12, 'title': 'foobar'},
-        ]
-        obtained = funcs.is_single(table)
-        self.assertFalse(obtained)
+#     TABLE_EXAMS_LONG = [
+#         {
+#             'description': 'foo',
+#             'id': 'c85779fd',
+#             'auto_rebase_grade': False,
+#             'grade_base': 5,
+#             'randomize_questions': False,
+#             'questions': ['foo'],
+#             'title': ''
+#         },
+#         {
+#             'description': '',
+#             'id': 'f67d625b',
+#             'auto_rebase_grade': True,
+#             'grade_base': 20,
+#             'randomize_questions': True,
+#             'questions': ['bar'],
+#             'title': ''
+#         },
+#     ]
+#     @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EXAMS_LONG)
+#     def test_load_exam(self, mock_table):
+#         # Almost duplicate of test_retrieve_exam_from_table
+#         self.exam.load_exam(id_exam='c85779fd')
+#         self.assertEqual(self.exam.questions, ['foo'])
+#         self.assertEqual(self.exam.description, 'foo')
+#         self.assertFalse(self.exam.auto_rebase_grade)
+#         self.assertEqual(self.exam.grade_base, 5)
+#         self.assertFalse(self.exam.randomize_questions)
 
 
-    def test_is_single_when_single_found(self):
-        table = [
-            {'id':12, 'title': 'foobar'},
-        ]
-        obtained = funcs.is_single(table)
-        self.assertTrue(obtained)
+
+#     def test_set_auto_rebase_grade_from_existing(self):
+#         self.exam.set_auto_rebase_grade_from_existing(self.LOADED_EXAM)
+#         obtained = self.exam.auto_rebase_grade
+#         expected = self.LOADED_EXAM['auto_rebase_grade']
+#         self.assertEqual(obtained, expected)
 
 
-    def test_is_empty_when_not_found(self):
-        table = []
-        obtained = funcs.is_empty(table)
-        self.assertTrue(obtained)
+#     def test_set_description_from_existing(self):
+#         self.exam.set_description_from_existing(self.LOADED_EXAM)
+#         obtained = self.exam.description
+#         expected = self.LOADED_EXAM['description']
+#         self.assertEqual(obtained, expected)
 
 
-    def test_is_empty_when_found(self):
-        table = [
-            {'id':12, 'title': 'foobar'},
-        ]
-        obtained = funcs.is_empty(table)
-        self.assertFalse(obtained)
+#     def test_set_grade_base_from_existing(self):
+#         self.exam.set_grade_base_from_existing(self.LOADED_EXAM)
+#         obtained = self.exam.grade_base
+#         expected = self.LOADED_EXAM['grade_base']
+#         self.assertEqual(obtained, expected)
 
 
-    TABLE_EXAMS_SHORT = [
-        {'title': '', 'id': 'c85779fd', 'questions': [...]},
-        {'title': '', 'id': '327e93a3', 'questions': [...]},
-    ]
-    @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EXAMS_SHORT)
-    def test_retrieve_sample_from_table(self, mock_table):
-        obtained = funcs.retrieve_sample_from_table(id_sample='c85779fd',
-                                                    path_table='')
-        expected = {'title': '', 'id': 'c85779fd', 'questions': [...]}
-        self.assertEqual(obtained, expected)
+#     def test_set_id_from_existing(self):
+#         self.exam.set_id_from_existing(self.LOADED_EXAM)
+#         obtained = self.exam.id
+#         expected = self.LOADED_EXAM['id']
+#         self.assertEqual(obtained, expected)
 
 
-    TABLE_EMPTY = []
-    @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EMPTY)
-    def test_retrieve_sample_from_table_when_is_empty(self, mock_table):
-        with self.assertRaises(ValueError) as context:
-            funcs.retrieve_sample_from_table(id_sample='c85779fd',
-                                                    path_table='')
-        self.assertTrue('Missing sample id c85779fd' in str(context.exception))
+#     def test_set_properties_from_existing_all(self):
+#         self.exam.set_properties_from_existing_all(self.LOADED_EXAM)
+#         self.assertEqual(self.exam.id, 'id_foo')
+#         self.assertEqual(self.exam.title, 'title_foo')
+#         self.assertEqual(self.exam.description, "desc foo")
+#         self.assertEqual(self.exam.randomize_questions, False)
+#         self.assertEqual(self.exam.auto_rebase_grade, False)
+#         self.assertEqual(self.exam.grade_base, 100)
+#         # Restore default parameters
+#         self.setUp()
 
 
-    TABLE_DUPLICATES = [
-        {'title': '', 'id': 'c85779fd', 'questions': [...]},
-        {'title': '', 'id': 'c85779fd', 'questions': [...]},
-    ]
-    @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_DUPLICATES)
-    def test_retrieve_sample_from_table_when_duplicates(self, mock_table):
-        with self.assertRaises(ValueError) as context:
-            funcs.retrieve_sample_from_table(id_sample='c85779fd',
-                                                    path_table='')
-        self.assertTrue('Duplicate sample ids c85779fd' in str(context.exception))
+#     @patch('builtins.input', return_value='new exam title')
+#     def test_set_title_from_input(self, mock_input):
+#         self.exam.set_title_from_input()
+#         self.assertEqual(self.exam.title, 'new exam title')
+#         # Restore default parameters
+#         self.setUp()
+
+
+#     @patch('builtins.input', return_value='new exam desc')
+#     def test_create_description_from_input(self, mock_input):
+#         self.exam.set_title_from_input()
+#         self.assertEqual(self.exam.title, 'new exam desc')
+#         # Restore default parameters
+#         self.setUp()
+
+
+#     @patch('builtins.input', return_value='False')
+#     def test_set_randomize_questions_from_input(self, mock_input):
+#         self.exam.set_randomize_questions_from_input()
+#         self.assertEqual(self.exam.randomize_questions, False)
+#         # Restore default parameters
+#         self.setUp()
+
+
+#     @patch('builtins.input', return_value='False')
+#     def test_set_auto_rebase_grade_from_input(self, mock_input):
+#         self.exam.set_auto_rebase_grade_from_input()
+#         self.assertEqual(self.exam.auto_rebase_grade, False)
+#         # Restore default parameters
+#         self.setUp()
+
+
+#     @patch('builtins.input', return_value='10')
+#     def test_set_grade_base_from_input(self, mock_input):
+#         self.exam.set_grade_base_from_input()
+#         self.assertEqual(self.exam.grade_base, 10)
+#         # Restore default parameters
+#         self.setUp()
+
+
+#     def test_set_randomize_questions_from_existing(self):
+#         self.exam.set_randomize_questions_from_existing(self.LOADED_EXAM)
+#         obtained = self.exam.randomize_questions
+#         expected = self.LOADED_EXAM['randomize_questions']
+#         self.assertEqual(obtained, expected)
+#         # Restore default parameters
+#         self.setUp()
+
+
+#     def test_set_title_from_existing(self):
+#         self.exam.set_title_from_existing(self.LOADED_EXAM)
+#         obtained = self.exam.title
+#         expected = self.LOADED_EXAM['title']
+#         self.assertEqual(obtained, expected)
+#         # Restore default parameters
+#         self.setUp()
+
+
+
+# class FuncsTestCase(unittest.TestCase):
+#     """
+#     Test the functions of general order
+#     """
+#     def test_cast_when_bool(self):
+#         obtained = funcs.cast('True', bool)
+#         expected = True
+#         self.assertEqual(obtained, expected)
+
+
+#     def test_cast_when_int(self):
+#         obtained = funcs.cast('12', int)
+#         expected = 12
+#         self.assertEqual(obtained, expected)
+
+
+#     def test_cast_when_float(self):
+#         obtained = funcs.cast('12', float)
+#         expected = 12.
+#         self.assertEqual(obtained, expected)
+
+
+#     def test_cast_when_not_possible(self):
+#         with self.assertRaises(TypeError) as context:
+#             funcs.cast('12', bool)
+
+#         expected = "The value: 12, of type <class 'str'>, " \
+#                    "cannot be casted into type: <class 'bool'>"
+#         self.assertTrue(expected in str(context.exception))
+
+
+#     def test__extract_sample(self):
+#         data = [
+#             {'id': 123, 'foo1': 'bar1'},
+#             {'id': 433, 'foo2': 'bar2'},
+#         ]
+#         obtained = funcs._extract_sample(id=433, data=data)
+#         expected = [{'id': 433, 'foo2': 'bar2'}]
+#         self.assertEqual(obtained, expected)
+
+
+#     def test_get_single_elem(self):
+#         obtained = funcs.get_single_elem([4])
+#         expected = 4
+#         self.assertEqual(obtained, expected)
+
+
+#     def test_is_single_when_duplicate_found(self):
+#         table = [
+#             {'id':12, 'title': 'foo'},
+#             {'id':12, 'title': 'foobar'},
+#         ]
+#         obtained = funcs.is_single(table)
+#         self.assertFalse(obtained)
+
+
+#     def test_is_single_when_single_found(self):
+#         table = [
+#             {'id':12, 'title': 'foobar'},
+#         ]
+#         obtained = funcs.is_single(table)
+#         self.assertTrue(obtained)
+
+
+#     def test_is_empty_when_not_found(self):
+#         table = []
+#         obtained = funcs.is_empty(table)
+#         self.assertTrue(obtained)
+
+
+#     def test_is_empty_when_found(self):
+#         table = [
+#             {'id':12, 'title': 'foobar'},
+#         ]
+#         obtained = funcs.is_empty(table)
+#         self.assertFalse(obtained)
+
+
+#     TABLE_EXAMS_SHORT = [
+#         {'title': '', 'id': 'c85779fd', 'questions': [...]},
+#         {'title': '', 'id': '327e93a3', 'questions': [...]},
+#     ]
+#     @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EXAMS_SHORT)
+#     def test_retrieve_sample_from_table(self, mock_table):
+#         obtained = db.retrieve_sample_from_table(id_sample='c85779fd',
+#                                                     path_table='')
+#         expected = {'title': '', 'id': 'c85779fd', 'questions': [...]}
+#         self.assertEqual(obtained, expected)
+
+
+#     TABLE_EMPTY = []
+#     @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_EMPTY)
+#     def test_retrieve_sample_from_table_when_is_empty(self, mock_table):
+#         with self.assertRaises(ValueError) as context:
+#             db.retrieve_sample_from_table(id_sample='c85779fd',
+#                                                     path_table='')
+#         self.assertTrue('Missing sample id c85779fd' in str(context.exception))
+
+
+#     TABLE_DUPLICATES = [
+#         {'title': '', 'id': 'c85779fd', 'questions': [...]},
+#         {'title': '', 'id': 'c85779fd', 'questions': [...]},
+#     ]
+#     @patch('adaptive_learning.questionnaires.funcs.load_table', return_value=TABLE_DUPLICATES)
+#     def test_retrieve_sample_from_table_when_duplicates(self, mock_table):
+#         with self.assertRaises(ValueError) as context:
+#             db.retrieve_sample_from_table(id_sample='c85779fd',
+#                                                     path_table='')
+#         self.assertTrue('Duplicate sample ids c85779fd' in str(context.exception))
 
 
 
@@ -564,13 +428,91 @@ class QuestionTestCase(unittest.TestCase):
     Test the manipulations on questions and answers
     (create, amend, delete, launch, etc.)
     """
+    # TODO: maybe replace the self.mock_inputs by a classic patch deorator,
+    # which indicates more explicitly the functions that require patching.
     def setUp(self):
+        self.INIT_INPUTS = ('Debug question text', 'keyword1, keyword2')
+        self.VALS = {
+            'id': '8148773d-773f-42a8-977a-4cbbcee752c1',
+            'text': 'Debug question text',
+            'keywords': 'keyword1, keyword2',
+            'use_question': True,
+            'nb_points': 1.,
+            'difficulty': 1,
+            'answers': [],
+        }
+        # This patcher will replace any call of 'input'
+        # Its property enables to modify the behavior of the patch
+        # using self.mock_inputs.side_effect = (list_of_values)
+        patcher = patch('builtins.input', side_effect=self.INIT_INPUTS)
+        self.mock_inputs = patcher.start()
+        self.addCleanup(patcher.stop)
+
         self.question = Question()
-        self.DEFAULT_PROPERTIES = {
-            'id': '',
-            'text': '',
-            'type': '',
-            'keywords': '',
+
+
+    def test__init__(self):
+        # Test init from the setUp
+        self.assertEqual(type(self.question._id), type(self.VALS['id']))
+        self.assertEqual(len(self.question._id), len(self.VALS['id']))
+        self.assertEqual(self.question._text, self.VALS['text'])
+        self.assertEqual(self.question._keywords, self.VALS['keywords'])
+        self.assertEqual(self.question._use_question, self.VALS['use_question'])
+        self.assertEqual(self.question._nb_points, self.VALS['nb_points'])
+        self.assertEqual(self.question._difficulty, self.VALS['difficulty'])
+        self.assertEqual(self.question._answers, self.VALS['answers'])
+
+
+    def test_make_exportable(self):
+        expected = self.VALS
+        obtained = self.question.make_exportable()
+        # No need to compare ids since different by design
+        del expected['answers']
+        del expected['id']
+        del obtained['id']
+        self.assertEqual(obtained, expected)
+
+
+    def test_load(self):
+        load_dic = {
+            'id': '234-aze',
+            'text': 'foo',
+            'keywords': 'bar1, bar2',
+            'use_question': False,
+            'nb_points': 5,
+            'difficulty': 3,
+            'answers': [],
+        }
+        self.question.load(load_dic)
+        self.assertEqual(self.question._id, load_dic['id'])
+        self.assertEqual(self.question._text, load_dic['text'])
+        self.assertEqual(self.question._keywords, load_dic['keywords'])
+        self.assertEqual(self.question._use_question, load_dic['use_question'])
+        self.assertEqual(self.question._nb_points, load_dic['nb_points'])
+        self.assertEqual(self.question._difficulty, load_dic['difficulty'])
+        self.assertEqual(self.question._answers, load_dic['answers'])
+
+
+
+class McqQuestionTestCase(unittest.TestCase):
+    """
+    Test the manipulations with McqQuestion
+    """
+    ONE_ANSWER = ('Debug question text',
+                    'keyword1, keyword2',
+                    'Debug answer',
+                    'True',
+                    'Yes',
+                    'No')
+
+
+    @patch('builtins.input', side_effect=ONE_ANSWER)
+    def setUp(self, mock_inputs):
+        self.VALS = {
+            'id': '8148773d-773f-42a8-977a-4cbbcee752c1',
+            'type': 'mcq',
+            'text': 'Debug question text',  #ONE_ANSWER[0]
+            'keywords': 'keyword1, keyword2',  #ONE_ANSWER[1]
             'use_question': True,
             'nb_points': 1.,
             'difficulty': 1,
@@ -579,183 +521,111 @@ class QuestionTestCase(unittest.TestCase):
             'randomize_answers_order': True,
             'answers': [],
         }
-        self.QUESTION_LOADED = {
-            'id': 'id_foo',
-            'text': 'clever question',
+        self.mcq_question = McqQuestion()
+
+
+    TWO_ANSWERS = (
+        'Text answer 1',  # text
+        'True',           # is_correct
+        'Yes',            # use_answer
+        'Yes',            # compose new answer
+        'Text answer 2',
+        'False',
+        'No',
+        'No',
+    )
+    @patch('builtins.input', side_effect=TWO_ANSWERS)
+    def test_add_answers(self, mock_inputs):
+        self.mcq_question.add_answers()
+        self.assertEqual(self.mcq_question._answers[0]._text, 'Debug answer')
+        self.assertEqual(self.mcq_question._answers[1]._text, 'Text answer 1')
+        self.assertEqual(self.mcq_question._answers[2]._text, 'Text answer 2')
+        self.assertTrue(self.mcq_question._answers[0]._is_correct)
+        self.assertTrue(self.mcq_question._answers[1]._is_correct)
+        self.assertFalse(self.mcq_question._answers[2]._is_correct)
+        self.assertTrue(self.mcq_question._answers[0]._use_answer)
+        self.assertTrue(self.mcq_question._answers[1]._use_answer)
+        self.assertFalse(self.mcq_question._answers[2]._use_answer)
+
+
+    ONE_ANSWER_ = ('mcq',) + ONE_ANSWER
+
+    @patch('builtins.input', side_effect=ONE_ANSWER_)
+    def test_create_question(self, mock_inputs):
+        mcq_q = create_question()
+
+        self.assertEqual(mcq_q._type, self.VALS['type'])
+        self.assertEqual(mcq_q._text, self.VALS['text'])
+        self.assertEqual(mcq_q._keywords, self.VALS['keywords'])
+        self.assertEqual(mcq_q._use_question, self.VALS['use_question'])
+        self.assertEqual(mcq_q._nb_points, self.VALS['nb_points'])
+        self.assertEqual(mcq_q._notif_correct_answers,
+                         self.VALS['notif_correct_answers'])
+        self.assertEqual(mcq_q._answers[0]._text, 'Debug answer')
+        self.assertTrue(mcq_q._answers[0]._is_correct)
+        self.assertTrue(mcq_q._answers[0]._use_answer)
+
+
+    def test_load(self):
+        load_dic = {
+            'id': '234-aze',
             'type': 'mcq',
-            'keywords': 'programming, python, structures',
-            # TODO: transform into list
+            'text': 'foo',
+            'keywords': 'bar1, bar2',
             'use_question': False,
-            'nb_points': 0.5,
+            'nb_points': 5,
             'difficulty': 3,
-            'notif_correct_answers': False,
-            'notif_num_exact_answers': False,
-            'randomize_answers_order': False,
-            'answers': [],
+            'notif_correct_answers': self.VALS['notif_correct_answers'],
+            'notif_num_exact_answers': self.VALS['notif_num_exact_answers'],
+            'randomize_answers_order': self.VALS['randomize_answers_order'],
+            'answers': [
+                {'text': 'Foo', 'is_correct': False, 'use_answer': False},
+                {'text': 'Bar', 'is_correct': True, 'use_answer': True},
+            ],
         }
+        self.mcq_question.load(load_dic)
+        self.assertEqual(self.mcq_question._id, load_dic['id'])
+        self.assertEqual(self.mcq_question._text, load_dic['text'])
+        self.assertEqual(self.mcq_question._keywords, load_dic['keywords'])
+        self.assertEqual(self.mcq_question._use_question, load_dic['use_question'])
+        self.assertEqual(self.mcq_question._nb_points, load_dic['nb_points'])
+        self.assertEqual(self.mcq_question._difficulty, load_dic['difficulty'])
+
+        self.assertEqual(self.mcq_question._answers[0]._text,
+                         load_dic['answers'][0]['text'])
+        self.assertEqual(self.mcq_question._answers[0]._is_correct,
+                         load_dic['answers'][0]['is_correct'])
+        self.assertEqual(self.mcq_question._answers[0]._use_answer,
+                         load_dic['answers'][0]['use_answer'])
+
+        self.assertEqual(self.mcq_question._answers[1]._text,
+                         load_dic['answers'][1]['text'])
+        self.assertEqual(self.mcq_question._answers[1]._is_correct,
+                         load_dic['answers'][1]['is_correct'])
+        self.assertEqual(self.mcq_question._answers[1]._use_answer,
+                         load_dic['answers'][1]['use_answer'])
 
 
-    def test__init(self):
-        self.assertEqual(
-            type(self.question.id),
-            type(self.DEFAULT_PROPERTIES['id']),
-        )
-        self.assertEqual(
-            len(self.question.id),
-            36,
-        )
-
-        self.assertEqual(
-            self.question.text,
-            self.DEFAULT_PROPERTIES['text'],
-        )
-        self.assertEqual(
-            self.question.type,
-            self.DEFAULT_PROPERTIES['type'],
-        )
-        self.assertEqual(
-            self.question.keywords,
-            self.DEFAULT_PROPERTIES['keywords'],
-        )
-        self.assertEqual(
-            self.question.use_question,
-            self.DEFAULT_PROPERTIES['use_question'],
-        )
-        self.assertEqual(
-            self.question.nb_points,
-            self.DEFAULT_PROPERTIES['nb_points'],
-        )
-        self.assertEqual(
-            self.question.difficulty,
-            self.DEFAULT_PROPERTIES['difficulty'],
-        )
-        self.assertEqual(
-            self.question.notif_correct_answers,
-            self.DEFAULT_PROPERTIES['notif_correct_answers'],
-        )
-        self.assertEqual(
-            self.question.notif_num_exact_answers,
-            self.DEFAULT_PROPERTIES['notif_num_exact_answers'],
-        )
-        self.assertEqual(
-            self.question.randomize_answers_order,
-            self.DEFAULT_PROPERTIES['randomize_answers_order'],
-        )
-        self.assertEqual(
-            self.question.answers,
-            self.DEFAULT_PROPERTIES['answers'],
-        )
-
-
-    ANSWER_PROPERTIES = ['Debug answer', 'True', 'False']
-
-    @patch('builtins.input', side_effect=ANSWER_PROPERTIES)
-    def test_add_answer(self, mock_inputs):
-        self.question.add_answer()
-        obtained = self.question.answers
-        expected = [
-            {
-                'text': 'Debug answer',
-                'is_correct': True,
-                'use_answer': False,
-                'position_id': 1,
-            }
-        ]
-        self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
-
-
-    INPUTS_NEW_QUESTION = ('mcq',
-                           'New question',
-                           'Programming, VBA, Introduction')
-
-    @patch('builtins.input', side_effect=INPUTS_NEW_QUESTION)
-    def test_create(self, mock_inputs):
+    def test_make_exportable(self):
         expected = {
             'id': 'uuid4_string',
-            'type': 'mcq',
-            'text': 'New question',
-            'keywords': 'Programming, VBA, Introduction',
-            'use_question': self.DEFAULT_PROPERTIES['use_question'],
-            'nb_points': self.DEFAULT_PROPERTIES['nb_points'],
-            'difficulty': self.DEFAULT_PROPERTIES['difficulty'],
-            'notif_correct_answers': self.DEFAULT_PROPERTIES['notif_correct_answers'],
-            'notif_num_exact_answers': self.DEFAULT_PROPERTIES['notif_num_exact_answers'],
-            'randomize_answers_order': self.DEFAULT_PROPERTIES['randomize_answers_order'],
-            'answers': [],
+            'type': self.VALS['type'],
+            'text': self.VALS['text'],
+            'keywords': self.VALS['keywords'],
+            'use_question': self.VALS['use_question'],
+            'nb_points': self.VALS['nb_points'],
+            'difficulty': self.VALS['difficulty'],
+            'notif_correct_answers': self.VALS['notif_correct_answers'],
+            'notif_num_exact_answers': self.VALS['notif_num_exact_answers'],
+            'randomize_answers_order': self.VALS['randomize_answers_order'],
+            'answers': [{'text': 'Debug answer',
+                         'is_correct': True,
+                         'use_answer': True}],
         }
-        self.question.create()
-        obtained = self.question.get_exportable()
-        # Delete id since uuid is different at each call
-        del expected['id']
+        obtained = self.mcq_question.make_exportable()
+        del expected['id']  # Delete id since uuid is different at each call
         del obtained['id']
         self.assertEqual(obtained, expected)
-        # Restore default parameters
-        self.setUp()
-
-
-    def test_get_exportable(self):
-        # Controls that:
-        # - it returns a dictionary with the expected structure
-        # - the following keys are included in the exportable (sort of dump)
-        # - the corresponding values are correctly matching
-        expected = self.DEFAULT_PROPERTIES
-        obtained = self.question.get_exportable()
-        # Delete id since uuid is different at each call
-        del expected['id']
-        del obtained['id']
-        self.assertEqual(obtained, expected)
-
-
-    def test_set_question_from_existing(self):
-        self.question.set_question_from_existing(self.QUESTION_LOADED)
-        self.assertEqual(
-            self.question.id,
-            self.QUESTION_LOADED['id'],
-        )
-        self.assertEqual(
-            self.question.text,
-            self.QUESTION_LOADED['text'],
-        )
-        self.assertEqual(
-            self.question.type,
-            self.QUESTION_LOADED['type'],
-        )
-        self.assertEqual(
-            self.question.keywords,
-            self.QUESTION_LOADED['keywords'],
-        )
-        self.assertEqual(
-            self.question.use_question,
-            self.QUESTION_LOADED['use_question'],
-        )
-        self.assertEqual(
-            self.question.nb_points,
-            self.QUESTION_LOADED['nb_points'],
-        )
-        self.assertEqual(
-            self.question.difficulty,
-            self.QUESTION_LOADED['difficulty'],
-        )
-        self.assertEqual(
-            self.question.notif_correct_answers,
-            self.QUESTION_LOADED['notif_correct_answers'],
-        )
-        self.assertEqual(
-            self.question.notif_num_exact_answers,
-            self.QUESTION_LOADED['notif_num_exact_answers'],
-        )
-        self.assertEqual(
-            self.question.randomize_answers_order,
-            self.QUESTION_LOADED['randomize_answers_order'],
-        )
-        self.assertEqual(
-            self.question.answers,
-            self.QUESTION_LOADED['answers'],
-        )
-        # Restore default parameters
-        self.setUp()
 
 
 

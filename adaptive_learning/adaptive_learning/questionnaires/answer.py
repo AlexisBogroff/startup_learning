@@ -1,7 +1,7 @@
 """
 Manage answers
 """
-from adaptive_learning.questionnaires.funcs import cast, get_input
+from adaptive_learning import funcs
 
 
 class Answer:
@@ -9,53 +9,71 @@ class Answer:
     Class to manage answers
     """
     def __init__(self):
-        self.text = ''
-        self.is_correct = False
-        self.use_answer = True
+        self._text = funcs.get_input("Enter the answer text")
 
 
-    def set_properties_from_input(self):
-        """
-        Create an answer
-
-        Returns:
-            None, it modifies the answer properties.
-        """
-        self.set_text_from_input()
-        self.set_is_correct_from_input()
-        self.set_use_answer_from_input()
+    def make_exportable(self):
+        """ Make a dictionary containing the settings """
+        return {'text': self._text}
 
 
-    def set_text_from_input(self):
-        """ Set is_correct property """
-        self.text = get_input("Enter the answer text")
+    def load(self, load_dic):
+        """ Load settings from existing answer """
+        self._text = load_dic['text']
 
 
-    def set_is_correct_from_input(self):
-        """ Set is_correct property """
-        is_correct = get_input("Is the answer correct? (True/False)")
-        casted_is_correct = cast(is_correct, bool)
-        self.is_correct = casted_is_correct
+
+class McqAnswer(Answer):
+    """
+    Manage MCQ answers
+    """
+    def __init__(self, load_dic=None):
+        if load_dic:
+            self.load(load_dic)
+        else:
+            Answer.__init__(self)
+            self._is_correct = funcs.input_bool("Is correct?")
+            self._use_answer = funcs.input_bool("Use answer?")
 
 
-    def set_use_answer_from_input(self):
-        """ Set use_answer property """
-        use_answer = get_input("Use this answer? (True/False)")
-        casted_use_answer = cast(use_answer, bool)
-        self.use_answer = casted_use_answer
+    def make_exportable(self):
+        """ Make a dictionary containing the settings """
+        exportable = super().make_exportable()
+        exportable['is_correct'] = self._is_correct
+        exportable['use_answer'] = self._use_answer
+        return exportable
 
 
-    def get_exportable(self):
-        """
-        Stores the answer properties in a dictionary
+    def load(self, load_dic):
+        """ Load settings from existing answer """
+        super().load(load_dic=load_dic)
+        self._is_correct = bool(load_dic['is_correct'])
+        self._use_answer = bool(load_dic['use_answer'])
 
-        Returns:
-            the data in dic format, ready to be added to the list of answers
-            of a question.
-        """
-        data_export = {
-            'text': self.text,
-            'is_correct': self.is_correct,
-            'use_answer': self.use_answer,
-        }
-        return data_export
+
+
+class DevAnswer(Answer):
+    """
+    Manage answers with development
+    """
+
+
+
+class ExactAnswer(Answer):
+    """
+    Manage exact answers
+    """
+
+
+
+class ApproxAnswer(Answer):
+    """
+    Manage approximated answers considered correct
+    """
+
+
+
+class CodeAnswer(Answer):
+    """
+    Manage answers as code
+    """

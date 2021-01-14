@@ -4,92 +4,97 @@ Manage exams
 #TODO: create a class db for functions interacting with tables
 # and extracting data (e.g. extract_question)
 
-from adaptive_learning.questionnaires import funcs
-from adaptive_learning.questionnaires.funcs import cast, get_input
-from adaptive_learning.questionnaires.question import Question
-
-__PATH_EXAMS__ = "/Users/Pro/git_repositories/"\
-    "adaptive_learning/adaptive_learning/adaptive_learning/"\
-    "data/table_exams.txt"
+from adaptive_learning import settings
+from adaptive_learning import funcs
+from adaptive_learning import db
+from adaptive_learning.funcs import cast, get_input
+from adaptive_learning.questionnaires.question import Question, \
+    McqQuestion, DevQuestion, ExactQuestion, ApproxQuestion, CodeQuestion, \
+    create_question, load_question
 
 
 class Exam:
     """
-    Class to manage exams (creation, modification, deletion) and compose their
-    questions and corresponding answers.
-
-    grade_rebase: enables to obtain a grade on e.g. /20, although there
-    are only e.g. 10 questions graded /1 point.
-
-    Args:
-        title: of the exam
+    Class to manage exams (create, load, modify, delete)
 
     Returns:
-        exam instance with its basic properties set, and ready to be composed.
+        default exam instance ready to be composed.
 
     Notes:
-        The structure of exam has its main and secondary parameters at the same
-        level. The structure of the dump is different and may lead to useless
-        complexity and confusion, since its secondary parameters are stored in
-        a list called 'parameters'.
+        grade_rebase: enables to obtain a grade on e.g. /20, although there
+        are only e.g. 10 questions graded /1 point.
     """
-    def __init__(self):
-        self.id = funcs.generate_uuid()
-        self.title = ""
-        self.description = ""
-        self.randomize_questions_order = True
-        self.auto_rebase_grade = True
-        self.grade_base = 20
-        self.questions = []
+    def __init__(self, exam_id=None):
+        if exam_id:
+            self.load_exam(exam_id)
+        else:
+            self._id = funcs.generate_uuid()
+            self._title = ""
+            self._description = ""
+            self._randomize_questions = True
+            self._auto_rebase_grade = True
+            self._grade_base = 20
+            self._questions = []
+
+            self.set_title_from_input()
+            self.set_description_from_input()
+            self.add_questions()
 
 
     def __str__(self):
-        return "title: {title}, id: {id}".format(title=self.title, id=self.id)
+        return "title: {title}, id: {id}".format(title=self._title, id=self._id)
 
 
-    def add_question(self, id_question):
-        """
-        Add existing question to the exam
-        """
-        question = Question()
-        question.load_question(id_question)
-        question_export = question.get_exportable()
-        question_export['position'] = funcs.generate_position_id(self.questions)
-        self.questions.append(question_export)
+    def add_questions(self):
+        """ Add new questions to exam """
+        new_question = True
+
+        while new_question:
+            question = create_question()
+            self._questions.append(question)
+            new_question = funcs.input_bool("Create new question?")
 
 
-    def get_exportable(self):
+    def load_question(self, load_id):
+        """ Add existing question """
+        # load_question()
+        pass
+
+
+    def make_exportable(self):
         """
         Stores exam properties in a dictionary
 
         Returns:
-            the data in dic format, ready to export in json file
+            the exam in dic format, ready to export in json file
         """
         data_export = {
-            'id': self.id,
-            'title': self.title,
-            'description': self.description,
-            'randomize_questions_order': self.randomize_questions_order,
-            'auto_rebase_grade': self.auto_rebase_grade,
-            'grade_base': self.grade_base,
-            'questions': self.questions,
+            'id': self._id,
+            'title': self._title,
+            'description': self._description,
+            'randomize_questions': self._randomize_questions,
+            'auto_rebase_grade': self._auto_rebase_grade,
+            'grade_base': self._grade_base,
+            'questions': [q.make_exportable() for q in self._questions]
         }
         return data_export
 
 
-    def load_exam(self, id_exam):
+    def load_exam(self, exam_id):
         """
         Load a specific exam from the exam table
-
-        Modifies the properties of the current exam to correspond to the
-        selected exam.
-
-        Returns:
-            void.
         """
-        exam = funcs.retrieve_sample_from_table(id_exam, __PATH_EXAMS__)
-        self.set_properties_from_existing_all(exam)
-        self.questions = exam['questions']
+        exam_dic = db.retrieve_sample_from_table(
+                                    exam_id,
+                                    settings.__PATH_EXAMS__)
+
+        self.set_id_from_existing(exam_dic)
+        self.set_title_from_existing(exam_dic)
+        self.set_description_from_existing(exam_dic)
+        self.set_randomize_questions_from_existing(exam_dic)
+        self.set_auto_rebase_grade_from_existing(exam_dic)
+        self.set_grade_base_from_existing(exam_dic)
+        self._questions = [load_question(question_dic=q) for q in exam_dic['questions']]
 
 
     def save(self):
@@ -108,99 +113,67 @@ class Exam:
 
             A method should contol that no duplicates can be added to the db
         """
-        exam_dump = self.get_exportable()
-        funcs.append_to_file(exam_dump, __PATH_EXAMS__)
+        exportable = self.make_exportable()
+        funcs.append_to_file(exportable, settings.__PATH_EXAMS__)
 
 
-    def set_auto_rebase_grade_from_existing(self, exam):
+    def set_auto_rebase_grade_from_existing(self, exportable):
         """ Load auto_rebase_grade parameter from existing exam """
-        param = exam['auto_rebase_grade']
-        self.auto_rebase_grade = param
-
+        param = exportable['auto_rebase_grade']
+        self._auto_rebase_grade = param
 
     def set_auto_rebase_grade_from_input(self):
         """ Set auto_rebase_grade property """
         auto_rebase = get_input("Activate automatic grade rebasing?")
         casted_auto_rebase = cast(auto_rebase, bool)
-        self.auto_rebase_grade = casted_auto_rebase
+        self._auto_rebase_grade = casted_auto_rebase
 
 
-    def set_description_from_existing(self, exam):
+    def set_description_from_existing(self, exportable):
         """ Load description from existing exam """
-        self.description = exam['description']
-
+        self._description = exportable['description']
 
     def set_description_from_input(self):
-        """ Set description property """
-        self.description = get_input("Enter the exam description")
+        """ Set description """
+        self._description = get_input("Enter the exam description")
 
 
-    def set_grade_base_from_existing(self, exam):
+    def set_grade_base_from_existing(self, exportable):
         """ Load grade_base parameter from existing exam """
-        param = exam['grade_base']
-        self.grade_base = param
-
+        param = exportable['grade_base']
+        self._grade_base = param
 
     def set_grade_base_from_input(self):
         """ Set grade_base property """
         grade_base = get_input("Enter the grade base")
         casted_grade_base = cast(grade_base, int)
-        self.grade_base = casted_grade_base
+        self._grade_base = casted_grade_base
 
 
-    def set_id_from_existing(self, exam):
+    def set_id_from_existing(self, exportable):
         """ Load id from existing exam """
-        self.id = exam['id']
+        self._id = exportable['id']
 
 
-    def set_properties_from_existing_all(self, exam):
-        """ Set the properties from an existing exam """
-        self.set_id_from_existing(exam)
-        self.set_title_from_existing(exam)
-        self.set_description_from_existing(exam)
-        self.set_randomize_questions_order_from_existing(exam)
-        self.set_auto_rebase_grade_from_existing(exam)
-        self.set_grade_base_from_existing(exam)
+    def set_randomize_questions_from_existing(self, exportable):
+        """ Load randomize_questions parameter from existing exam """
+        param = exportable['randomize_questions']
+        self._randomize_questions = param
 
-
-    def set_properties_from_input_extra(self):
-        """
-        Set the extra properties from user input
-        """
-        self.set_randomize_questions_order_from_input()
-        self.set_auto_rebase_grade_from_input()
-        self.set_grade_base_from_input()
-
-
-    def set_properties_from_input_main(self):
-        """
-        Set the main properties from user input
-        """
-        self.set_title_from_input()
-        self.set_description_from_input()
-
-
-    def set_randomize_questions_order_from_existing(self, exam):
-        """ Load randomize_questions_order parameter from existing exam """
-        param = exam['randomize_questions_order']
-        self.randomize_questions_order = param
-
-
-    def set_randomize_questions_order_from_input(self):
+    def set_randomize_questions_from_input(self):
         """ Set randomize_order property """
         randomize_order = get_input("Randomize questions order?")
         casted_randomize_order = cast(randomize_order, bool)
-        self.randomize_questions_order = casted_randomize_order
+        self._randomize_questions = casted_randomize_order
 
 
-    def set_title_from_existing(self, exam):
+    def set_title_from_existing(self, exportable):
         """ Load title from existing exam """
-        self.title = exam['title']
-
+        self._title = exportable['title']
 
     def set_title_from_input(self):
-        """ Set title property """
-        self.title = get_input("Enter the exam title")
+        """ Set title """
+        self._title = get_input("Enter the exam title")
 
 
     def show(self):
@@ -208,43 +181,37 @@ class Exam:
         Display the exam properties
         """
         # TODO: split into multiple functions
-        questions = self.questions
+        questions = self._questions
         if questions:
             text_questions = ["({nb_points}) {type}: {text}"\
-                .format(nb_points=q['nb_points'],
-                        type=q['type'],
-                        text=q['text']) \
-                            for q in questions]
+                .format(nb_points=q.make_exportable()['nb_points'],
+                        type=q.make_exportable()['type'],
+                        text=q.make_exportable()['text']) \
+                        for q in questions]
 
             text_questions = "\n\t".join(text_questions)
         else:
             text_questions = "No question registered"
 
-        text = "id: {id}\n" \
-               "title: {title}\n" \
-               "description: {description}\n\n" \
-               "randomize_questions_order: {randomize_questions_order}\n" \
-               "auto_rebase_grade: {auto_rebase_grade}\n" \
-               "grade_base: {grade_base}\n\n" \
-               "questions\n" \
-               "\t{text_questions}" \
-               .format(
-                    id=self.id,
-                    title=self.title,
-                    description=self.description,
-                    randomize_questions_order=self.randomize_questions_order,
-                    auto_rebase_grade=self.auto_rebase_grade,
-                    grade_base=self.grade_base,
+        text_exam = \
+            "id: {id}\n" \
+            "title: {title}\n" \
+            "description: {description}\n\n" \
+            "randomize_questions: {randomize_questions}\n" \
+            "auto_rebase_grade: {auto_rebase_grade}\n" \
+            "grade_base: {grade_base}\n\n" \
+            "questions\n" \
+            "\t{text_questions}" \
+            .format(
+                    id=self._id,
+                    title=self._title,
+                    description=self._description,
+                    randomize_questions=self._randomize_questions,
+                    auto_rebase_grade=self._auto_rebase_grade,
+                    grade_base=self._grade_base,
                     text_questions=text_questions,
                 )
-        print(text)
-
-
-    @staticmethod
-    def show_list_of_exams():
-        """ Display the list of exams stored in db """
-        table = funcs.load_table(f_path=__PATH_EXAMS__)
-        funcs.show_table(table, ['title', 'id'])
+        print(text_exam)
 
 
     def update(self, id_exam):
@@ -258,3 +225,8 @@ class Exam:
         """
         # TODO: Implement
         raise NotImplementedError
+
+
+if __name__ == "__main__":
+    exam = Exam()
+    print(exam._id)
